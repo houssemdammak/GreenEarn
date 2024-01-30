@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Image from "../assets/image.png";
 import Logo from "../assets/logo.png";
+import GoogleSvg from "../assets/icons8-google.svg";
 import { FaEye } from "react-icons/fa6";
 import { FaEyeSlash } from "react-icons/fa6";
 import "../styles/Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [token, setToken] = useState(
-    JSON.parse(localStorage.getItem("auth")) || ""
-  );
+  const [ token, setToken ] = useState(JSON.parse(localStorage.getItem("auth")) || "");
   const navigate = useNavigate();
+
+
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    let email = e.target.email.value.trim();
-    let password = e.target.password.value.trim();
+    let email = e.target.email.value;
+    let password = e.target.password.value;
 
     if (email.length > 0 && password.length > 0) {
       const formData = {
@@ -26,18 +27,16 @@ const Login = () => {
         password,
       };
       try {
-        const response = await axios.post("/api/auth/login", formData, {
-          headers: { "Content-Type": "application/json" },
-        });
-
-        console.log(response.data);
-
-        localStorage.setItem("auth", JSON.stringify(response.data.token));
+        const response = await axios.post(
+          "/api/auth/login",
+          formData
+        );
+        localStorage.setItem('auth', JSON.stringify(response.data.token));
         toast.success("Login successfull");
         navigate("/");
       } catch (err) {
         console.log(err);
-        toast.error(err.response.data.msg);
+        toast.error(err.message);
       }
     } else {
       toast.error("Please fill all inputs");
@@ -45,7 +44,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (token !== "") {
+    if(token !== ""){
       toast.success("You already logged in");
       navigate("/");
     }
@@ -100,9 +99,17 @@ const Login = () => {
               </div>
               <div className="login-center-buttons">
                 <button type="submit">Log In</button>
+                <button type="submit">
+                  <img src={GoogleSvg} alt="" />
+                  Log In with Google
+                </button>
               </div>
             </form>
           </div>
+
+          <p className="login-bottom-p">
+            Don't have an account? <Link to="/register">Sign Up</Link>
+          </p>
         </div>
       </div>
     </div>

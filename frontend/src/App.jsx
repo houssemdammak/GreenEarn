@@ -1,30 +1,73 @@
-import { useState,useEffect } from "react";
-import {  theme } from "antd";
-import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
-import ShipperDemo from "./pages/ShipperPage";
-import BinsDemo from "./pages/BinsPage";
-import CitizensDemo from "./pages/CitizensPage";
-import Home from "./pages/Home";
-import Login from './pages/loginM' 
-import Register from  "./pages/Register"
-import Sidebar from "./pages/Sidebar";
-import { InplaceDisplay } from "primereact/inplace";
-import Dashboard from "./pages/dashboard";
-import { ToastContainer, toast } from 'react-toastify';
+// App.jsx
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import ShipperDemo from './pages/ShipperPage';
+import BinsDemo from './pages/BinsPage';
+import CitizensDemo from './pages/CitizensPage';
+import Home from './pages/Home';
+import Login from './pages/loginM';
+import Sidebar from './pages/Sidebar';
+import { useAuth } from './contexts/useAuth'
+
+const PrivateRoute = ({ element, ...rest }) => {
+  const { token } = useAuth();
+
+  return token ? element : <Navigate to="/login" />;
+};
+
 function App() {
-    const user = JSON.parse(localStorage.getItem('auth'))
-  
   return (
     <div className="App">
-   <ToastContainer position='top-center' />
-   <Routes>
-          <Route path="/login" element={<Login/>} />
-          <Route path="/shippers" element={user ?<div className="container"><Sidebar/><div className="ProductDemo"><ShipperDemo /></div></div>: <Navigate to="/login" />} />
-          <Route path="/" element={ user ? <div className="container"><Sidebar/><div className="ProductDemo"><Home /></div></div>: <Navigate to="/login" />} />
-          <Route path="/citizens" element={user ? <div className="container"><Sidebar/><div className="ProductDemo"><CitizensDemo /></div></div>: <Navigate to="/login" />} />
-          <Route path="/bins" element={user ?<div className="container"><Sidebar/><div className="ProductDemo"><BinsDemo /></div></div>: <Navigate to="/login" />} />
-    </Routes>
-        
+      <Routes>
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+        <Route
+          path="/"
+          element={
+            <div className="container">
+              <Sidebar />
+              <div className="ProductDemo">
+                <PrivateRoute element={<Home />} />
+              </div>
+            </div>
+          }
+        />
+        <Route
+          path="/shippers"
+          element={
+            <div className="container">
+              <Sidebar />
+              <div className="ProductDemo">
+                <PrivateRoute element={<ShipperDemo />} />
+              </div>
+            </div>
+          }
+        />
+        <Route
+          path="/citizens"
+          element={
+            <div className="container">
+              <Sidebar />
+              <div className="ProductDemo">
+                <PrivateRoute element={<CitizensDemo />} />
+              </div>
+            </div>
+          }
+        />
+        <Route
+          path="/bins"
+          element={
+            <div className="container">
+              <Sidebar />
+              <div className="ProductDemo">
+                <PrivateRoute element={<BinsDemo />} />
+              </div>
+            </div>
+          }
+        />
+      </Routes>
     </div>
   );
 }
