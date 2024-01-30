@@ -1,4 +1,4 @@
-// AuthContext.jsx
+// AuthUtils.jsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext();
@@ -8,10 +8,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (token !== '') {
-      // Additional logic for checking the validity of the token if needed
-      // For example, you might want to make an API call to verify the token
+      const user = JSON.parse(localStorage.getItem('auth'))
+
     }
-  }, [token]);
+  }, []);
 
   const login = (token) => {
     setToken(token);

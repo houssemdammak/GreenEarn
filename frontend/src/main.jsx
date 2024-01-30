@@ -10,7 +10,7 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import { BrowserRouter } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import "./responsive.css";
-import AuthProvider from "./contexts/AuthUtils.jsx";
+import { AuthProvider } from "./contexts/AuthUtils.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
