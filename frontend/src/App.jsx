@@ -19,54 +19,11 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route
-          path="/login"
-          element={<Login />}
-        />
-        <Route
-          path="/"
-          element={
-            <div className="container">
-              <Sidebar />
-              <div className="ProductDemo">
-                <PrivateRoute element={<Home />} />
-              </div>
-            </div>
-          }
-        />
-        <Route
-          path="/shippers"
-          element={
-            <div className="container">
-              <Sidebar />
-              <div className="ProductDemo">
-                <PrivateRoute element={<ShipperDemo />} />
-              </div>
-            </div>
-          }
-        />
-        <Route
-          path="/citizens"
-          element={
-            <div className="container">
-              <Sidebar />
-              <div className="ProductDemo">
-                <PrivateRoute element={<CitizensDemo />} />
-              </div>
-            </div>
-          }
-        />
-        <Route
-          path="/bins"
-          element={
-            <div className="container">
-              <Sidebar />
-              <div className="ProductDemo">
-                <PrivateRoute element={<BinsDemo />} />
-              </div>
-            </div>
-          }
-        />
+        <Route path="/login" element={<Login />}/>
+        <Route path="/"element={<div className="container"><Sidebar /><div className="ProductDemo"><PrivateRoute element={<Home />} /> </div></div>}/>
+        <Route path="/shippers" element={<div className="container"><Sidebar /><div className="ProductDemo"><PrivateRoute element={<ShipperDemo />}/></div></div>}/>
+        <Route path="/citizens" element={<div className="container"> <Sidebar /><div className="ProductDemo"><PrivateRoute element={<CitizensDemo />} /></div></div>}/>
+        <Route path="/bins" element={<div className="container"><Sidebar /><div className="ProductDemo"><PrivateRoute element={<BinsDemo />} /></div></div> }/>
       </Routes>
     </div>
   );
