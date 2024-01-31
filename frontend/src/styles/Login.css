@@ -1,4 +1,7 @@
-
+.error-message {
+  color: red;
+  font-size: 12px; /* Ajustez la taille de police selon vos besoins */
+}
 .login-main{
     display: flex;
   }
@@ -6,15 +9,15 @@
   .login-left{
     flex-grow: 1;
     height: 100vh;
-    background-color: #E9E9E9;
+    background-color: #c9efc7;
   
     display: flex;
-    justify-content: center;
-    align-items: center;
+   justify-content: center; 
+     align-items: center; 
   }
   
   .login-left img{
-    width: 400px;
+    width: 500px;
   }
   
   .login-right{
@@ -52,7 +55,7 @@
   }
   
   .login-logo img{
-    width: 50px;
+    width: 100px;
   }
   
   .login-center h2{

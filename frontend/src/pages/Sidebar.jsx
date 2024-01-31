@@ -1,17 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Layout, Button } from 'antd';
 import Logo from '../components/Logo';
 import MenuList from '../components/MenuList';
-import { useNavigate } from 'react-router-dom';
+import AuthContext from '../contexts/authSlice';
 
 const { Sider } = Layout;
+
 const Sidebar = () => {
-  const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
 
   const handleLogout = () => {
-    localStorage.removeItem("auth");
-    console.log('Logout clicked');
-      navigate("/login");
+    logout();
   };
 
   return (
@@ -19,10 +18,10 @@ const Sidebar = () => {
       <Layout>
         <Sider style={{ backgroundColor: '#C9EFC7', color: 'white' }}>
           <Logo />
-          <Button type="primary" onClick={handleLogout} style={{ marginTop: '50px', marginLeft: '50px'  }}>
+          <Button type="primary" onClick={handleLogout} style={{ marginTop: '50px', marginLeft: '50px' }}>
             Logout
           </Button>
-          <MenuList />          
+          <MenuList />
         </Sider>
       </Layout>
     </div>

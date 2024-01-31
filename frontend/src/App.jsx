@@ -5,28 +5,21 @@ import ShipperDemo from './pages/ShipperPage';
 import BinsDemo from './pages/BinsPage';
 import CitizensDemo from './pages/CitizensPage';
 import Home from './pages/Home';
-import Login from './pages/loginM';
+import Login from './pages/login';
 import Sidebar from './pages/Sidebar';
-import { useAuth } from './contexts/useAuth'
-
-const PrivateRoute = ({ element, ...rest }) => {
-  const { token } = useAuth();
-
-  return token ? element : <Navigate to="/login" />;
-};
-
+import PrivateRoute from './components/PrivateRoute';
+import { PageProvider } from './contexts/pageContext';
+import { AuthProvider } from './contexts/authSlice';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import Index from './pages/index';
 function App() {
-  return (
-    <div className="App">
-      <Routes>
-        <Route path="/login" element={<Login />}/>
-        <Route path="/"element={<div className="container"><Sidebar /><div className="ProductDemo"><PrivateRoute element={<Home />} /> </div></div>}/>
-        <Route path="/shippers" element={<div className="container"><Sidebar /><div className="ProductDemo"><PrivateRoute element={<ShipperDemo />}/></div></div>}/>
-        <Route path="/citizens" element={<div className="container"> <Sidebar /><div className="ProductDemo"><PrivateRoute element={<CitizensDemo />} /></div></div>}/>
-        <Route path="/bins" element={<div className="container"><Sidebar /><div className="ProductDemo"><PrivateRoute element={<BinsDemo />} /></div></div> }/>
-      </Routes>
-    </div>
-  );
+ return(
+        <Routes>
+          <Route path="*" element={<PrivateRoute element={<Index />} />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+     
+);
 }
 
 export default App;
