@@ -1,0 +1,70 @@
+.ProductDemo {
+    text-align: center;
+    max-height: 700px;
+  }
+  .DataTable {
+    overflow-x: scroll;
+    max-width: 1300px;
+    max-height: 580px;
+  }
+  
+  .ProductDemo-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    .ProductDemo-logo {
+      animation: App-logo-spin infinite 20s linear;
+    }
+  }
+  
+  .ProductDemo-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .DataTable .p-datatable-header,
+  .DataTable .p-datatable-footer {
+    position: sticky;
+    top: 0;
+    background-color: #fff; 
+    z-index: 1;
+  }
+  .DataTable .p-datatable-tfoot {
+    position: sticky;
+    z-index: 1;
+    bottom: 0;
+    background-color: #fff;
+  }
+  
+  .DataTable .p-paginator {
+    position: sticky;
+    bottom: 0;
+    background-color: #fff; 
+    z-index: 1;
+  }
+  
+  .ProductDemo-link {
+    color: #61dafb;
+  }
+  
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .mb-4 {
+    margin-bottom: 1.5rem !important;
+    margin-right: 5px;
+    margin-left: 5px;
+  }
