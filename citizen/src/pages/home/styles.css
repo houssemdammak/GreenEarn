@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla&Fira+Sans&family=Poppins&display=swap');
+
+.main {
+    font-family: 'Karla', sans-serif;
+    height: 100vh;
+    background-color: #c7efc9;
+    background-image: url('../../images/bg.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+
+}
+.steps {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.wrapper {
+    border-radius: 15px;
+    padding-top: 25px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0  0 10px 10px rgb(0 0 0 / 0.2);
+    align-items: center;
+    justify-content: center;
+    height: 450px;
+    width: 700px;
+    margin-top: 50px;
+    background-color: rgba(255 ,255, 255, 0.95); 
+
+}
+
+.contain {
+    padding: 10px;
+     text-align: center;
+ }
+ .form {
+     display: flex;
+     padding: 20px;
+     flex-direction: column;
+     /* width: 380px;
+     height: 200px; */
+ }
+ .formInput{
+     border-radius: 5px;
+     border-color: #e5e5e5;
+     border-style: solid;
+     border-width: 0.5px;
+     margin-bottom: 10px;
+     padding: 10px;
+ }
+ .formSubmit {
+     border-radius: 5px;
+     color: black;
+     padding: 8px;
+     border-style: solid;
+     border-color: #4ca848;
+     width: 75px;
+     align-self: flex-end;
+     background-color: #4ca848;
+ }
+
+ .container-home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container-home p{
+    margin-top: 20px;
+    font-weight: bolder;
+}
+.otpimg {
+    width: 120px;
+    padding: 5px;
+}
+
+.formSelect{
+    width: 380px;
+    border-radius: 5px;
+    border-color: #e5e5e5;
+    border-style: solid;
+    border-width: 0.5px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+.multipleButtons {
+    padding: 10px;
+    align-self: flex-end;
+  
+
+
+
+}
+.multipleButton {
+    margin-right: 5px;
+    border-radius: 5px;
+    color: black;
+     padding: 8px;
+     border-style: solid;
+     border-color: #4ca848;
+     background-color: #4ca848;
+
+     width: 75px;
+}
+.multipleButton:hover,.doneSubmit:hover {
+    border-color: black;
+    background-color: black;
+    color: white;
+  }
+
+.done {
+    width: 65px;
+    margin-bottom: 10px;
+}
+.doneSubmit {
+    border-color: #4ca848;
+    background-color: #4ca848;
+    margin-top: 10px;
+    border-radius: 5px;
+    padding: 8px;
+    border-style: solid;
+    width: 85px;
+}
