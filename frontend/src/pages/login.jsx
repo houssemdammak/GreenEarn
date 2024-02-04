@@ -79,7 +79,7 @@ const Login = () => {
             <img src={Logo} alt="" />
           </div>
           <div className="login-center">
-            <h2>Welcome </h2>
+            <h2>Welcome to Admin Page</h2>
             <p>Please enter your details</p>
             <form onSubmit={handleLoginSubmit}>
               <input type="email" placeholder="Email" name="email" />
@@ -105,18 +105,6 @@ const Login = () => {
                 )}
               </div>
               {passwordError && <span className="error-message">{passwordError}</span>}
-
-              <div className="login-center-options">
-                <div className="remember-div">
-                  <input type="checkbox" id="remember-checkbox" />
-                  <label htmlFor="remember-checkbox">
-                    Remember for 30 days
-                  </label>
-                </div>
-                <a href="#" className="forgot-pass-link">
-                  Forgot password?
-                </a>
-              </div>
               <div className="login-center-buttons">
                 <button type="submit">Log In</button>
               </div>

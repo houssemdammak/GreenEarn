@@ -18,7 +18,7 @@ const Sidebar = () => {
       <Layout>
         <Sider style={{ backgroundColor: '#C9EFC7', color: 'white' }}>
           <Logo />
-          <Button type="primary" onClick={handleLogout} style={{ marginTop: '50px', marginLeft: '50px' }}>
+          <Button type="primary" onClick={handleLogout} style={{ marginTop: '50px', marginLeft: '60px', backgroundColor:"white", color:"black"}}>
             Logout
           </Button>
           <MenuList />

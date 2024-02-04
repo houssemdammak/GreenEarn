@@ -320,10 +320,10 @@ function CitizensDemo() {
         className="p-input-icon-left"
         style={{ display: "flex", alignItems: "center" }}
       >
-        <i
+        {/* <i
           style={{ fontSize: "14px", alignItems: "center" }}
           className="pi pi-search"
-        />
+        /> */}
         <InputText
           type="search"
           onInput={(e) => setGlobalFilter(e.target.value)}
