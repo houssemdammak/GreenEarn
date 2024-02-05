@@ -1,70 +1,80 @@
+@import url("https://fonts.googleapis.com/css2?family=Karla&Fira+Sans&family=Poppins&display=swap");
+
+body {
+  font-family: "Karla", sans-serif;
+  height: 100vh;
+  background-color: #c7efc9;
+  background-image: url("../../images/bg.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+}
 .ProductDemo {
-    text-align: center;
-    max-height: 700px;
-  }
-  .DataTable {
-    overflow-x: scroll;
-    max-width: 1300px;
-    max-height: 580px;
-  }
-  
+  text-align: center;
+  max-height: 700px;
+
+}
+.DataTable {
+  overflow-x: scroll;
+ border-radius: 40px;
+  max-height: 580px;
+
+}
+
+.ProductDemo-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
   .ProductDemo-logo {
-    height: 40vmin;
-    pointer-events: none;
+    animation: App-logo-spin infinite 20s linear;
   }
-  
-  @media (prefers-reduced-motion: no-preference) {
-    .ProductDemo-logo {
-      animation: App-logo-spin infinite 20s linear;
-    }
+}
+
+
+tr{
+  background-color: rgba(255 ,255, 255, 0.7); 
+ 
+}
+
+
+
+.DataTable .p-paginator {
+  position: sticky;
+  bottom: 0;
+  background-color: #fff;
+  z-index: 1;
+}
+
+.ProductDemo-link {
+  color: #3f656f;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
   }
-  
-  .ProductDemo-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+  to {
+    transform: rotate(360deg);
   }
-  
-  .DataTable .p-datatable-header,
-  .DataTable .p-datatable-footer {
-    position: sticky;
-    top: 0;
-    background-color: #fff; 
-    z-index: 1;
-  }
-  .DataTable .p-datatable-tfoot {
-    position: sticky;
-    z-index: 1;
-    bottom: 0;
-    background-color: #fff;
-  }
-  
-  .DataTable .p-paginator {
-    position: sticky;
-    bottom: 0;
-    background-color: #fff; 
-    z-index: 1;
-  }
-  
-  .ProductDemo-link {
-    color: #61dafb;
-  }
-  
-  @keyframes App-logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  .mb-4 {
-    margin-bottom: 1.5rem !important;
-    margin-right: 5px;
-    margin-left: 5px;
-  }
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+.card {
+  background-color: transparent;
+  padding: 2rem;
+  border-radius: 10px;
+  border: none;
+
+}
+/* Optional: Customize scrollbars */
+.DataTable::-webkit-scrollbar {
+  width: 0px;
+}
+.DataTable::-webkit-scrollbar-track {
+  background-color: transparent;
+}
