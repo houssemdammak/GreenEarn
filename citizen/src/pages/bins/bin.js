@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+<<<<<<< HEAD
 //import "./bin.css";
+=======
+import "./bin.css";
+import NavigationBar from "../../components/navbar";
+
+>>>>>>> 0793ab32d304aa687a70538a1e761e1272d75edb
 import { classNames } from 'primereact/utils';
 import { Dropdown } from 'primereact/dropdown';
 import { DataTable } from 'primereact/datatable';
@@ -353,13 +359,18 @@ function BinDemo() {
 
 
   return (
-    <div>
+<>
+    <NavigationBar />
+
+
       <Toast ref={toast} />
       <div className="card">
-        <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar>
         <div className="DataTableContainer">
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0793ab32d304aa687a70538a1e761e1272d75edb
           <DataTable
             ref={dt}
             value={productsWithIndex}
@@ -370,7 +381,7 @@ function BinDemo() {
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
             globalFilter={globalFilter}
-            header={header}
+              // header={header}
           >
             <Column field="index" header="Num" sortable style={{ minWidth: '12rem' }}></Column>
             <Column field="type" header="Type" sortable style={{ minWidth: '12rem' }}></Column>
@@ -378,7 +389,7 @@ function BinDemo() {
             <Column field="location" header="Location" sortable style={{ minWidth: '16rem' }}></Column>
             <Column field="capacity" header="Capacity (Kg)" sortable style={{ minWidth: '16rem' }}></Column>
             <Column field="currentWeight" header="Current Weight (Kg)" sortable style={{ minWidth: '16rem' }}></Column>
-            <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
+            {/* <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column> */}
           </DataTable>
 
         </div>
@@ -510,7 +521,7 @@ function BinDemo() {
       </Dialog>
 
 
-    </div>
+    </>
   );
 }
 export default BinDemo;
