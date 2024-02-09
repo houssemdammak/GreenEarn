@@ -1,22 +1,25 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
 import App from "./App";
+import "./index.css";
+import "primeicons/primeicons.css";
+import { PrimeReactProvider } from "primereact/api";
+import "primeflex/primeflex.css";
+import "primereact/resources/primereact.css";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
 import { BrowserRouter } from "react-router-dom";
-import 'primeicons/primeicons.css';
-import { PrimeReactProvider } from 'primereact/api';
-import 'primeflex/primeflex.css';  
-import 'primereact/resources/primereact.css';
-import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import { AuthProvider } from "./contexts/authContext"
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     <React.StrictMode>
+    <AuthProvider>
       <PrimeReactProvider>
       <App />
       </PrimeReactProvider>
+      </AuthProvider>
     </React.StrictMode>
   </BrowserRouter>
 );

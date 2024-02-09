@@ -7,6 +7,7 @@ getCitizens,
   createCitizen,
   deleteCitizen,
   updateCitizen,
+  register,login
 } = require("../controllers/CitizenController");
 
 //get all Citizens
@@ -22,5 +23,8 @@ router.delete("/:id", deleteCitizen);
 
 //Update a Citizens
 router.patch("/:id", updateCitizen);
-
+//login for citizien page 
+router.route("/login").post(login);
+//register for citizien page
+router.route("/register").post(register);
 module.exports = router;

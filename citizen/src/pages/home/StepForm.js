@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./styles.css";
+import  "./styles.css";
 import AppContext from "./Context";
 import FormTwo from "./FormTwo";
 import FormOne from "./FormOne";
@@ -29,6 +29,7 @@ const StepForm = () => {
   };
 
   return (
+    
     <AppContext.Provider value={{ userDetails }}>
       <div className="main">
         <div>

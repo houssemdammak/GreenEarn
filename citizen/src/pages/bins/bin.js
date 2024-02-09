@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import "./bin.css";
+//import "./bin.css";
 import { classNames } from 'primereact/utils';
 import { Dropdown } from 'primereact/dropdown';
 import { DataTable } from 'primereact/datatable';
@@ -358,8 +358,6 @@ function BinDemo() {
       <div className="card">
         <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar>
         <div className="DataTableContainer">
-
-
 
 
           <DataTable

@@ -9,14 +9,17 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 function CitizensDemo() {
   let emptyProduct = {
-    ID: "",
+    email: "",
+    password:"" ,
+    confirmpassword:"" ,
     FullName: "",
-    BankCardNumber: "",
+    WalletID: "",
   };
-  const [IDError, setIDError] = useState("");
-  const [IDErrorExist, setIDErrorExist] = useState("");
-  const [IDErrorExistUpdate, setIDErrorExistUpdate] = useState("");
-  const [IDEmptyError, setIDEmptyError] = useState('');
+  /////error sets 
+  const [EmailErrorExist, setEmailErrorExist] = useState("");
+  const [WalletIdError, setWalletIDError] = useState('');
+  const [passwordError, setpasswordError] = useState("");
+  const [confirmpasswordError, setconfirmpasswordError] = useState("");
 
   const [products, setProducts] = useState(null);
   const [productDialog, setProductDialog] = useState(false);
@@ -54,35 +57,65 @@ function CitizensDemo() {
     setSubmitted(false);
     setProductDialog(false);
     setProductDialogUpdate(false);
-    setIDError("");
-    setIDErrorExistUpdate("");
-    setIDErrorExist("");
+    setEmailErrorExist("");
+    setWalletIDError("") ;setconfirmpasswordError("");setpasswordError("") ;
   };
 
   const hideDeleteProductDialog = () => {
     setDeleteProductDialog(false);
   };
+  const isPasswordStrong = (password) => {
+    // Vérifier la force du mot de passe en fonction de certains critères
+    // Vous pouvez modifier ces critères en fonction de vos besoins
+    const regexStrong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regexStrong.test(password);
+  };
+  const validateWalletID = (walletID) => {
+    const addressRegex = /^0x[0-9a-fA-F]{40}$/; // Expression régulière pour valider une adresse Ethereum
 
+    if (!walletID) {
+        return "Wallet ID required";
+    }
+    if (!addressRegex.test(walletID)) {
+        return "Wallet ID must be a valid Ethereum address.";
+    }
+
+    return ""; // Wallet ID valide
+};
+// fullname
+//email 
+// password // confirmpassword //wallet id 
   const saveProduct = async () => {
     setSubmitted(true);
     let _products = [...products];
     let _product = { ...product };
-    const index = findIndexById(_product.ID);
-    const isExistID = index !== -1;
-    const isExistIDError = isExistID ? "ID Card already exist ." : "";
-    const isEmpty= product.ID == '';
-    const isEmptyError= isEmpty?'ID Card is required.':'';
-    const isValidID = /^[a-zA-Z0-9]{8}$/.test(product.ID);
-    const idError = !isValidID ? "ID should be 8 digits." : "";
-    if (!isEmpty &&
-      isValidID &&
-      product.ID.trim() !== "" &&
-      product.FullName.trim() &&
-      !isExistID &&
-      product.BankCardNumber.toString().trim() !== ""
+    //console.log(_product)
+
+    // verifier email existe ou non 
+    const index = findIndexByEmail(_product.email);
+    const isExistEmail = index !== -1;
+    const isExistEmailError = isExistEmail ? "Email already exist ." : "";
+    //walet id verification 
+    const errorWallet = "";
+
+    //const errorWallet = validateWalletID(_product.WalletID);
+    //verifier le password confirm 
+    const confirmationpass =(product.confirmpassword == product.password) 
+    //password not strong 
+    
+    const validatePassword=isPasswordStrong(_product.password) ;
+
+    /////////////////////
+    
+    //////////////
+    if ( errorWallet =="" && validatePassword && confirmationpass &&isExistEmailError ==""  &&
+    product.email.trim() !== "" &&product.FullName.trim()!== "" &&product.password.trim() !=="" && product.confirmpassword.trim() !==""&& product.WalletID.trim() !== ""
     ) {
       try {
-        const response = await fetch("/api/citizens", {
+        delete _product.confirmpassword;
+        console.log(_product)
+
+        const response = await fetch("/api/citizens/register", {
           method: "POST",
           body: JSON.stringify(_product),
           headers: {
@@ -97,12 +130,9 @@ function CitizensDemo() {
           life: 3000,
         });
         fetchCitizens();
-        setIDError("");
-        setIDErrorExist("");
-        setIDErrorExistUpdate('')
-        setProducts(_products);
-        setProduct(emptyProduct);
-        setProductDialog(false);
+        setEmailErrorExist("");
+        setWalletIDError("") ;setconfirmpasswordError("");setpasswordError("") ;
+        setProducts(_products);setProduct(emptyProduct);setProductDialog(false);
         //console.log(_product)
         // const responseData = await response.json();
         // fetchCitizens();
@@ -113,47 +143,45 @@ function CitizensDemo() {
 
     
     } else {
+      
       // Mise à jour de l'état d'erreur pour chaque champ
-      if(isEmpty && !isValidID){
-        setIDEmptyError(isEmptyError);
-        setIDError('');
-        setIDErrorExistUpdate('')
+      if(!validatePassword){
+        setpasswordError("Please enter a strong password")
       }
-      if(!isEmpty && !isValidID ){
-        setIDError(idError);
-        setIDEmptyError('')
-        setIDErrorExistUpdate('')
+      if(!confirmationpass){
+        setconfirmpasswordError("Please confirm your password")
       }
-      if(isExistID){
-        setIDErrorExistUpdate(isExistIDError);
-        setIDEmptyError('')
-        setIDError('');
-      }
+       if(isExistEmailError !=""){
+         setEmailErrorExist(isExistEmailError);
+       }
+      if(errorWallet !==""){
+         setWalletIDError(errorWallet) ;
+       }
     }
   };
   const saveUpdatedProduct = async () => {
     setSubmitted(true);
     let _products = [...products];
     let _product = { ...product };
-    const index = findIndexById(_product.ID);
-    const indexDB = findIndexBy_id(_product._id);
-    const isTheSameID = _product.ID ==_products[indexDB].ID;
-    const isExistID = index !== -1 && !isTheSameID;
-    const isExistIDError = isExistID ? "ID Card already exist ." : "";
-    const isEmpty= product.ID == '';
-    const isEmptyError= isEmpty?'ID Card is required.':'';
-    const isValidID = /^[a-zA-Z0-9]{8}$/.test(product.ID);
-    const idError = !isValidID ? "ID should be 8 digits." : "";
-    if (!isEmpty &&
-      isValidID &&
-      product.ID.trim() !== "" &&
-      product.FullName.trim()&& 
-      !isExistID &&
-      product.BankCardNumber.toString().trim() !== ""
-    ) {
-      setProductDialog(false);
+    //console.log(product)
 
+    //email exist 
+    const index = findIndexByEmail(_product.email);
+    const indexDB = findIndexBy_id(_product._id);
+    const isTheSameEmail = _product.email ==_products[indexDB].email;
+    const isExistEmailError = index !== -1 && !isTheSameEmail;
+   //walet id verification 
+   const errorWallet = "";
+   //const errorWallet = validateWalletID(_product.WalletID);
+ 
+   if ( errorWallet ==""  && !isExistEmailError  &&
+   product.email.trim() !== "" &&product.FullName.trim()!== "" && product.WalletID.trim() !== ""
+   ) {
+      setProductDialog(false);
+      delete product.confirmpassword 
+      delete product.password 
       try {
+        console.log(_product)
         const response = await fetch(`/api/citizens/${_product._id}`, {
           method: "PATCH",
           body: JSON.stringify(_product),
@@ -176,25 +204,18 @@ function CitizensDemo() {
         console.error("Erreur lors de la mise à jour du citizen:", error);
       }
       setProductDialogUpdate(false);
-        setIDError("");
+      
         setProducts(_products);
-        setIDErrorExistUpdate("");
+        setEmailErrorExist("");
+        setWalletIDError("") ;setconfirmpasswordError("");setpasswordError("") ;
     } else {
-      if(isEmpty && !isValidID){
-        setIDEmptyError(isEmptyError);
-        setIDError('');
-        setIDErrorExistUpdate('')
+      if(isExistEmailError !=""){
+        setEmailErrorExist("Email already exist .");
       }
-      if(!isEmpty && !isValidID ){
-        setIDError(idError);
-        setIDEmptyError('')
-        setIDErrorExistUpdate('')
+     if(errorWallet !==""){
+        setWalletIDError(errorWallet) ;
       }
-      if(isExistID){
-        setIDErrorExistUpdate(isExistIDError);
-        setIDEmptyError('')
-        setIDError('');
-      }
+      
 
     }
   };
@@ -242,11 +263,11 @@ function CitizensDemo() {
     }
   };
 
-  const findIndexById = (id) => {
+  const findIndexByEmail = (email) => {
     let index = -1;
 
     for (let i = 0; i < products.length; i++) {
-      if (products[i].ID === id) {
+      if (products[i].email === email) {
         index = i;
         break;
       }
@@ -316,6 +337,7 @@ function CitizensDemo() {
   const header = (
     <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
       <h4 className="m-0">Manage Citizens</h4>
+      <h5>houssem :Password123! asma:ABCabc123! yasmine:yasmine123!</h5>
       <span
         className="p-input-icon-left"
         style={{ display: "flex", alignItems: "center" }}
@@ -379,12 +401,7 @@ function CitizensDemo() {
             globalFilter={globalFilter}
             header={header}
           >
-            <Column
-              field="ID"
-              header="ID Card"
-              sortable
-              style={{ minWidth: "12rem" }}
-            ></Column>
+            
 
             <Column
               field="FullName"
@@ -392,10 +409,15 @@ function CitizensDemo() {
               sortable
               style={{ minWidth: "16rem" }}
             ></Column>
-
             <Column
-              field="BankCardNumber"
-              header="Bank Card Number"
+              field="email"
+              header="Email"
+              sortable
+              style={{ minWidth: "12rem" }}
+            ></Column>
+            <Column
+              field="WalletID"
+              header="Wallet Number"
               sortable
               style={{ minWidth: "16rem" }}
             ></Column>
@@ -421,31 +443,7 @@ function CitizensDemo() {
         onHide={hideDialog}
       >
         <div className="field">
-          <label htmlFor="ID" className="font-bold">
-            ID Card
-          </label>
-          <InputText
-            id="ID"
-            value={product.ID}
-            onChange={(e) => onInputChange(e, "ID")}
-            required
-            autoFocus
-            className={classNames({ "p-invalid": submitted && !product.ID })}
-          />
-          {submitted && !product.ID && (
-            <small className="p-error">ID Card is required. <br></br></small>
-          )}
-          {submitted && !product.ID && (
-            <small className="p-error">ID Card is required. <br></br></small>
-          )}          
-          {IDErrorExist && <small className="p-error">{IDErrorExist}</small>}
-          {IDErrorExistUpdate && <small className="p-error">{IDErrorExistUpdate}</small>}
-
-        </div>
-        <div className="field">
-          <label htmlFor="FullName" className="font-bold">
-            Full Name
-          </label>
+          <label htmlFor="FullName" className="font-bold">Full Name</label>
           <InputText
             id="FullName"
             value={product.FullName}
@@ -461,21 +459,77 @@ function CitizensDemo() {
           )}
         </div>
         <div className="field">
-          <label htmlFor="BankCardNumber" className="font-bold">
-            Bank Card Number
-          </label>
+          <label htmlFor="Email" className="font-bold">Email </label>
           <InputText
-            id="BankCardNumber"
-            value={product.BankCardNumber}
-            onChange={(e) => onInputChange(e, "BankCardNumber")}
+            id="email"
+            value={product.email}
+            onChange={(e) => onInputChange(e, "email")}
+            required
+            autoFocus
+            className={classNames({ "p-invalid": submitted && !product.email })}
+          />
+          {submitted && !product.email && (
+            <small className="p-error">Email is required. <br></br></small>
+          )}
+                    
+          {EmailErrorExist && <small className="p-error">{EmailErrorExist}</small>}
+
+        </div>
+        <div className="field">
+          <label htmlFor="Password" className="font-bold">Password</label>
+          <InputText
+            id="password"
+            type="password"
+            value={product.password}
+            onChange={(e) => onInputChange(e, "password")}
             required
             autoFocus
             className={classNames({
-              "p-invalid": submitted && !product.BankCardNumber,
+              "p-invalid": submitted && !product.password,
             })}
           />
-          {submitted && !product.BankCardNumber && (
-            <small className="p-error">Bank Card Number is required.</small>
+          {submitted && !product.password && (
+            <small className="p-error">Password is required.</small>
+          )}
+          {passwordError && product.password && (
+            <small className="p-error">{passwordError}</small>
+          )}
+        </div>
+        <div className="field">
+          <label htmlFor="Password" className="font-bold">Confirm Password</label>
+          <InputText
+            id="confirmpassword"
+            type="password"
+            value={product.confirmpassword}
+            onChange={(e) => onInputChange(e, "confirmpassword")}
+            required
+            autoFocus
+            className={classNames({
+              "p-invalid": submitted && !product.confirmpassword,
+            })}
+          />
+          {submitted && !product.confirmpassword && (
+            <small className="p-error">Confirm password is required.</small>
+          )}
+          {confirmpasswordError && product.confirmpassword && (<small className="p-error">{confirmpasswordError}</small>)}
+        </div>
+        <div className="field">
+          <label htmlFor="BankCardNumber" className="font-bold">
+            Wallet ID
+          </label>
+          <InputText
+            id="WalletID"
+            value={product.WalletID}
+            onChange={(e) => onInputChange(e, "WalletID")}
+            required
+            autoFocus
+            className={classNames({
+              "p-invalid": submitted && !product.WalletID,
+            })}
+          />
+          {submitted && !product.WalletID && (<small className="p-error">Wallet ID is required.</small>)}
+          {WalletIdError && product.WalletID && (
+            <small className="p-error">{WalletIdError}</small>
           )}
         </div>
       </Dialog>
@@ -489,29 +543,9 @@ function CitizensDemo() {
         footer={productDialogUpdateFooter}
         onHide={hideDialog}
       >
+       
         <div className="field">
-          <label htmlFor="ID" className="font-bold">
-            ID Card
-          </label>
-          <InputText
-            id="ID"
-            value={product.ID}
-            onChange={(e) => onInputChange(e, "ID")}
-            required
-            autoFocus
-            className={classNames({ "p-invalid": submitted && !product.ID })}
-          />
-          {submitted && !product.ID && (
-            <small className="p-error">ID Card is required. <br></br></small>
-          )}
-          {IDError && <small className="p-error">{IDError}</small>}
-          {IDErrorExistUpdate && <small className="p-error">{IDErrorExistUpdate}</small>}
-
-        </div>
-        <div className="field">
-          <label htmlFor="FullName" className="font-bold">
-            Full Name
-          </label>
+          <label htmlFor="FullName" className="font-bold">Full Name</label>
           <InputText
             id="FullName"
             value={product.FullName}
@@ -527,21 +561,36 @@ function CitizensDemo() {
           )}
         </div>
         <div className="field">
-          <label htmlFor="BankCardNumber" className="font-bold">
-            Bank Card Number
-          </label>
+          <label htmlFor="Email" className="font-bold">Email</label>
           <InputText
-            id="BankCardNumber"
-            value={product.BankCardNumber}
-            onChange={(e) => onInputChange(e, "BankCardNumber")}
+            id="email"
+            value={product.email}
+            onChange={(e) => onInputChange(e, "email")}
+            required
+            autoFocus
+            className={classNames({ "p-invalid": submitted && !product.email })}
+          />
+          {submitted && !product.email && (<small className="p-error">Email is required.</small>)}
+          {EmailErrorExist && product.email&& <small className="p-error">{EmailErrorExist}</small>}
+        </div>
+       
+        <div className="field">
+          <label htmlFor="WalletID" className="font-bold"> Wallet ID </label>
+          <InputText
+            id="WalletID"
+            value={product.WalletID}
+            onChange={(e) => onInputChange(e, "WalletID")}
             required
             autoFocus
             className={classNames({
-              "p-invalid": submitted && !product.BankCardNumber,
+              "p-invalid": submitted && !product.WalletID,
             })}
           />
-          {submitted && !product.BankCardNumber && (
-            <small className="p-error">Bank Card Number is required .</small>
+          {submitted && !product.WalletID && (
+            <small className="p-error">Wallet ID  is required .</small>
+          )}
+          {WalletIdError && product.WalletID && (
+            <small className="p-error">{WalletIdError}</small>
           )}
         </div>
       </Dialog>

@@ -1,5 +1,6 @@
 const Citizen = require('../models/CitizenModel')
 const mongoose = require('mongoose')
+const jwt = require("jsonwebtoken");
 // get all Citizens
 const getCitizens = async (req, res) => {
     const citizens = await Citizen.find({}).sort({createdAt: -1})
@@ -72,11 +73,68 @@ const deleteCitizen = async (req, res) => {
   
     res.status(200).json(citizen)
   }
-  
+
+//login for citizen page 
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      msg: "Bad request. Please add email and password in the request body",
+    });
+  }
+
+  let foundUser = await Citizen.findOne({ email: req.body.email });
+  if (foundUser) {
+    const isMatch = await foundUser.comparePassword(password);
+
+    if (isMatch) {
+      const token = jwt.sign(
+        { id: foundUser._id, name: foundUser.name },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "30d",
+        }
+      );
+
+      return res.status(200).json({ msg: "user logged in", token });
+    } else {
+      return res.status(400).json({ msg: "Bad password" });
+    }
+  } else {
+    return res.status(400).json({ msg: "Bad credentails" });
+  }
+};
+
+
+//resgister for citizen page 
+const register = async (req, res) => {
+  let foundUser = await Citizen.findOne({ email: req.body.email });
+  if (foundUser === null) {
+    console.log(req.body)
+    let { FullName, email, password,WalletID } = req.body;
+    if (FullName.length && email.length && password.length && WalletID.length) {
+      const person = new Citizen({
+        FullName: FullName,
+        email: email,
+        password: password,
+        WalletID:WalletID
+      });
+      await person.save();
+      return res.status(201).json({ person });
+    }else{
+        return res.status(400).json({msg: "Please add all values in the request body"});
+    }
+  } else {
+    return res.status(400).json({ msg: "Email already in use" });
+  }
+};
   module.exports = {
     getCitizens,
     getCitizen,
     createCitizen,
     deleteCitizen,
-    updateCitizen
+    updateCitizen,
+    register,
+    login
   }

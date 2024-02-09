@@ -34,9 +34,9 @@ const Login = () => {
           const response = await axios.post("/api/auth/login", formData, {
             headers: { "Content-Type": "application/json" },
           });
-          localStorage.setItem('auth', JSON.stringify(response.data.token));
+          //localStorage.setItem('auth', JSON.stringify(response.data.token));
           login(response.data.token);
-          navigate("/");
+         // navigate("/");
         } catch (err) {
           console.log(err.response);
           console.log(err.response.data.msg)

@@ -23,11 +23,6 @@ app.use('/api/auth/', mainRouter);
 app.use('/api/shippers', shipperRoutes);
 app.use('/api/citizens', citizenRoutes);
 app.use('/api/bins', binRoutes);
-
-
-
-
-
 mongoose.connect(process.env.MONG_URI)
 .then(()=>{
     //listen for request
