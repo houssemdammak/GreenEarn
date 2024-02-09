@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-<<<<<<< HEAD
-//import "./bin.css";
-=======
 import "./bin.css";
 import NavigationBar from "../../components/navbar";
 
->>>>>>> 0793ab32d304aa687a70538a1e761e1272d75edb
 import { classNames } from 'primereact/utils';
 import { Dropdown } from 'primereact/dropdown';
 import { DataTable } from 'primereact/datatable';
@@ -367,10 +363,6 @@ function BinDemo() {
       <div className="card">
         <div className="DataTableContainer">
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 0793ab32d304aa687a70538a1e761e1272d75edb
           <DataTable
             ref={dt}
             value={productsWithIndex}

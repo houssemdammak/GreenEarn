@@ -1,14 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
-<<<<<<< HEAD
 .error-message {
   color: red;
   font-size: 12px; /* Ajustez la taille de police selon vos besoins */
 }
-* {
-=======
-
 /* * {
->>>>>>> 0793ab32d304aa687a70538a1e761e1272d75edb
   margin: 0;
   padding: 0;
   box-sizing: border-box;
