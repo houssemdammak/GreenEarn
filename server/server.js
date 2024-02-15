@@ -3,6 +3,7 @@ const express=require('express')
 //const cors= require('cors') 
 const mongoose=require('mongoose')
 const app=express()
+const wasteRoutes=require ('./routes/waste')
 const shipperRoutes =require('./routes/shippers')
 const citizenRoutes= require ('./routes/citizens')
 const binRoutes= require ('./routes/bins')
@@ -23,6 +24,8 @@ app.use('/api/auth/', mainRouter);
 app.use('/api/shippers', shipperRoutes);
 app.use('/api/citizens', citizenRoutes);
 app.use('/api/bins', binRoutes);
+app.use('/api/wastes', wasteRoutes);
+
 mongoose.connect(process.env.MONG_URI)
 .then(()=>{
     //listen for request

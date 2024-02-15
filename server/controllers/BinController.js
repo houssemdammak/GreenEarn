@@ -1,4 +1,6 @@
 const Bin = require('../models/BinModel')
+
+const Bag =require('../models/BagModel')
 const mongoose = require('mongoose')
 // get all bins
 const getBins = async (req, res) => {
