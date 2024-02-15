@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 // Récupérer tous les sacs
 const getWastes = async (req, res) => {
   try {
-    const Wastes = await Watse.find({}).sort({ createdAt: -1 });
+    const Wastes = await Waste.find({}).sort({ createdAt: -1 });
     res.status(200).json(Wastes);
   } catch (error) {
     res.status(500).json({ error: error.message });
