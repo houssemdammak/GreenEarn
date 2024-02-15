@@ -10,7 +10,12 @@ import { Toolbar } from 'primereact/toolbar';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { useWeb3 } from '../contexts/web3Context';
+import { createBin} from '../web3';
+
 function BinDemo() {
+  const { contract } = useWeb3();
+
   let emptyProduct = {
     type: '',
     status: 'Empty',
@@ -118,6 +123,11 @@ function BinDemo() {
           toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Bin Created', life: 3000 });
           //console.log(_product)
           // const responseData = await response.json();
+          console.log(product.id);
+          /*-----------------------------------------hethy blockchain------------------------------------------------------------*/
+          createBin(contract,product.id, product.location, product.status, product.capacity, product.currentWeight);
+          //createBin(contract,9, "agereb", "empty", 100, 0);
+          /*--------------------------------------------------------------------------------------------------------------*/
           fetchBins();
 
           // console.log('Réponse de l\'API:', responseData);
