@@ -4,14 +4,17 @@ const {
     getBin,
     createBin,
     deleteBin,
-    updateBin
+    updateBin,
+    deleteAllBins,
+    getLastGeneratedId
+
 }=require('../controllers/BinController')
 
 const router = express.Router()
 
 // GET all workouts
 router.get('/',getBins )
-
+router.get('/getLastId',getLastGeneratedId )
 // GET a single workout
 router.get('/:id',getBin)
 
@@ -20,7 +23,8 @@ router.post('/',createBin)
 
 // DELETE a workout
 router.delete('/:id',deleteBin)
-
+//delete all bins
+router.delete('/',deleteAllBins)
 // UPDATE a workout
 router.patch('/:id',updateBin)
 

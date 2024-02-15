@@ -47,5 +47,21 @@ const createBin = async (contract, id, location, state, capacity, currentWeight)
     console.error("Error creating bin:", error);
   }
 };
-export { initWeb3, initContract,createBin };
+
+const deleteBin = async (contract, id) => {
+  const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Use web3 instance to access getAccounts
+    console.log(accounts)
+    const senderAddress = accounts[0];
+  try {
+    await contract.methods.deleteBin(id).send({ 
+      from: senderAddress
+  });  
+    console.log("Bin deleted successfully!");
+  } catch (error) {
+    console.error("Error deleting bin:", error);
+  }
+};
+
+export { initWeb3, initContract,createBin,deleteBin };
 
