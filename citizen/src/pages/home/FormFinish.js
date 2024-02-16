@@ -18,7 +18,6 @@ const FormFinish = () => {
         updateContext.setBinID(null);
         updateContext.setwasteType(null);
         updateContext.setQuantity(null);
-        binContext.setbinID(null);
         binContext.setType(null);
         binContext.setCapacity(null);
         binContext.setcurrentweight(null);

@@ -1,4 +1,35 @@
 @import url("https://fonts.googleapis.com/css2?family=Karla&Fira+Sans&family=Poppins&display=swap");
+.no-waste-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.error-container {
+  position: absolute;
+  top:35%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 60px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.not-found-icon {
+  margin-bottom: 10px;
+}
+
+.message-text {
+  font-size: 24px; /* Ajustez la taille du texte ici */
+  text-align: center;
+  color: #555;
+
+}
+
 
 body {
   font-family: "Karla", sans-serif;

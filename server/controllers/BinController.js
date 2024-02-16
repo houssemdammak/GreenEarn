@@ -25,37 +25,50 @@ const getBin = async (req, res) => {
 
 // create a new bin
 const createBin = async (req, res) => {
-  const {type,status,location,capacity,currentWeight} = req.body
+  const { type, location, capacity, currentWeight } = req.body;
 
-  let emptyFields = []
+  let emptyFields = [];
 
   if (!type) {
-    emptyFields.push('type')
-  }
-  if (!status) {
-    emptyFields.push('status')
-  }
-  if (!location) {
-    emptyFields.push('location')
-  }
-  if (!capacity) {
-    emptyFields.push('capacity')
-  }
-  if (currentWeight===null) {
-    emptyFields.push('currentWeight')
-  }
-  if (emptyFields.length > 0) {
-    return res.status(400).json({ error: 'Please fill in all fields', emptyFields })
+    emptyFields.push('type');
   }
 
-  // add to the database
-  try {
-    const bin = await Bin.create({type,status,location,capacity,currentWeight})
-    res.status(200).json(bin)
-  } catch (error) {
-    res.status(400).json({ error: error.message })
+  if (!location) {
+    emptyFields.push('location');
   }
-}
+  if (!capacity) {
+    emptyFields.push('capacity');
+  }
+  if (currentWeight === null) {
+    emptyFields.push('currentWeight');
+  }
+  if (emptyFields.length > 0) {
+    return res.status(400).json({ error: 'Please fill in all fields', emptyFields });
+  }
+
+  let bin;
+  let isUnique = false;
+
+  // Tant que l'ID généré n'est pas unique, générez un nouvel entier aléatoire
+  while (!isUnique) {
+    const randomId = Math.floor(Math.random() * 1000000); // Génère un entier aléatoire
+    try {
+      // Vérifie si l'ID est déjà utilisé
+      const existingBin = await Bin.findOne({ id: randomId });
+      if (!existingBin) {
+        bin = await Bin.create({ id: randomId, type, location, capacity, currentWeight });
+        isUnique = true;
+      }
+    } catch (error) {
+      // Gérer les erreurs de base de données
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  // Si tout s'est bien passé, renvoyer le bin créé
+  res.status(200).json(bin);
+};
+
 
 // delete a bin
 const deleteBin = async (req, res) => {
@@ -76,22 +89,36 @@ const deleteBin = async (req, res) => {
 
 // update a bin
 const updateBin = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({error: 'No such bin'})
+    return res.status(400).json({ error: 'No such bin' });
   }
 
-  const bin = await Bin.findOneAndUpdate({_id: id}, {
-    ...req.body
-  })
+  const bin = await Bin.findById(id);
 
   if (!bin) {
-    return res.status(400).json({error: 'No such bin'})
+    return res.status(400).json({ error: 'No such bin' });
   }
 
-  res.status(200).json(bin)
-}
+  // Mettre à jour les valeurs actuelles du bin avec les valeurs de la requête
+  Object.assign(bin, req.body);
+
+  // Vérifier si currentWeight ou capacity a été modifié
+  const { currentWeight, capacity } = req.body;
+  if (currentWeight !== undefined || capacity !== undefined) {
+    // Calculer le pourcentage rempli
+    bin.status = (bin.currentWeight / bin.capacity) * 100;
+  }
+
+  try {
+    const updatedBin = await bin.save();
+    res.status(200).json(updatedBin);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 const deleteAllBins = async (req, res) => {
   try {
     const result = await Bin.deleteMany({});

@@ -12,20 +12,20 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { useWeb3 } from '../contexts/web3Context';
 import { createBin,deleteBin} from '../web3';
-
+import ProgressBar from "react-percent-bar";
 function BinDemo() {
   const { contract } = useWeb3();
 
   let emptyProduct = {
     type: '',
-    status: 'Empty',
+    status: '0',
     location: '',
     capacity: '',
     currentWeight: '0',
   };
   let emptyProductUpdate = {
     type: '',
-    status: 'Empty',
+    status: '0',
     location: '',
     capacity: '',
     currentWeight: '0',
@@ -48,7 +48,6 @@ function BinDemo() {
     const products = await response.json()
     setProducts(products)
     console.log(products)
-
   }
   //fetchBins;
 
@@ -96,7 +95,6 @@ function BinDemo() {
       isValidCapacity &&
       isValidCurrentWeight &&
       product.type.trim() !== '' &&
-      product.status.trim() !== '' &&
       product.location.trim() !== ''
       //product.currentWeight.toString().trim() !== ''
     ) {
@@ -119,7 +117,7 @@ function BinDemo() {
           _products.push(_product);
           toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Bin Created', life: 3000 });
           //console.log(_product)
-          const responseData = await response.json();
+         // const responseData = await response.json();
           
           //console.log(responseData.id);
           /*-----------------------------------------hethy blockchain------------------------------------------------------------*/
@@ -129,7 +127,7 @@ function BinDemo() {
           /*--------------------------------------------------------------------------------------------------------------*/
           fetchBins();
 
-          // console.log('Réponse de l\'API:', responseData);
+          //console.log('Réponse de l\'API:', responseData);
         } catch (error) {
           console.error('Erreur lors de l\'envoi des données à l\'API:', error);
         }
@@ -163,7 +161,6 @@ function BinDemo() {
       isValidCapacity &&
       isValidCurrentWeight &&
       product.type.trim() !== '' &&
-      product.status.trim() !== '' &&
       product.location.trim() !== ''
       //product.currentWeight.toString().trim() !== ''
     ) {
@@ -177,7 +174,7 @@ function BinDemo() {
       setCurrentWeightError('');
       setProducts(_products);
 
-      if (index !== -1) {
+      
 
         try {
           // Utilisation de la méthode PATCH pour mettre à jour partiellement la ressource
@@ -193,31 +190,16 @@ function BinDemo() {
             _products[index] = _product;
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Bin Updated', life: 3000 });
           }
+          console.log(_product)
+          const responseData = await response.json();
+
+          console.log('Réponse de l\'API:', responseData);
+          fetchBins();
+
         } catch (error) {
           console.error('Erreur lors de la mise à jour du Bin:', error);
         }
-      } else {
-
-        try {
-          const response = await fetch('/api/bins/', {
-            method: 'POST',
-            body: JSON.stringify(_product),
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-          _products.push(_product);
-
-          toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Bin Created', life: 3000 });
-          //console.log(_product)
-          // const responseData = await response.json();
-          fetchBins();
-
-          // console.log('Réponse de l\'API:', responseData);
-        } catch (error) {
-          console.error('Erreur lors de l\'envoi des données à l\'API:', error);
-        }
-      }
+       
       setcapacityError('');
       setCurrentWeightError('');
       setProducts(_products);
@@ -368,6 +350,44 @@ function BinDemo() {
   if (products !== null) {
     productsWithIndex = products.map((product, index) => ({ ...product, index: products.length - index }));
   }
+  const statusBodyTemplate = (rowData) => {
+    const percent = (rowData.currentWeight / rowData.capacity) * 100;
+    const mainColor = "rgb(201, 239, 199)";
+    let fillColor;
+
+    // Calculer la couleur en fonction du pourcentage
+    if (percent <= 25) {
+        fillColor = `rgb(${Math.round( percent * 3)}, ${Math.round( percent * 4)}, 100)`; // Dégradation douce vers le haut
+    } else if (percent <= 50) {
+        fillColor = `rgb(${Math.round(201 + (percent - 25) * 1.52)}, ${Math.round(239 - (percent - 25) * 1.6)}, 199)`; // Dégradation plus rapide vers le haut
+    } else if (percent <= 75) {
+        fillColor = `rgb(${Math.round(201 + (percent - 50) * 0.76)}, ${Math.round(239 - (percent - 50) * 0.8)}, 199)`; // Dégradation douce vers le bas
+    } else if (percent <= 95) {
+        // Pourcentage supérieur à 75% et inférieur ou égal à 95%
+        const remainingPercent = percent - 75; // Pourcentage restant après 75%
+        const redComponent = 255 - remainingPercent ; // Calcul de la composante rouge pour un rouge plus doux
+        const greenComponent =100+  remainingPercent; // Augmentation de la composante verte pour un rouge plus doux
+        fillColor = `rgb(${Math.round(redComponent)}, ${Math.round(greenComponent)}, 100)`; // Rouge plus doux
+    } else {
+        // Pourcentage supérieur à 95%
+        fillColor = "rgb(255, 50, 50)"; // Rouge doux
+    }
+
+    return (
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+    <ProgressBar
+        percent={percent}
+        fillColor={fillColor}
+        width="100px"
+        height="15px"
+    />
+    <span style={{ marginLeft: '5px' }}>{`${Math.round(percent)}%`}</span>
+</div>
+
+    );
+};
+
+
 
 
 
@@ -395,8 +415,8 @@ function BinDemo() {
           >
             <Column field="index" header="Num" sortable style={{ minWidth: '12rem' }}></Column>
             <Column field="type" header="Type" sortable style={{ minWidth: '12rem' }}></Column>
-            <Column field="status" header="Status" sortable style={{ minWidth: '16rem' }}></Column>
             <Column field="location" header="Location" sortable style={{ minWidth: '16rem' }}></Column>
+            <Column field="status" header="Status" body={statusBodyTemplate} style={{ minWidth: '16rem' }}></Column>
             <Column field="capacity" header="Capacity (Kg)" sortable style={{ minWidth: '16rem' }}></Column>
             <Column field="currentWeight" header="Current Weight (Kg)" sortable style={{ minWidth: '16rem' }}></Column>
             <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
@@ -465,18 +485,6 @@ function BinDemo() {
             placeholder="Select Type"
           />
           {submitted && !product.type && <small className="p-error">Type is required.</small>}
-        </div>
-        <div className="field">
-          <label htmlFor="status" className="font-bold">Status</label>
-          <Dropdown
-            id="status"
-            value={product.status}
-            options={['Empty', 'Partially Filled', 'Half-Filled', 'Almost Full', 'Full']}
-            onChange={(e) => onInputChange(e, 'status')}
-            required
-            placeholder="Select Status"
-          />
-          {submitted && !product.status && <small className="p-error">Status is required.</small>}
         </div>
         <div className="field">
           <label htmlFor="location" className="font-bold">Location</label>

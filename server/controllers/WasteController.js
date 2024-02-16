@@ -72,29 +72,57 @@ const getWaste = async (req, res) => {
 
 // Créer un nouveau sac
 const createWaste = async (req, res) => {
-    const { weight, citizenID, binID } = req.body;
-    console.log(req.body)
-    try {
+  const { weight, citizenID, binID } = req.body;
+
+  // Formater la date au format "JJ/MM/AAAA HH:MM"
+  const currentDate = new Date();
+  try {
       // Créez un nouveau document Waste avec les données fournies
       const newWaste = new Waste({
-        status: "Waiting",
-        weight: weight,
-        dateAdded: new Date(), // Ajoutez la date actuelle
-        citizenID: citizenID,
-        binID: binID
+          status: "Waiting",
+          weight: weight,
+          dateAdded: currentDate, // Ajoutez la date actuelle
+          citizenID: citizenID,
+          binID: binID
       });
-  
+
       // Enregistrez le nouveau déchet dans la base de données
       const savedWaste = await newWaste.save();
-  
+
+      // Mettre à jour le bac associé
+      try {
+          // Récupérer le bac associé au déchet
+          const updatedBin = await Bin.findOneAndUpdate(
+              { _id: binID },
+              { $inc: { currentWeight: weight } },
+              { new: true }
+          ).exec(); // exécuter la requête et attendre la réponse
+
+          // Calculer le pourcentage rempli
+          const filledPercentage = (updatedBin.currentWeight / updatedBin.capacity) * 100;
+
+          // Mettre à jour le statut du bac avec le pourcentage rempli
+          await Bin.findOneAndUpdate(
+              { _id: binID },
+              { $set: { status: filledPercentage } }
+          );
+
+          console.log("Bin mis à jour avec succès :", updatedBin);
+          // Faire quelque chose avec le document mis à jour
+      } catch (err) {
+          console.error("Erreur lors de la mise à jour du bin :", err);
+          // Gérer l'erreur
+      }
+
       // Répondre avec le déchet nouvellement créé
       res.status(201).json(savedWaste);
-    } catch (error) {
+  } catch (error) {
       // Gérer les erreurs de manière appropriée
       console.error('Erreur lors de la création du déchet :', error);
       res.status(400).json({ error: error.message });
-    }
-  };
+  }
+};
+
   
 
 // Supprimer un sac

@@ -23,20 +23,11 @@ const binSchema = new Schema({
     required: true
   },
   status :{
-    type: String,
-    required: true
-  }
+    type: Number,
+    default: function() {
+      return (this.currentWeight / this.capacity) * 100;
+    } 
+   }
 }, { timestamps: true })
-// Hook pre-save pour générer automatiquement l'ID
-binSchema.pre('save', async function(next) {
-  try {
-    if (!this.id) {
-      const count = await this.constructor.countDocuments();
-      this.id = count + 1;
-    }
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+
 module.exports = mongoose.model('Bin', binSchema)
