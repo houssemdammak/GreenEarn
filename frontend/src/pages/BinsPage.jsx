@@ -10,7 +10,12 @@ import { Toolbar } from 'primereact/toolbar';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { useWeb3 } from '../contexts/web3Context';
+import { createBin,deleteBin} from '../web3';
+
 function BinDemo() {
+  const { contract } = useWeb3();
+
   let emptyProduct = {
     type: '',
     status: 'Empty',
@@ -114,7 +119,14 @@ function BinDemo() {
           _products.push(_product);
           toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Bin Created', life: 3000 });
           //console.log(_product)
-          // const responseData = await response.json();
+          const responseData = await response.json();
+          
+          //console.log(responseData.id);
+          /*-----------------------------------------hethy blockchain------------------------------------------------------------*/
+          //createBin(contract,responseData.id, product.location, product.status, product.capacity, product.currentWeight);
+          
+          //createBin(contract,9, "agereb", "empty", 100, 0);
+          /*--------------------------------------------------------------------------------------------------------------*/
           fetchBins();
 
           // console.log('Réponse de l\'API:', responseData);
@@ -240,13 +252,18 @@ function BinDemo() {
 
       if (response.ok) {
         let _products = products.filter((val) => val._id !== product._id);
-
+        const responseData = await response.json();
         setProducts(_products);
         setDeleteProductDialog(false);
         setProduct(emptyProduct);
+       // console.log(responseData.id)
+
+        /*----------------------------------------blockchain-----------------------------*/
+        //deleteBin(contract,responseData.id)
+
         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'in Deleted', life: 3000 });
       } else {
-        console.error('Failed to delete Shipper. Server returned:', response.status, response.statusText);
+        console.error('Failed to delete bin. Server returned:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error deleting Bin:', error.message);

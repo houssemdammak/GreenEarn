@@ -11,17 +11,18 @@ import { BrowserRouter } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import "./responsive.css";
 import { AuthProvider } from "./contexts/authSlice.jsx"
+import { Web3Provider } from './contexts/web3Context';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <React.StrictMode>
-     
       <AuthProvider>
-        <PrimeReactProvider>
-          <App />
-        </PrimeReactProvider>
+        <Web3Provider>
+          <PrimeReactProvider>
+            <App />
+          </PrimeReactProvider>
+        </Web3Provider>
       </AuthProvider>
-      
     </React.StrictMode>
-    </BrowserRouter>
+  </BrowserRouter>
 );

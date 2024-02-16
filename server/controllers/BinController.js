@@ -92,11 +92,29 @@ const updateBin = async (req, res) => {
 
   res.status(200).json(bin)
 }
-
+const deleteAllBins = async (req, res) => {
+  try {
+    const result = await Bin.deleteMany({});
+    res.status(200).json({ message: `${result.deletedCount} bin(s) deleted successfully` });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+ const getLastGeneratedId = async (req, res) => {
+    try {
+      const bins = await Bin.find({}).sort({ createdAt: -1 });
+      const lastBinId = bins.length > 0 ? bins[0].id : null; // Get the ID of the last bin created
+      res.status(200).json({lastBinId });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 module.exports = {
   getBins,
   getBin,
   createBin,
   deleteBin,
-  updateBin
+  updateBin,
+  deleteAllBins,
+  getLastGeneratedId
 }
