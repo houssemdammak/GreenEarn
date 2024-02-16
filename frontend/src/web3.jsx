@@ -35,18 +35,23 @@ const initContract = async (web3) => {
 };
 const createBin = async (contract, id, location, state, capacity, currentWeight) => {
   const web3 = await initWeb3(); // Initialize Web3 instance
-    const accounts = await web3.eth.getAccounts(); // Use web3 instance to access getAccounts
-    console.log(accounts)
-    const senderAddress = accounts[0];
+  const accounts = await web3.eth.getAccounts(); // Use web3 instance to access getAccounts
+  console.log(accounts)
+  const senderAddress = accounts[0];
+  
   try {
+    // Send transaction to the blockchain
     await contract.methods.createBin(id, location, state, capacity, currentWeight).send({ 
       from: senderAddress
-  });  
+    });  
     console.log("Bin created successfully!");
+    return 'accepted'; // Return 'accepted' if transaction succeeds
   } catch (error) {
     console.error("Error creating bin:", error);
+    return 'rejected'; // Return 'rejected' if transaction fails
   }
 };
+
 
 const deleteBin = async (contract, id) => {
   const web3 = await initWeb3(); // Initialize Web3 instance

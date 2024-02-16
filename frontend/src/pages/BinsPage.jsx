@@ -86,36 +86,37 @@ function BinDemo() {
     setSubmitted(true);
     const isValidCapacity = product.capacity !== null && product.capacity > 0;
     const capacityError = !isValidCapacity ? "Capacity must be a number greater than 0." : '';
-
+  
     // Validate currentWeight
     const isValidCurrentWeight = product.currentWeight !== '' && product.currentWeight < product.capacity;
     const currentWeightError = !isValidCurrentWeight ? " Current Weight should be less than the capacity " : '';
-
+  
     if (
       isValidCapacity &&
       isValidCurrentWeight &&
       product.type.trim() !== '' &&
       product.location.trim() !== ''
-      //product.currentWeight.toString().trim() !== ''
     ) {
-
       let _products = [...products];
       let _product = { ...product };
       const index = findIndexById(_product._id);
       setProductDialog(false);
       setcapacityError('');
       setCurrentWeightError('');
-      setProducts(_products);
-        try {
-          const response = await fetch('/api/bins/', {
-            method: 'POST',
-            body: JSON.stringify(_product),
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
+  
+      try {
+        const response = await fetch('/api/bins/', {
+          method: 'POST',
+          body: JSON.stringify(_product),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+      
+        if (response.status === 200) {
           _products.push(_product);
           toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Bin Created', life: 3000 });
+<<<<<<< HEAD
           //console.log(_product)
          // const responseData = await response.json();
           
@@ -131,19 +132,48 @@ function BinDemo() {
         } catch (error) {
           console.error('Erreur lors de l\'envoi des données à l\'API:', error);
         }
+=======
+>>>>>>> a5eb788533e5c7b819d3ce18923dfc762485d149
       
-          setcapacityError('');
-          setCurrentWeightError('');
-          setProducts(_products);
-          setProductDialog(false);
-          setProduct(emptyProduct);
+          // Perform blockchain transaction
+          const responseData = await response.json();
+          //console.log(responseData);
+          const blockchainTransactionStatus = await createBin(contract, responseData.id, product.location, product.status, product.capacity, product.currentWeight);
+          
+          if (blockchainTransactionStatus === 'accepted') {
+            fetchBins();
+          } else {
+            // If blockchain transaction fails, delete the bin from MongoDB
+            await fetch(`/api/bins/${responseData._id}`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+            fetchBins();
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Bin creation reverted.', life: 3000 });
+          }
+        } else {
+          // Handle API error response
+          console.error('Error creating bin:', response.statusText);
+          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create bin.', life: 3000 });
+        }
+      } catch (error) {
+        console.error('Error creating bin:', error);
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create bin.', life: 3000 });
+      }
+      
+  
+      setProducts(_products);
+      setProductDialog(false);
+      setProduct(emptyProduct);
     } else {
       // Mise à jour de l'état d'erreur pour chaque champ
-      //setIDError(idError);
       setcapacityError(capacityError);
       setCurrentWeightError(currentWeightError);
     }
   };
+  
 
   //Check if products is not null before getting its length
 
