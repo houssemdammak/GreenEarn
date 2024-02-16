@@ -1,17 +1,17 @@
-import React, { useState,useContext } from "react";
+import React, { useState,useContext,useEffect} from "react";
 import "./login.css";
 import register from "../../images/bitcoin.svg";
 import log from "../../images/recycle.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //import { byPrefixAndName } from '@awesome.me/kit-KIT_CODE/icons'
 import {  faCheck,  faEnvelope,  faIdBadge,  faLock,  faUser,  faWallet,  faSquareCheck,} from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Link} from "react-router-dom";
 import axios from "axios";
 import  AuthContext  from "../../contexts/authContext";
 
 import icon from "../../images/icon_black.png";
 
-const Login = () => {
+const Login = ({  })  => {
   //for login
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -25,15 +25,16 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
   const [isSignUpMode, setSignUpMode] = useState(false);
-
+  
   const handleSignUpClick = () => {
+    navigate('/SignUp'); 
     setSignUpMode(true);
     console.log("ena f")
-    navigate("/Signup");
+    
   };
   const handleSignInClick = () => {
-    setSignUpMode(false);
     navigate("/Login");
+    setSignUpMode(false);
   };
   const isPasswordStrong = (password) => {
     // Vérifier la force du mot de passe en fonction de certains critères
@@ -81,7 +82,7 @@ const Login = () => {
 
         //localStorage.setItem('citizensAuth', JSON.stringify(response.data.token));
         ////login teb3a contexte
-        login(response.data.token);
+        login(response.data.token,response.data.id,response.data.name);
         //navigate("/Home");
       } catch (err) {
         console.log(err);
@@ -199,7 +200,9 @@ const Login = () => {
   };
 
   return (
+    
     <>
+
       <div className={`containerLogin ${isSignUpMode ? "sign-up-mode" : ""}`}>
         <div className="forms-container">
           <div className="signin-signup">
@@ -298,6 +301,7 @@ const Login = () => {
                 from recyling and earning crypto
               </p>
               <button
+                
                 className="button transparent"
                 id="sign-up-btn"
                 onClick={handleSignUpClick}

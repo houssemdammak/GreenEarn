@@ -1,28 +1,48 @@
-import React, {useContext} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AppContext from './Context';
 import './styles.css';
-
+import AuthContext from '../../contexts/authContext';
 const FormThree = () => {
+  const {id} = useContext(AuthContext);
     const myContext = useContext(AppContext);
-    const updateContext = myContext.userDetails;
+    const updateContext = myContext.wasteDetails;
+   
+    const addToBin = async (binID, citizenID, weight) => {
+      console.log(binID, citizenID, weight)
+        try {
+          const response = await fetch('/api/wastes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ binID, citizenID, weight })
+          });
+      
+          if (!response.ok) {
+            throw new Error('Erreur lors de l\'ajout du déchet à la poubelle');
+          }
+      
+          const waste = await response.json();
+      
+          return waste;
+        } catch (error) {
+          throw new Error(error.message);
+        }
+      };
+      
 
-    const next = () => {
-      if (updateContext.walletID == null) {
-            console.log('Please fill your wallet ID')
-        } else (updateContext.setStep(updateContext.currentPage + 1))
-    };
+    const finish = () => {
+        console.log(updateContext);
+        updateContext.setStep(updateContext.currentPage +1)
+        addToBin(updateContext.binID,id,updateContext.quantity)
 
+    }
     return (
         <div className="container-home">
-            <p>Enter your wallet ID</p>
-            <div className="formContain">
-                <form className="form">
-                    <input className="formInput" type="text" placeholder="Wallet ID" onChange={e => updateContext.setWalletID(e.target.value)} required/>
-                    <div className="multipleButtons">
-                    <button className="multipleButton" value="Previous" type="button" onClick={() => updateContext.setStep(updateContext.currentPage - 1)}>Previous </button>
-                    <button className="multipleButton" value="Next" type="button" onClick={next}>Next </button>
-                    </div>
-                </form>
+            <p>Are you sur to validate ?</p>
+            <div className="multipleButtons">
+            <button className="multipleButton" value="Previous" type="button" onClick={() => updateContext.setStep(updateContext.currentPage - 1)}>Previous</button>
+            <button className="doneSubmit" onClick={finish}>Done</button>
             </div>
         </div>
     );

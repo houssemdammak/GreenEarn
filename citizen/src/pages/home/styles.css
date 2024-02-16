@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Karla&Fira+Sans&family=Poppins&display=swap');
-
+.errorText {
+    color: red;
+    font-size: 14px;
+  }
+  
 .main {
     font-family: 'Karla', sans-serif;
     height: 100vh;

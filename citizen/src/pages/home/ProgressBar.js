@@ -3,7 +3,7 @@ import AppContext from './Context';
 
 const ProgressBar = () => {
     const myContext = useContext(AppContext);
-    const updateContext = myContext.userDetails;
+    const updateContext = myContext.wasteDetails;
 
     const percent = updateContext.currentPage * 135;  //each progress with 135px 
     const percentage = updateContext.currentPage;

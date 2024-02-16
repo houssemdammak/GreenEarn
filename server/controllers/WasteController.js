@@ -1,5 +1,5 @@
 const Waste = require('../models/WasteModel'); // Import du modèle Bag
-
+const Bin= require('../models/BinModel'); 
 const mongoose = require('mongoose');
 
 // Récupérer tous les sacs
@@ -13,6 +13,30 @@ const getWastes = async (req, res) => {
 };
 
 // Récupérer un seul sac
+// const getWaste = async (req, res) => {
+//   const { id } = req.params;
+
+//   if (!mongoose.Types.ObjectId.isValid(id)) {
+//     return res.status(404).json({ error: 'Aucun waste trouvé' });
+//   }
+
+//   try {
+//     const waste = await Waste.find({ citizenID: id });
+//     console.log(waste)
+    
+//     if (!waste) {
+//       return res.status(404).json({ error: 'Aucun waste trouvé' });
+//     }
+//     const bin = await Bin.findOne({ _id: waste.binID });
+
+//     if (!bin) {
+//       return res.status(404).json({ error: 'Aucun bac trouvé pour ce déchet' });
+//     }
+//     res.status(200).json(waste,{location:bin.location ,type:bin.type});
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 const getWaste = async (req, res) => {
   const { id } = req.params;
 
@@ -21,11 +45,26 @@ const getWaste = async (req, res) => {
   }
 
   try {
-    const waste = await Waste.findById(id);
-    if (!waste) {
+    const waste = await Waste.find({ citizenID: id });
+    console.log(waste);
+    
+    if (!waste || waste.length === 0) {
       return res.status(404).json({ error: 'Aucun waste trouvé' });
     }
-    res.status(200).json(waste);
+
+    const binIds = waste.map(w => w.binID);
+    const bins = await Bin.find({ _id: { $in: binIds } });
+
+    if (!bins || bins.length === 0) {
+      return res.status(404).json({ error: 'Aucun bac trouvé pour ces déchets' });
+    }
+
+    const response = waste.map(w => {
+      const bin = bins.find(b => b._id.toString() === w.binID.toString());
+      return { ...w._doc, location: bin.location, type: bin.type };
+    });
+
+    res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -33,12 +72,12 @@ const getWaste = async (req, res) => {
 
 // Créer un nouveau sac
 const createWaste = async (req, res) => {
-    const { status, weight, citizenID, binID } = req.body;
-  
+    const { weight, citizenID, binID } = req.body;
+    console.log(req.body)
     try {
       // Créez un nouveau document Waste avec les données fournies
       const newWaste = new Waste({
-        status: status,
+        status: "Waiting",
         weight: weight,
         dateAdded: new Date(), // Ajoutez la date actuelle
         citizenID: citizenID,

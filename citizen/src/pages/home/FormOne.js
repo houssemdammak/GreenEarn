@@ -1,37 +1,69 @@
-import React, {useContext} from 'react';
+import React, { useContext, useState } from 'react';
 import AppContext from './Context';
 import './styles.css';
 
 const FormOne = () => {
     const myContext = useContext(AppContext);
-    const updateContext = myContext.userDetails;
 
-    const next = () => {
-        if (updateContext.wasteType == null) {
-            console.log('Please select the types')
-        } else if (updateContext.quantity == null) {
-            console.log('Enter the Quantity in Kg')
-        } else (updateContext.setStep(updateContext.currentPage + 1))
+    const updateContext = myContext.wasteDetails;
+    const binContext=myContext.binDetail ;
+    const [binIdError, setBinIdError] = useState(false);
+
+    const getBindetail = async () => {
+        try {
+            const response = await fetch(`/api/bins/${updateContext.binID}`);
+            const products = await response.json();
+            console.log(products);
+            return products;
+        } catch (error) {
+            console.error('Error fetching bin details:', error);
+            return null;
+        }
+    };
+
+    const next = async () => {
+        if (updateContext.binID == null) {
+            console.log('Please enter the Bin ID correctly');
+            setBinIdError(true);
+        } else {
+            try {
+                const products = await getBindetail();
+                if (products) {
+                    updateContext.setwasteType(products.type);
+                    updateContext.setBinID(products._id)
+                    binContext.setType(products.type)
+                    binContext.setcurrentweight(products.currentWeight)
+                    binContext.setCapacity(products.capacity)
+                    
+                }else {
+                    console.log('No bin details found');
+                }
+                updateContext.setStep(updateContext.currentPage + 1);
+                setBinIdError(false);
+            } catch (error) {
+                console.error('Error getting bin details:', error);
+                setBinIdError(true);
+            }
+        }
     };
 
     return (
         <div className="container-home">
-            <p>Enter your waste details</p>
-            <div className="formContainer">
+            <p>Enter your Bin ID</p>
+            <div className="formContain">
                 <form className="form">
-                    <label>
-                    <select className="formSelect" onChange={e => updateContext.setwasteType(e.target.value)} >
-                        <option >Select Type of waste</option>
-                        <option value="Medical">Medical</option>
-                        <option value="Electronic">Electronic</option>
-                        <option value="Plastic">Plastic</option>
-                    </select>
-                    </label>
-                    <input className="formInput" type="text" placeholder="Quantity in kg" onChange={e => updateContext.setQuantity(e.target.value)} />
+                    <input
+                        className="formInput"
+                        type="text"
+                        maxLength="24"
+                        placeholder="Bin ID"
+                        value={updateContext.binID || ""}
+                        onChange={e => updateContext.setBinID(e.target.value)}
+                        required
+                    />
+                    {binIdError && <span className="errorText">Please enter a valid Bin ID</span>}
                     <div className="multipleButtons">
-                    <button className="multipleButton" value="Next" type="button" onClick={next}>Next </button>
-
-                        {/* <button type="button" className="formSubmit" onClick={next}>Next </button> */}
+                        <button className="multipleButton" value="Next" type="button" onClick={next}>Next</button>
                     </div>
                 </form>
             </div>

@@ -103,9 +103,6 @@ function BinDemo() {
       setcapacityError('');
       setCurrentWeightError('');
       setProducts(_products);
-
-      
-        
         try {
           const response = await fetch('/api/bins/', {
             method: 'POST',
@@ -258,6 +255,7 @@ function BinDemo() {
 
   const findIndexById = (id) => {
     let index = -1;
+
 
     for (let i = 0; i < products.length; i++) {
       if (products[i]._id === id) {

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import  "./styles.css";
 import AppContext from "./Context";
-import FormTwo from "./FormTwo";
+// import FormTwo from "./FormTwo";
 import FormOne from "./FormOne";
 import FormThree from "./FormThree";
 import FormFinish from "./FormFinish";
+import FormTwo from "./FormTwo";
+
 import ProgressBar from "./ProgressBar";
 import icon from "../../images/icon_black.png";
 import NavigationBar from "../../components/navbar";
@@ -13,24 +15,31 @@ const StepForm = () => {
   const [BinID, setBinID] = useState(null);
   const [wasteType, setwasteType] = useState(null);
   const [Quantity, setQuantity] = useState(null);
-  const [walletId, setWalletID] = useState(null);
+////////////////////////
+const [capacity, setCapacity] = useState(null);
+const [type, setType] = useState(null);
+const [currentWeight, setcurrentweight] = useState(null);
 
-  const userDetails = {
+/////////////
+  const wasteDetails = {
     currentPage: step,
     binID: BinID,
     wasteType: wasteType,
     quantity: Quantity,
-    walletID: walletId,
     setStep,
     setBinID,
     setwasteType,
     setQuantity,
-    setWalletID,
   };
-
+  const binDetail ={
+    capacity:capacity ,
+    type:type ,
+    currentweight:currentWeight,
+    setType,setCapacity,setcurrentweight
+  }
   return (
     
-    <AppContext.Provider value={{ userDetails }}>
+    <AppContext.Provider value={{ wasteDetails,binDetail }}>
       <div className="main">
         <div>
         <NavigationBar />
@@ -44,9 +53,9 @@ const StepForm = () => {
           <div className="wrapper">
             <ProgressBar />
             {step === 0 && <FormOne />}
-            {step === 1 && <FormTwo />}
+            {step === 1 && <FormTwo/>}
             {step === 2 && <FormThree />}
-            {step === 3 && <FormFinish />}
+            {step === 3 && <FormFinish />} 
           </div>
         </div>
       </div>
