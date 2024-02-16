@@ -6,7 +6,6 @@ const {
     deleteBin,
     updateBin,
     deleteAllBins,
-    getLastGeneratedId
 
 }=require('../controllers/BinController')
 
@@ -14,7 +13,6 @@ const router = express.Router()
 
 // GET all workouts
 router.get('/',getBins )
-router.get('/getLastId',getLastGeneratedId )
 // GET a single workout
 router.get('/:id',getBin)
 
