@@ -25,17 +25,7 @@ const NavigationBar=()=> {
           
             <Nav.Link as={Link} to="/Home">Home</Nav.Link>
             <Nav.Link as={Link} to="/Bin">Bin Status</Nav.Link>
-            {/* <Nav.Link onClick={handleLogout}>Logout</Nav.Link> */}
           </Nav>
-          {/* <Nav>
-          <Nav.Link>
-              <FontAwesomeIcon icon={faBell} />
-            </Nav.Link>
-            <Nav.Link>
-              <FontAwesomeIcon icon={faUserCircle} />
-            </Nav.Link>
-
-            </Nav> */}
              <Nav>
             <NavDropdown title={<FontAwesomeIcon icon={faUserCircle} />} align="end">
               <NavDropdown.Item>{name}</NavDropdown.Item>
