@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Karla&Fira+Sans&family=Poppins&display=swap");
+
+.BodyShipper {
+  font-family: "Karla", sans-serif;
+  height: 100vh;
+  background-color: #c7efc9;
+  /* background-image: url("../../images/bg.svg"); */
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.DataTableShipper {
+  overflow-x: scroll;
+ border-radius: 40px;
+  max-height: 580px;
+
+}
+
+
+
+
+tr{
+  background-color: rgba(255 ,255, 255, 0.7); 
+ 
+}
+
+
+
+.DataTableShipper .p-paginator {
+  position: sticky;
+  bottom: 0;
+  background-color: #fff;
+  z-index: 1;
+}
+
+
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+.cardShipper {
+  background-color: transparent;
+  padding: 2rem;
+  border-radius: 10px;
+  border: none;
+
+}
+/* Optional: Customize scrollbars */
+.DataTableShipper::-webkit-scrollbar {
+  width: 0px;
+}
+.DataTableShipper::-webkit-scrollbar-track {
+  background-color: transparent;
+
+}

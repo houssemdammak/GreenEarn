@@ -12,9 +12,11 @@ import { PageProvider } from './contexts/pageContext';
 import { AuthProvider } from './contexts/authSlice';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Index from './pages/index';
+import ShipperApp from './pages/App Shipper/AppShipper';
 function App() {
  return(
         <Routes>
+          <Route path="/shipperApp" element={<PrivateRoute element={<ShipperApp />} />} />
           <Route path="*" element={<PrivateRoute element={<Index />} />} />
           <Route path="/login" element={<Login />} />
         </Routes>

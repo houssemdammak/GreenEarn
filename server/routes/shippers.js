@@ -2,6 +2,7 @@ const express = require ('express')
 const router = express.Router()
 const Shipper=require ('../models/ShipperModel')
 const {
+    login,
     getShippers,
     getShipper,
     createShipper,
@@ -9,11 +10,15 @@ const {
     updateShipper
 } =require ('../controllers/ShipperController')
 
+//login shipper 
+router.post("/login",login)
+
 //get all Shippers
 router.get('/',getShippers)
 
 //get single Shipper
 router.get('/:id',getShipper)
+
 //Post new Shipper
 router.post('/',createShipper)
 

@@ -14,11 +14,17 @@ import { InputText } from 'primereact/inputtext';
     FullName: '',
     Location: '',
     TelephoneNum: '',
+     email: "",
+    password:"" ,
 };
+  /*------------------------errors sets--------------------------------*/
+    const [EmailErrorExist, setEmailErrorExist] = useState("");
+    const [passwordError, setpasswordError] = useState("");
+    const [confirmpasswordError, setconfirmpasswordError] = useState("");
+    /*------------------------------------------------------------------*/
     const [IDError, setIDError] = useState('');
     const [IDErrorExist, setIDErrorExist] = useState('');
     const [IDErrorExistUpdate, setIDErrorExistUpdate] = useState("");
-    const [IDEmptyError, setIDEmptyError] = useState('');
     const [phoneNumberError, setPhoneNumberError] = useState('');
     const [products, setProducts] = useState(null);
     const [productDialog, setProductDialog] = useState(false);
@@ -66,23 +72,40 @@ import { InputText } from 'primereact/inputtext';
         setDeleteProductDialog(false);
     }; 
     
+    const isPasswordStrong = (password) => {
+      // Vérifier la force du mot de passe en fonction de certains critères
+      // Vous pouvez modifier ces critères en fonction de vos besoins
+      const regexStrong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      return regexStrong.test(password);
+    };
     const saveProduct = async() => {
       setSubmitted(true);
       let _products = [...products];
       let _product = { ...product };
+      /*------------------------- email check -------------------------*/
+      const index2 = findIndexByEmail(_product.email);
+      const isExistEmail = index2 !== -1;
+      const isExistEmailError = isExistEmail ? "Email already exist ." : "";
+          //verifier le password confirm 
+      const confirmationpass =(product.confirmpassword == product.password) 
+      //password not strong 
+    
+      const validatePassword=isPasswordStrong(_product.password) ;
+      /* ------------------------------------------------------------------------ */
       const index = findIndexById(_product.ID);
-      const isEmpty= product.ID == '';
-      const isEmptyError= isEmpty?'ID Card is required.':'';
       const isValidID = /^[a-zA-Z0-9]{8}$/.test(product.ID);
       const isExistID= index !==-1 ;
       const isExistIDError=isExistID ? 'ID Card already exist .' : '';
       const isValidPhoneNumber = /^\d{8}$/.test(product.TelephoneNum);
       const idError = !isValidID ? 'ID Card should be 8 digits.' : '';
       const phoneNumberError = !isValidPhoneNumber ? 'Telephone Number should be 8 digits.' : '';
-      if (!isEmpty &&
+      if ( validatePassword && confirmationpass &&isExistEmailError ==""  && product.email.trim() !== ""&& product.confirmpassword.trim() !== "" &&product.password.trim() !==""&&
         isValidID && !isExistID && isValidPhoneNumber && product.ID.trim() !== '' 
         && product.FullName.trim() && product.Location.trim() && product.TelephoneNum.toString().trim() !== ''){            
           try {
+
+                  delete _product.confirmpassword;
+
                   const response = await fetch('/api/shippers', {
                       method: 'POST',
                       body: JSON.stringify(_product),
@@ -92,7 +115,7 @@ import { InputText } from 'primereact/inputtext';
                   });
                   _products.push(_product);
               toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Shipper Created', life: 3000 });
-                  //console.log(_product)
+                  console.log(_product)
                   // const responseData = await response.json();
                   // console.log('Réponse de l\'API:', responseData);
               } catch (error) {
@@ -105,23 +128,27 @@ import { InputText } from 'primereact/inputtext';
               setIDErrorExistUpdate('')
               setProducts(_products);
               setProduct(emptyProduct);
+              setEmailErrorExist("");setconfirmpasswordError("");setpasswordError("") ;
               setProductDialog(false);
           
       }else {
-        // Mise à jour de l'état d'erreur pour chaque champ
-        if(isEmpty && !isValidID){
-          setIDEmptyError(isEmptyError);
-          setIDError('');
-          setIDErrorExistUpdate('')
+        if(!validatePassword){
+          setpasswordError("Please enter a strong password")
         }
-        if(!isEmpty && !isValidID ){
+        if(!confirmationpass){
+          setconfirmpasswordError("Please confirm your password")
+        }
+         if(isExistEmailError !=""){
+           setEmailErrorExist(isExistEmailError);
+         }
+        // Mise à jour de l'état d'erreur pour chaque champ
+        
+        if(!isValidID ){
           setIDError(idError);
-          setIDEmptyError('')
           setIDErrorExistUpdate('')
         }
         if(isExistID){
           setIDErrorExistUpdate(isExistIDError);
-          setIDEmptyError('')
           setIDError('');
         }
         setPhoneNumberError(phoneNumberError);
@@ -131,26 +158,30 @@ import { InputText } from 'primereact/inputtext';
     setSubmitted(true);
     let _products = [...products];
     let _product = { ...product };
-    const index = findIndexById(_product.ID);
+    const index2 = findIndexByEmail(_product.email);
     const indexDB = findIndexBy_id(_product._id);
+    const isTheSameEmail = _product.email ==_products[indexDB].email;
+    const isExistEmailError = index2 !== -1 && !isTheSameEmail;
+    const index = findIndexById(_product.ID);
     const isTheSameID = _product.ID ==_products[indexDB].ID;
     const isExistID = index !== -1 && !isTheSameID;
     const isExistIDError=isExistID ? 'ID Card already exist .' : '';
     const isValidID = /^[a-zA-Z0-9]{8}$/.test(product.ID);
-    const isEmpty= product.ID == '';
-    const isEmptyError= isEmpty?'ID Card is required.':'';
     const isValidPhoneNumber = /^\d{8}$/.test(product.TelephoneNum);
     const idError = !isValidID ? 'ID should be 8 digits.' : '';
     const phoneNumberError = !isValidPhoneNumber ? 'Telephone Number should be 8 digits.' : '';
-    if (!isEmpty &&
-      isValidID && isValidPhoneNumber &&
+    if ( isValidID && isValidPhoneNumber &&
+      !isExistEmailError  &&
+      product.email.trim() !== "" &&
       product.ID.trim() !== '' &&
       product.FullName.trim() &&
       product.Location.trim() &&
      !isExistID &&  
       product.TelephoneNum.toString().trim() !== '')
       {        
-        setProductDialog(false);           
+        setProductDialog(false);    
+        delete product.confirmpassword 
+        delete product.password        
         try {
               // Utilisation de la méthode PATCH pour mettre à jour partiellement la ressource
               //console.log(_product._id)
@@ -172,25 +203,25 @@ import { InputText } from 'primereact/inputtext';
           setProductDialogUpdate(false);
           //fetchShippers();
           setIDError('');
+          setEmailErrorExist("");
           setPhoneNumberError('');
           setProducts(_products);
           setIDErrorExistUpdate('');
+          setconfirmpasswordError("");
+          setpasswordError("") ;
 
      }else {
-      // Mise à jour de l'état d'erreur pour chaque champ
-      if(isEmpty && !isValidID){
-        setIDEmptyError(isEmptyError);
-        setIDError('');
-        setIDErrorExistUpdate('')
+      if(isExistEmailError !=""){
+        setEmailErrorExist("Email already exist .");
       }
-      if(!isEmpty && !isValidID ){
+      // Mise à jour de l'état d'erreur pour chaque champ
+     
+      if( !isValidID ){
         setIDError(idError);
-        setIDEmptyError('')
         setIDErrorExistUpdate('')
       }
       if(isExistID){
         setIDErrorExistUpdate(isExistIDError);
-        setIDEmptyError('')
         setIDError('');
       }
       setPhoneNumberError(phoneNumberError);
@@ -230,6 +261,19 @@ import { InputText } from 'primereact/inputtext';
       }
   }; 
 
+  
+    const findIndexByEmail = (email) => {
+      let index = -1;
+
+      for (let i = 0; i < products.length; i++) {
+        if (products[i].email === email) {
+          index = i;
+          break;
+        }
+      }
+
+      return index;
+    };
     const findIndexById = (id) => {
         let index = -1;
 
@@ -349,9 +393,8 @@ import { InputText } from 'primereact/inputtext';
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" globalFilter={globalFilter} header={header}>
                           
                     <Column field="ID" header="ID Card" sortable style={{ minWidth: '12rem' }}></Column>
-                    
                     <Column field="FullName" header="Full Name" sortable  style={{ minWidth: '16rem' }}></Column>
-
+                    <Column field="email" header="Email" sortable sortablestyle={{ minWidth: "12rem" }}></Column>
                     <Column field="Location" header="Location" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="TelephoneNum" header="Telephone Number" sortable style={{ minWidth: '16rem' }}></Column>
 
@@ -367,7 +410,6 @@ import { InputText } from 'primereact/inputtext';
           <label htmlFor="ID" className="font-bold">ID Card</label>
           <InputText id="ID" value={product.ID} onChange={(e) => onInputChange(e, 'ID')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.ID })} />
           {submitted && !product.ID && <small className="p-error">ID Card is required.</small>}
-          {IDError && <small className="p-error">{IDError}</small>}
           {IDErrorExist && <small className="p-error">{IDErrorExist}</small>}
           {IDErrorExistUpdate && <small className="p-error">{IDErrorExistUpdate}</small>}
 
@@ -380,6 +422,61 @@ import { InputText } from 'primereact/inputtext';
           
         </div>
         <div className="field">
+          <label htmlFor="Email" className="font-bold">Email </label>
+          <InputText
+            id="email"
+            value={product.email}
+            onChange={(e) => onInputChange(e, "email")}
+            required
+            autoFocus
+            className={classNames({ "p-invalid": submitted && !product.email })}
+          />
+          {submitted && !product.email && (
+            <small className="p-error">Email is required. <br></br></small>
+          )}
+                    
+          {EmailErrorExist && <small className="p-error">{EmailErrorExist}</small>}
+
+        </div>
+        <div className="field">
+          <label htmlFor="Password" className="font-bold">Password</label>
+          <InputText
+            id="password"
+            type="password"
+            value={product.password}
+            onChange={(e) => onInputChange(e, "password")}
+            required
+            autoFocus
+            className={classNames({
+              "p-invalid": submitted && !product.password,
+            })}
+          />
+          {submitted && !product.password && (
+            <small className="p-error">Password is required.</small>
+          )}
+          {passwordError && product.password && (
+            <small className="p-error">{passwordError}</small>
+          )}
+        </div>
+        <div className="field">
+          <label htmlFor="Password" className="font-bold">Confirm Password</label>
+          <InputText
+            id="confirmpassword"
+            type="password"
+            value={product.confirmpassword}
+            onChange={(e) => onInputChange(e, "confirmpassword")}
+            required
+            autoFocus
+            className={classNames({
+              "p-invalid": submitted && !product.confirmpassword,
+            })}
+          />
+          {submitted && !product.confirmpassword && (
+            <small className="p-error">Confirm password is required.</small>
+          )}
+          {confirmpasswordError!=="" && product.confirmpassword && (<small className="p-error">{confirmpasswordError}</small>)}
+        </div>
+        <div className="field">
           <label htmlFor="Location" className="font-bold">Location</label>
           <InputTextarea id="Location" value={product.Location} onChange={(e) => onInputChange(e, 'Location')} required rows={3} cols={20}  className={classNames({ 'p-invalid': submitted && !product.Location })} />
             {submitted && !product.Location && <small className="p-error">Location is required.</small>}
@@ -388,7 +485,7 @@ import { InputText } from 'primereact/inputtext';
           <label htmlFor="TelephoneNum" className="font-bold">Telephone Number</label>
           <InputText id="TelephoneNum" value={product.TelephoneNum} onChange={(e) => onInputChange(e, 'TelephoneNum')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.TelephoneNum })} />
           {submitted && !product.TelephoneNum && <small className="p-error">Telephone Number is required.</small>}
-          {phoneNumberError && <small className="p-error">{phoneNumberError}</small>}
+          {phoneNumberError&& product.TelephoneNum && <small className="p-error">{phoneNumberError}</small>}
         </div>
       </Dialog>
       <Dialog visible={productDialogUpdate} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Shipper Details" modal className="p-fluid" footer={productDialogUpdateFooter} onHide={hideDialog}>
@@ -407,6 +504,20 @@ import { InputText } from 'primereact/inputtext';
           {submitted && !product.FullName && <small className="p-error">Full Name is required.</small>}
           
         </div>
+        <div className="field">
+          <label htmlFor="Email" className="font-bold">Email</label>
+          <InputText
+            id="email"
+            value={product.email}
+            onChange={(e) => onInputChange(e, "email")}
+            required
+            autoFocus
+            className={classNames({ "p-invalid": submitted && !product.email })}
+          />
+          {submitted && !product.email && (<small className="p-error">Email is required.</small>)}
+          {EmailErrorExist && product.email&& <small className="p-error">{EmailErrorExist}</small>}
+        </div>
+        
         <div className="field">
           <label htmlFor="Location" className="font-bold">Location</label>
           <InputTextarea id="Location" value={product.Location} onChange={(e) => onInputChange(e, 'Location')} required rows={3} cols={20}  className={classNames({ 'p-invalid': submitted && !product.Location })} />
