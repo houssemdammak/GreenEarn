@@ -3,6 +3,8 @@ const express=require('express')
 //const cors= require('cors') 
 const mongoose=require('mongoose')
 const app=express()
+const collectionRoutes=require ('./routes/collection')
+
 const wasteRoutes=require ('./routes/waste')
 const shipperRoutes =require('./routes/shippers')
 const citizenRoutes= require ('./routes/citizens')
@@ -20,6 +22,7 @@ app.use((req, res, next) => {
 
 
 app.use('/api/auth/', mainRouter);
+app.use('/api/collection', collectionRoutes);
 
 app.use('/api/shippers', shipperRoutes);
 app.use('/api/citizens', citizenRoutes);

@@ -13,13 +13,13 @@ export const AuthProvider = ({ children }) => {
       navigate("/login"); // Redirect to login if not authenticated
     }
   }, [token, navigate]);
-
+///login manager
   const login = (token) => {
     setToken(token);
     localStorage.setItem('auth', JSON.stringify(token));
     navigate("/")
   };
-
+///login shipper
   const logout = () => {
     setToken(null);
     localStorage.removeItem('auth');

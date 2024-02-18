@@ -15,7 +15,9 @@ import Index from './pages/index';
 function App() {
  return(
         <Routes>
+          {/* manager  */}
           <Route path="*" element={<PrivateRoute element={<Index />} />} />
+          {/* shipper */}
           <Route path="/login" element={<Login />} />
         </Routes>
      

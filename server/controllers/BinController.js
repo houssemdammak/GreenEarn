@@ -24,6 +24,50 @@ const getBin = async (req, res) => {
 }
 
 // create a new bin
+// const createBin = async (req, res) => {
+//   const { type, location, capacity, currentWeight } = req.body;
+
+//   let emptyFields = [];
+
+//   if (!type) {
+//     emptyFields.push('type');
+//   }
+
+//   if (!location) {
+//     emptyFields.push('location');
+//   }
+//   if (!capacity) {
+//     emptyFields.push('capacity');
+//   }
+//   if (currentWeight === null) {
+//     emptyFields.push('currentWeight');
+//   }
+//   if (emptyFields.length > 0) {
+//     return res.status(400).json({ error: 'Please fill in all fields', emptyFields });
+//   }
+
+//   let bin;
+//   let isUnique = false;
+
+//   // Tant que l'ID généré n'est pas unique, générez un nouvel entier aléatoire
+//   while (!isUnique) {
+//     const randomId = Math.floor(Math.random() * 1000000); // Génère un entier aléatoire
+//     try {
+//       // Vérifie si l'ID est déjà utilisé
+//       const existingBin = await Bin.findOne({ id: randomId });
+//       if (!existingBin) {
+//         bin = await Bin.create({ id: randomId, type, location, capacity, currentWeight });
+//         isUnique = true;
+//       }
+//     } catch (error) {
+//       // Gérer les erreurs de base de données
+//       return res.status(500).json({ error: 'Internal server error' });
+//     }
+//   }
+
+//   // Si tout s'est bien passé, renvoyer le bin créé
+//   res.status(200).json(bin);
+// };
 const createBin = async (req, res) => {
   const { type, location, capacity, currentWeight } = req.body;
 
@@ -46,29 +90,19 @@ const createBin = async (req, res) => {
     return res.status(400).json({ error: 'Please fill in all fields', emptyFields });
   }
 
-  let bin;
-  let isUnique = false;
-
-  // Tant que l'ID généré n'est pas unique, générez un nouvel entier aléatoire
-  while (!isUnique) {
-    const randomId = Math.floor(Math.random() * 1000000); // Génère un entier aléatoire
     try {
       // Vérifie si l'ID est déjà utilisé
-      const existingBin = await Bin.findOne({ id: randomId });
-      if (!existingBin) {
-        bin = await Bin.create({ id: randomId, type, location, capacity, currentWeight });
-        isUnique = true;
-      }
+        bin = await Bin.create({ type, location, capacity, currentWeight });
+        return res.status(200).json(bin);
     } catch (error) {
       // Gérer les erreurs de base de données
       return res.status(500).json({ error: 'Internal server error' });
     }
-  }
+  
 
   // Si tout s'est bien passé, renvoyer le bin créé
-  res.status(200).json(bin);
+ 
 };
-
 
 // delete a bin
 const deleteBin = async (req, res) => {
