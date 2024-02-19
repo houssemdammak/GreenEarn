@@ -9,12 +9,12 @@ const MenuList = () => {
   return (
     <Menu onClick={({ key }) => { navigate(key) }} style={{ backgroundColor: '#C9EFC7', color: 'black' }} mode="inline" className="menu-bar"
       items={[
-        { label: "Home", icon: <HomeOutlined />, key: "/" },
+        { label: "Home", icon: <HomeOutlined />, key: "/manager" },
         {
           label: "Management", icon: <BarsOutlined />, children: [
-            { label: "Bins", key: "/bins" },
-            { label: "Shippers", key: "/shippers" },
-            { label: "Citizens", key: "/citizens" }
+            { label: "Bins", key: "/manager/bins" },
+            { label: "Shippers", key: "/manager/shippers" },
+            { label: "Citizens", key: "/manager/citizens" }
           ]
         }
       ]}

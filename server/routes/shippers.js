@@ -9,12 +9,13 @@ const {
     deleteShipper,
     updateShipper
 } =require ('../controllers/ShipperController')
+const authMiddleware = require('../middleware/auth')
 
 //login shipper 
 router.post("/login",login)
 
 //get all Shippers
-router.get('/',getShippers)
+router.get('/',authMiddleware,getShippers)
 
 //get single Shipper
 router.get('/:id',getShipper)

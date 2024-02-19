@@ -22,19 +22,20 @@ const login = async (req, res) => {
 
     if (isMatch) {
       const token = jwt.sign(
-        { id: foundUser._id, name: foundUser.name },
+        { id: foundUser._id, name: foundUser.FullName },
         process.env.JWT_SECRET,
         {
-          expiresIn: "30d",
+          expiresIn: "2m",
         }
       );
-
-      return res.status(200).json({ msg: "Shipper logged in", token });
+      console.log(token,foundUser._id,foundUser.FullName)
+      return res.status(200).json({ msg: "Shipper logged in", token,id:foundUser._id,name:foundUser.FullName });
+      
     } else {
-      return res.status(400).json({ msg: "Bad password" });
+      return res.status(200).json({ msg: "Bad password" });
     }
   } else {
-    return res.status(400).json({ msg: "Bad credentails" });
+    return res.status(200).json({ msg: "Bad credentials" });
   }
 };
 
@@ -138,7 +139,21 @@ const createShipper = async (req, res) => {
     return res.status(400).json({ msg: "Email already in use" });
   }
 };
+const getCollectionByShipper=async (req,res)=>{
+  try {
+    const { id } = req.params;
 
+    // Utilisez la méthode find de Mongoose pour récupérer les collections avec le shipperID spécifié
+    const collections = await Collection.find({ shipperID: id });
+
+    // Envoyez les collections trouvées en réponse
+    res.status(200).json(collections);
+  } catch (error) {
+    // En cas d'erreur, renvoyez un statut d'erreur avec un message d'erreur
+    res.status(500).json({ message: error.message });
+  }
+
+}
 module.exports = {
   login,
   getShippers,

@@ -16,8 +16,8 @@ import ShipperApp from './pages/App Shipper/AppShipper';
 function App() {
  return(
         <Routes>
-          <Route path="/shipperApp" element={<PrivateRoute element={<ShipperApp />} />} />
-          <Route path="*" element={<PrivateRoute element={<Index />} />} />
+          <Route path="/shipperApp" element={<PrivateRoute element={<ShipperApp />} Role="Shipper" />} />
+          <Route path="/manager/*" element={<PrivateRoute element={<Index />} Role="Manager" />} />
           <Route path="/login" element={<Login />} />
         </Routes>
      
