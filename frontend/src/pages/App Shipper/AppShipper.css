@@ -65,7 +65,7 @@
 
 }
 /*---------------navbar------------------------*/
-.navbar {
+.BodyShipper .navbar {
   background-color:  rgba(255 ,255, 255, 0.7);
   color: #fff;
   display: flex;
@@ -74,38 +74,38 @@
   padding: 1rem;
 }
 
-.navbar-logo {
+.BodyShipper .navbar-logo {
   flex: 1;
 }
 
-.logo {
+.BodyShipper .logo {
   width: 100px; /* Adjust size as needed */
   height: auto;
 }
 
-.navbar-items {
+.BodyShipper .navbar-items {
   flex: 1;
   display: flex;
   justify-content: flex-end;
 }
 
-.navbar-user {
+.BodyShipper .navbar-user {
   display: flex;
   align-items: center;
 }
 
-.user-icon {
+.BodyShipper .user-icon {
   color: black;
   font-size: 1.5rem;
   margin-right: 0.5rem;
 }
 
-.user-name {
+.BodyShipper .user-name {
   color: black;
   margin-right: 0.5rem;
 }
 
-.logout-icon {
+.BodyShipper .logout-icon {
   cursor: pointer;
   color: black;
 }
