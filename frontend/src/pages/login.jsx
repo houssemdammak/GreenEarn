@@ -30,23 +30,74 @@ const Login = () => {
           password,
         };
   
+        // try {
+        //   try{
+        //     const response = await axios.post("/api/auth/login", formData, {
+        //       headers: { "Content-Type": "application/json" },
+        //     });
+        //     console.log(response.data) ;
+        //      //login(response.data.token,response.data.name,"Manager");
+        //   }catch{
+        //     const responseLogShipper = await axios.post("/api/shippers/login", formData, {
+        //       headers: { "Content-Type": "application/json" },
+        //     });
+            
+        //     console.log(responseLogShipper)
+        //      //login(responseLogShipper.data.token,responseLogShipper.data.name,"Shipper");
+        //   }
+          
+          
+        //   //localStorage.setItem('auth', JSON.stringify(response.data.token));
+        //  // login(response.data.token);
+        //  // navigate("/");
+        // } catch (err) {
+        //   console.log()
+        //   console.log(err.response);
+        //   console.log(err.response.data.msg)
+          
+        //   if ( err.response.data.msg ==="Bad password") {
+        //     setPasswordError("Incorrect password");
+        //   } if(err.response.data.msg==="Bad credentails"){
+        //     setEmailError("User does not exist");
+        //   }
+        // }
         try {
-          const response = await axios.post("/api/auth/login", formData, {
-            headers: { "Content-Type": "application/json" },
+          let response = await axios.post("/api/shippers/login", formData, {
+              headers: { "Content-Type": "application/json" }
           });
-          //localStorage.setItem('auth', JSON.stringify(response.data.token));
-          login(response.data.token);
-         // navigate("/");
-        } catch (err) {
-          console.log(err.response);
-          console.log(err.response.data.msg)
-  
-          if ( err.response.data.msg ==="Bad password") {
-            setPasswordError("Incorrect password");
-          } if(err.response.data.msg==="Bad credentails"){
+          console.log(response.data);
+          console.log(response.data.msg);
+
+          if (response.data.msg === "Shipper logged in") {
+              login(response.data.token, response.data.name, "Shipper");
+              
+              return;
+          } else if (response.data.msg === "Bad password") {
+            
+              setPasswordError("Incorrect password");
+              return;
+          }else if (response.data.msg === "Bad credentials"){
+            
+            let response = await axios.post("/api/auth/login", formData, {
+              headers: { "Content-Type": "application/json" }});
+          console.log(response.data);
+          if (response.data.msg === "User logged in") {
+              login(response.data.token, response.data.name, "Manager");
+              
+              return;
+          } else if (response.data.msg === "Bad password") {
+              setPasswordError("Incorrect password");
+              return;
+          } else if (response.data.msg === "Bad credentials") {
             setEmailError("User does not exist");
-          }
+            return;
         }
+          }
+      } catch (error) {
+          console.log(error.response);
+      }
+      console.log(password,email)
+  
       } else {
         if (!isValidemail){
           if(email.length==0){

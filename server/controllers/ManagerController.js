@@ -23,12 +23,12 @@ const login = async (req, res) => {
         }
       );
 
-      return res.status(200).json({ msg: "user logged in", token });
+      return res.status(200).json({ msg: "user logged in", token,name:foundUser.name });
     } else {
-      return res.status(400).json({ msg: "Bad password" });
+      return res.status(200).json({ msg: "Bad password" });
     }
   } else {
-    return res.status(400).json({ msg: "Bad credentails" });
+    return res.status(200).json({ msg: "Bad credentials" });
   }
 };
 

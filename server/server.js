@@ -4,7 +4,6 @@ const express=require('express')
 const mongoose=require('mongoose')
 const app=express()
 const collectionRoutes=require ('./routes/collection')
-
 const wasteRoutes=require ('./routes/waste')
 const shipperRoutes =require('./routes/shippers')
 const citizenRoutes= require ('./routes/citizens')
