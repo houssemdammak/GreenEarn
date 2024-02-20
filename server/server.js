@@ -22,7 +22,6 @@ app.use((req, res, next) => {
 
 app.use('/api/auth/', mainRouter);
 app.use('/api/collection', collectionRoutes);
-
 app.use('/api/shippers', shipperRoutes);
 app.use('/api/citizens', citizenRoutes);
 app.use('/api/bins', binRoutes);

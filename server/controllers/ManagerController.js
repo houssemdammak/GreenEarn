@@ -23,7 +23,7 @@ const login = async (req, res) => {
         }
       );
 
-      return res.status(200).json({ msg: "user logged in", token,name:foundUser.name });
+      return res.status(200).json({ msg: "user logged in", token,name:foundUser.name ,id:foundUser._id});
     } else {
       return res.status(200).json({ msg: "Bad password" });
     }

@@ -6,7 +6,7 @@ const PrivateRoute = ({ element,Role }) => {
     const { token,role } = useContext(AuthContext);
     //console.log(token)
     if(!token){
-      return <Navigate to="/login" replace />
+      return <Navigate to="/" replace />
     }else{
       if(role=="Manager" && Role!="Manager"){
         return <Navigate to="/manager" replace />

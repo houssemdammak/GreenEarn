@@ -69,7 +69,7 @@ const Login = () => {
           console.log(response.data.msg);
 
           if (response.data.msg === "Shipper logged in") {
-              login(response.data.token, response.data.name, "Shipper");
+              login(response.data.token, response.data.name,response.data.id, "Shipper");
               
               return;
           } else if (response.data.msg === "Bad password") {
@@ -81,8 +81,8 @@ const Login = () => {
             let response = await axios.post("/api/auth/login", formData, {
               headers: { "Content-Type": "application/json" }});
           console.log(response.data);
-          if (response.data.msg === "User logged in") {
-              login(response.data.token, response.data.name, "Manager");
+          if (response.data.msg === "user logged in") {
+              login(response.data.token, response.data.name, response.data.id,"Manager");
               
               return;
           } else if (response.data.msg === "Bad password") {

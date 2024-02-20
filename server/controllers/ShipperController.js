@@ -1,7 +1,7 @@
 const Shipper = require("../models/ShipperModel");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-
+const Collection= require("../models/CollectionModel")
 // get all Shippers
 const getShippers = async (req, res) => {
   const shippers = await Shipper.find({}).sort({ createdAt: -1 });
@@ -144,13 +144,13 @@ const getCollectionByShipper=async (req,res)=>{
     const { id } = req.params;
 
     // Utilisez la méthode find de Mongoose pour récupérer les collections avec le shipperID spécifié
-    const collections = await Collection.find({ shipperID: id });
+    const collections = await Collection.find({ shipperID: id }).populate('binID');
 
     // Envoyez les collections trouvées en réponse
     res.status(200).json(collections);
   } catch (error) {
     // En cas d'erreur, renvoyez un statut d'erreur avec un message d'erreur
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 
 }
@@ -161,4 +161,5 @@ module.exports = {
   createShipper,
   deleteShipper,
   updateShipper,
+  getCollectionByShipper,
 };

@@ -18,7 +18,8 @@ function App() {
         <Routes>
           <Route path="/shipperApp" element={<PrivateRoute element={<ShipperApp />} Role="Shipper" />} />
           <Route path="/manager/*" element={<PrivateRoute element={<Index />} Role="Manager" />} />
-          <Route path="/login" element={<Login />} />
+          {/* <Route path="/" element={<PrivateRoute element={<Login />} />}/> */}
+          <Route path="/" element={<Login />} />
         </Routes>
      
 );

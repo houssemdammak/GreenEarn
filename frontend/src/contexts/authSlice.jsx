@@ -9,18 +9,21 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(JSON.parse(localStorage.getItem('auth')) || null);
   const [name, setName] = useState(JSON.parse(localStorage.getItem('name')) || null);
   const [role, setRole] = useState(JSON.parse(localStorage.getItem('role')) || null);
+  const [id, setID] = useState(JSON.parse(localStorage.getItem('id')) || null);
 
   useEffect(() => {
     if (!token) {
-      navigate("/login"); // Redirect to login if not authenticated
+      navigate("/"); // Redirect to login if not authenticated
     }
   }, [token, navigate]);
 ///login manager
-  const login = (token,name,role) => {
+  const login = (token,name,id,role) => {
       setToken(token);
       setName(name)
+      setID(id)
       localStorage.setItem('auth', JSON.stringify(token));
       localStorage.setItem('name', JSON.stringify(name));
+      localStorage.setItem('id', JSON.stringify(id));
     if(role=="Manager"){
       setRole("Manager")
       localStorage.setItem('role', JSON.stringify("Manager"));
@@ -35,15 +38,17 @@ export const AuthProvider = ({ children }) => {
   };
 ///login shipper
   const logout = () => {
-    setToken(null);
+    setToken(null);setRole(null);
+    setID(null);
     localStorage.removeItem('auth');
     localStorage.removeItem('name');
     localStorage.removeItem('role');
-    navigate("/login");
+    localStorage.removeItem('id');
+    navigate("/");
   };
 
   return (
-    <AuthContext.Provider value={{ token,name,role, login, logout }}>
+    <AuthContext.Provider value={{ token,name,id,role, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

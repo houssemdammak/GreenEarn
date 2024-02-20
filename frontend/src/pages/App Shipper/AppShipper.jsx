@@ -1,41 +1,40 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef,useContext } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
 import ProgressBar from "react-percent-bar";
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+
 import logo from '../../images/EarnGreen Icons/icon_black.png';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-
+import AuthContext from '../../contexts/authSlice';
 import './AppShipper.css';
 
 function ShipperApp() {
-  const [products, setProducts] = useState(null);
+  const {id, name ,logout } = useContext(AuthContext);
+
+  const [collections, setCollections] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
 
-  const fetchBins = async () => {
-    const response = await fetch('/api/bins')
-    const products = await response.json()
-    setProducts(products)
-    console.log(products)
+  const fetchCollection = async () => {
+    const response = await fetch(`/api/shippers/getCollection/${id}`);
+    const collection = await response.json()
+    setCollections(collection)
+    console.log(collection)
   }
 
-  const fetchBinsCalled = useRef(false);
+  const fetchCollectionCalled = useRef(false);
 
   useEffect(() => {
-    if (!fetchBinsCalled.current) {
-      fetchBins();
-      fetchBinsCalled.current = true;
+    if (!fetchCollectionCalled.current) {
+      fetchCollection();
+      fetchCollectionCalled.current = true;
     }
-  }, [fetchBinsCalled]);
+  }, [fetchCollectionCalled]);
 
   const header = (
     <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
@@ -51,45 +50,42 @@ function ShipperApp() {
   );
 
   let productsWithIndex = [];
-  if (products !== null) {
-    productsWithIndex = products.map((product, index) => ({ ...product, index: products.length - index }));
+  if (collections !== null) {
+    productsWithIndex = collections.map((product, index) => ({ ...product, index: collections.length - index }));
   }
 
-  const statusBodyTemplate = (rowData) => {
-    const percent = (rowData.currentWeight / rowData.capacity) * 100;
-    const mainColor = "rgb(201, 239, 199)";
-    let fillColor;
-
-    // Calculate color based on percentage
-    if (percent <= 25) {
-        fillColor = `rgb(${Math.round( percent * 3)}, ${Math.round( percent * 4)}, 100)`; // Gentle gradient upwards
-    } else if (percent <= 50) {
-        fillColor = `rgb(${Math.round(201 + (percent - 25) * 1.52)}, ${Math.round(239 - (percent - 25) * 1.6)}, 199)`; // Faster gradient upwards
-    } else if (percent <= 75) {
-        fillColor = `rgb(${Math.round(201 + (percent - 50) * 0.76)}, ${Math.round(239 - (percent - 50) * 0.8)}, 199)`; // Gentle gradient downwards
-    } else if (percent <= 95) {
-        const remainingPercent = percent - 75;
-        const redComponent = 255 - remainingPercent;
-        const greenComponent = 100 + remainingPercent;
-        fillColor = `rgb(${Math.round(redComponent)}, ${Math.round(greenComponent)}, 100)`; // Softer red
-    } else {
-        fillColor = "rgb(255, 50, 50)"; // Softer red
-    }
-
+  const handleLogout = () => {
+    logout()
+  }
+  const actionBodyTemplate = (rowData) => {
     return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <ProgressBar
-            percent={percent}
-            fillColor={fillColor}
-            width="100px"
-            height="15px"
-        />
-        <span style={{ marginLeft: '5px' }}>{`${Math.round(percent)}%`}</span>
-      </div>
+        <React.Fragment>
+            <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editProduct(rowData)} />
+            <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeleteProduct(rowData)} />
+        </React.Fragment>
     );
+};
+  const formatDate = (dateString) => {
+    // Convertir la date de type string en objet Date
+    const date = new Date(dateString);
+    
+    // Formater la date en JJ/MM/AAAA
+    const formattedDate = date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    
+    // Formater l'heure en HH:MM
+    const formattedTime = date.toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    // Combinaison de la date et de l'heure formatées
+    return `${formattedDate} ${formattedTime}`;
   };
-
-  const Navbar = ({ userName, handleLogout }) => {
+  const Navbar = () => {
     return (
       <nav className="navbar">
         <div className="navbar-logo">
@@ -97,8 +93,8 @@ function ShipperApp() {
         </div>
         <div className="navbar-items">
           <div className="navbar-user">
-            <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
-            <span className="user-name">{userName}Houssem</span>
+          <span className="user-name">{name}</span>
+            <FontAwesomeIcon icon={faUserCircle} className="user-icon"></FontAwesomeIcon> 
             <FontAwesomeIcon icon={faSignOutAlt} className="logout-icon" onClick={handleLogout} />
           </div>
         </div>
@@ -123,11 +119,12 @@ function ShipperApp() {
             globalFilter={globalFilter}
           >
             <Column field="index" header="Num" sortable style={{ minWidth: '12rem' }}></Column>
-            <Column field="type" header="Type" sortable style={{ minWidth: '12rem' }}></Column>
-            <Column field="location" header="Location" sortable style={{ minWidth: '16rem' }}></Column>
-            <Column field="status" header="Status" body={statusBodyTemplate} style={{ minWidth: '16rem' }}></Column>
-            <Column field="capacity" header="Capacity (Kg)" sortable style={{ minWidth: '16rem' }}></Column>
-            <Column field="currentWeight" header="Current Weight (Kg)" sortable style={{ minWidth: '16rem' }}></Column>
+            <Column field="binID.type" header="Type" sortable style={{ minWidth: '12rem' }}></Column>
+            <Column field="binID.location" header="Location" sortable style={{ minWidth: '16rem' }}></Column>
+            <Column field="createdAt" header="Date" sortable style={{ minWidth: '16rem' }} body={(rowData) => formatDate(rowData.createdAt)}
+/>          <Column field="binID.capacity" header="Capacity (Kg)" sortable style={{ minWidth: '16rem' }}></Column>
+            {/* <Column field="binID.currentWeight" header="Current Weight (Kg)" sortable style={{ minWidth: '16rem' }}></Column> */}
+            
           </DataTable>
         </div>
       </div>

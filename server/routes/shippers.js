@@ -7,7 +7,8 @@ const {
     getShipper,
     createShipper,
     deleteShipper,
-    updateShipper
+    updateShipper,
+    getCollectionByShipper
 } =require ('../controllers/ShipperController')
 const authMiddleware = require('../middleware/auth')
 
@@ -15,7 +16,8 @@ const authMiddleware = require('../middleware/auth')
 router.post("/login",login)
 
 //get all Shippers
-router.get('/',authMiddleware,getShippers)
+// router.get('/',authMiddleware,getShippers)
+router.get('/',getShippers)
 
 //get single Shipper
 router.get('/:id',getShipper)
@@ -28,6 +30,8 @@ router.delete('/:id',deleteShipper)
     
 //Update a Shipper
 router.patch('/:id',updateShipper)
+//get collection by shipper 
+router.get('/getCollection/:id',getCollectionByShipper)
 
 
 
