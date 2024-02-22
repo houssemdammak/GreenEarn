@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 contract WasteManagement {
     struct Bin {
-        uint256 id;
+        string id;
         string location;
         string state;
         uint256 capacity;
@@ -14,13 +14,15 @@ contract WasteManagement {
         uint256 binNotif;
         bool done;
     }
+    event BinCreated(string id);
+
 
     uint256 public binCount;
-    mapping(uint256 => Bin) public bins;
-    uint256[] binIds;
+    mapping(string => Bin) public bins;
+    string[] binIds;
     address[] citizens; // Array to store addresses of citizens
     address[] shippers; // Array to store addresses of shippers
-    mapping(uint256 => bool) isBin; // Mapping to check if an address is a bin
+    mapping(string => bool) isBin; // Mapping to check if an address is a bin
     mapping(address => bool) isCitizen; // Mapping to check if an address is a citizen
     mapping(address => bool) isShipper; // Mapping to check if an address is a shipper
     address public owner;
@@ -40,42 +42,53 @@ contract WasteManagement {
 
 
                      //*************Bin************//
-    function createBin(uint256 _id, string memory _location, string memory _state, uint256 _capacity, uint256 _currentWeight) external onlyOwner {
-        require(!isBin[_id], "Bin already exists");
+ function createBin(string memory _location, string memory _state, uint256 _capacity, uint256 _currentWeight) external onlyOwner returns (string memory) {
+        string memory _id = generateUniqueId();
+        require(!isBin[_id], "Generated ID already exists");
         bins[_id] = Bin(_id, _location, _state, _capacity, _currentWeight);
         binIds.push(_id);
         binCount++;
         isBin[_id] = true;
+        emit BinCreated(_id);
+        return _id;
     }
 
-    function modifyBin(uint256 _id, string memory _location, string memory _state, uint256 _capacity, uint256 _currentWeight) external onlyOwner {
+
+    function modifyBin(string memory _id, string memory _location, string memory _state, uint256 _capacity, uint256 _currentWeight) external onlyOwner {
         require(isBin[_id], "Bin does not exist");
         bins[_id] = Bin(_id, _location, _state, _capacity, _currentWeight);
     }
 
-    function deleteBin(uint256 _id) external onlyOwner {
+    function deleteBin(string memory _id) external onlyOwner {
         require(isBin[_id], "Bin does not exist");
-        
-        // Update mappings and arrays
-        isBin[_id] = false;
-        delete bins[_id];
-        
-        // Find and remove the bin ID from binIds array
+
+        // Find the index of the bin ID in binIds
+        uint256 indexToDelete = binIds.length; // Initialize to an out-of-bounds index
         for (uint256 i = 0; i < binIds.length; i++) {
-            if (binIds[i] == _id) {
-                for (uint256 j = i; j < binIds.length - 1; j++) {
-                    binIds[j] = binIds[j + 1];
-                }
-                binIds.pop();
+            if (keccak256(abi.encodePacked(binIds[i])) == keccak256(abi.encodePacked(_id))) {
+                indexToDelete = i;
                 break;
             }
         }
-        
+
+        // Ensure the bin ID was found in the binIds array
+        require(indexToDelete < binIds.length, "Bin ID not found in binIds array");
+
+        // Remove the bin ID from binIds
+        for (uint256 i = indexToDelete; i < binIds.length - 1; i++) {
+            binIds[i] = binIds[i + 1];
+        }
+        binIds.pop();
+
         // Decrement binCount
         binCount--;
+
+        // Update mappings
+        isBin[_id] = false;
+        delete bins[_id];
     }
     
-    function getBins() public view returns (uint256[] memory, string[] memory, string[] memory, uint256[] memory, uint256[] memory) {
+    function getBins() public view returns (string [] memory, string[] memory, string[] memory, uint256[] memory, uint256[] memory) {
         string[] memory locations = new string[](binCount);
         string[] memory states = new string[](binCount);
         uint256[] memory capacities = new uint256[](binCount);
@@ -91,116 +104,29 @@ contract WasteManagement {
 
         return (binIds, locations, states, capacities, currentWeights);
     }
-
-
-
-
-                        //*************Citizen************//
-    function createCitizen(address _citizen) external onlyOwner {
-        require(!isCitizen[_citizen], "Citizen already exists");
-        require(_citizen != owner, "Cannot create citizen with owner's address");
-
-        citizens.push(_citizen);
-        isCitizen[_citizen] = true;
+    function generateUniqueId() internal view returns (string memory) {
+        bytes32 hash = keccak256(abi.encodePacked(block.timestamp, block.prevrandao, binCount));
+        return toStringUniqueId(uint64(uint256(hash)));
     }
+    //ena zedt fazat uint64 bech nsa8arha
 
-
-    function getCitizens() public view returns (address[] memory) {
-        return citizens;
-    }
-
-    function deleteCitizen(address _citizenAddress) external onlyOwner {
-        for (uint256 i = 0; i < citizens.length; i++) {
-            if (citizens[i] == _citizenAddress) {
-                citizens[i] = citizens[
-                    citizens.length - 1
-                ];
-                citizens.pop();
-                break;
-            }
+    function toStringUniqueId(uint256 value) internal pure returns (string memory) {
+        if (value == 0) {
+            return "0";
         }
-    }
-
-
-                         //*************Shipper************//
-    function createShipper(address _shipper) external onlyOwner {
-        // Check if the shipper already exists
-        require(!isShipper[_shipper], "Shipper already exists");
-
-        // Add the shipper to the database
-        shippers.push(_shipper);
-        isShipper[_shipper] = true;
-    }
-
-    function getShippers() public view returns (address[] memory) {
-        return shippers;
-    }
-
-    function notifyShipper(address _shipper, uint256 _idBin) external onlyOwner {
-        require(isShipper[_shipper], "Shipper doesn't exist");
-        require(isBin[_idBin], "Bin doesn't exist");
-        notifications[_shipper][_idBin] = Notif(_shipper, _idBin, false);
-    }
-
-    function getNotifByShipper(address _shipper) public view returns (Notif[] memory) {
-        // Create an array to store notifications for the specified shipper
-        Notif[] memory shipperNotifications = new Notif[](binCount);
-
-        for (uint256 i = 0; i < binCount; i++) {
-            uint256 binId = binIds[i];
-            if (isBin[binId]) {
-                shipperNotifications[i] = notifications[_shipper][binId];
-            }
+        uint256 temp = value;
+        uint256 digits;
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
         }
-
-        return shipperNotifications;
-    }
-
-   function getAllNotif() public view returns (Notif[] memory) {
-        // Calculate the total number of notifications
-        uint256 totalNotifications = 0;
-        for (uint256 i = 0; i < shippers.length; i++) {
-            for (uint256 j = 0; j < binCount; j++) {
-                uint256 binId = binIds[j];
-                if (isBin[binId] && notifications[shippers[i]][binId].shipperNotified != address(0)) {
-                    totalNotifications++;
-                }
-            }
+        bytes memory buffer = new bytes(digits);
+        while (value != 0) {
+            digits -= 1;
+            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+            value /= 10;
         }
-
-        // Create an array to store all notifications
-        Notif[] memory allNotifications = new Notif[](totalNotifications);
-
-        uint256 index = 0;
-        for (uint256 i = 0; i < shippers.length; i++) {
-            for (uint256 j = 0; j < binCount; j++) {
-                uint256 binId = binIds[j];
-                Notif memory notification = notifications[shippers[i]][binId];
-                if (isBin[binId] && notification.shipperNotified != address(0)) {
-                    allNotifications[index] = notification;
-                    index++;
-                }
-            }
-        }
-
-        return allNotifications;
+        return string(buffer);
     }
-
-
-
-
-   function deleteShipper(address _shipperAddress) external onlyOwner {
-        for (uint256 i = 0; i < shippers.length; i++) {
-            if (shippers[i] == _shipperAddress) {
-                shippers[i] = shippers[
-                    shippers.length - 1
-                ];
-                shippers.pop();
-                break;
-            }
-        }
-    }
-
-
 
 }

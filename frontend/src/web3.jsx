@@ -33,24 +33,30 @@ const initContract = async (web3) => {
   );
   return contract;
 };
-const createBin = async (contract, id, location, state, capacity, currentWeight) => {
-  const web3 = await initWeb3(); // Initialize Web3 instance
-  const accounts = await web3.eth.getAccounts(); // Use web3 instance to access getAccounts
-  console.log(accounts)
-  const senderAddress = accounts[0];
-  
+const createBin = async (contract, location, state, capacity, currentWeight) => {
   try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; // Assuming you want to use the first account
+
     // Send transaction to the blockchain
-    await contract.methods.createBin(id, location, state, capacity, currentWeight).send({ 
+    const transaction = await contract.methods.createBin(location, state, capacity, currentWeight).send({ 
       from: senderAddress
     });  
+
     console.log("Bin created successfully!");
-    return 'accepted'; // Return 'accepted' if transaction succeeds
+
+    // Retrieve the bin ID from the emitted event
+    const binId = transaction.events.BinCreated.returnValues.id;
+    console.log(binId)
+    return { status: 'accepted', binId }; // Return 'accepted' status along with bin ID
   } catch (error) {
     console.error("Error creating bin:", error);
-    return 'rejected'; // Return 'rejected' if transaction fails
+    return { status: 'rejected', binId: null }; // Return 'rejected' status and null bin ID if transaction fails
   }
 };
+
+
 
 
 const deleteBin = async (contract, id) => {
@@ -68,5 +74,24 @@ const deleteBin = async (contract, id) => {
   }
 };
 
-export { initWeb3, initContract,createBin,deleteBin };
+const modifyBin = async (contract, binId, location, state, capacity, currentWeight) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; // Assuming you want to use the first account
+    // Send transaction to the blockchain
+    await contract.methods.modifyBin(binId, location, state, capacity, currentWeight).send({ 
+      from: senderAddress
+    });  
 
+    console.log("Bin modified successfully!");
+
+    return { status: 'accepted' }; // Return 'accepted' status if transaction succeeds
+  } catch (error) {
+    console.error("Error modifying bin:", error);
+    return { status: 'rejected' }; // Return 'rejected' status if transaction fails
+  }
+};
+
+
+export { initWeb3, initContract,createBin,deleteBin,modifyBin };

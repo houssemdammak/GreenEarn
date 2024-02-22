@@ -11,8 +11,9 @@ import { Message } from 'primereact/message';
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { useWeb3 } from "../contexts/web3Context";
-import { createBin, deleteBin } from "../web3";
+import { createBin, deleteBin ,modifyBin} from "../web3";
 import ProgressBar from "react-percent-bar";
+
 function BinDemo() {
   const { contract } = useWeb3();
 
@@ -23,6 +24,7 @@ function BinDemo() {
     capacity: "",
     currentWeight: "0",
     shipperID:"",
+    BlockchainID:"",
   };
   let emptyProductUpdate = {
     type: "",
@@ -105,14 +107,14 @@ function BinDemo() {
     const capacityError = !isValidCapacity
       ? "Capacity must be a number greater than 0."
       : "";
-
+  
     // Validate currentWeight
     const isValidCurrentWeight =
       product.currentWeight !== "" && product.currentWeight < product.capacity;
     const currentWeightError = !isValidCurrentWeight
       ? " Current Weight should be less than the capacity "
       : "";
-
+  
     if (
       isValidCapacity &&
       isValidCurrentWeight &&
@@ -128,36 +130,40 @@ function BinDemo() {
       setCurrentWeightError("");
       setProducts(_products);
       try {
-        const response = await fetch("/api/bins/", {
-          method: "POST",
-          body: JSON.stringify(_product),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        _products.push(_product);
-        toast.current.show({
-          severity: "success",
-          summary: "Successful",
-          detail: "Bin Created",
-          life: 3000,
-        });
-        //console.log(_product)
-        const responseData = await response.json();
-
-        console.log(responseData);
-        /*-----------------------------------------hethy blockchain------------------------------------------------------------*/
-        //createBin(contract,responseData.id, product.location, product.status, product.capacity, product.currentWeight);
-
-        //createBin(contract,9, "agereb", "empty", 100, 0);
-        /*--------------------------------------------------------------------------------------------------------------*/
-        fetchBins();
-
-        //console.log('Réponse de l\'API:', responseData);
+  
+        // Perform blockchain transaction
+        const blockchainTransactionResult = await createBin(contract, _product.location, _product.status, _product.capacity, _product.currentWeight);
+  
+        if (blockchainTransactionResult.status === 'accepted') {
+          // Update the bin model with the returned ID
+          _product.BlockchainID = blockchainTransactionResult.binId;
+          console.log(blockchainTransactionResult.binId)
+          // Save the bin to the database
+          const response = await fetch("/api/bins/", {
+            method: "POST",
+            body: JSON.stringify(_product), 
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+  
+          if (response.status === 200) {
+            _products.push(_product);      
+            fetchBins();
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Bin Created', life: 3000 });
+          } else {
+            console.error('Error saving bin to the database:', response.statusText);
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to save bin to the database.', life: 3000 });
+          }
+        } else {
+          console.error('Blockchain transaction failed.');
+          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Bin creation reverted.', life: 3000 });
+        }
       } catch (error) {
-        console.error("Erreur lors de l'envoi des données à l'API:", error);
+        console.error('Error creating bin:', error);
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create bin.', life: 3000 });
       }
-
+    
       setcapacityError("");
       setCurrentWeightError("");
       setProducts(_products);
@@ -170,6 +176,7 @@ function BinDemo() {
       setCurrentWeightError(currentWeightError);
     }
   };
+  
 
   //Check if products is not null before getting its length
 
@@ -201,34 +208,66 @@ function BinDemo() {
       setcapacityError("");
       setCurrentWeightError("");
       setProducts(_products);
-
       try {
-        // Utilisation de la méthode PATCH pour mettre à jour partiellement la ressource
-        const response = await fetch(`/api/bins/${_product._id}`, {
-          method: "PATCH",
-          body: JSON.stringify(_product),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (response.ok) {
-          _products[index] = _product;
-          toast.current.show({
-            severity: "success",
-            summary: "Successful",
-            detail: "Bin Updated",
-            life: 3000,
-          });
+  //lehna ghalta toString lezmn nraj3o el status fel contrat uint
+        const blockchainTransactionResult = await modifyBin(contract,_product.BlockchainID, _product.location, _product.status, _product.capacity, _product.currentWeight);
+  
+        if (blockchainTransactionResult.status === 'accepted') {
+          
+          const response = await fetch(`/api/bins/${_product._id}`, {
+                method: "PATCH",
+                body: JSON.stringify(_product),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+  
+          if (response.status === 200) {
+           _products[index] = _product;
+            fetchBins();
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Bin Updated', life: 3000 });
+          } else {
+            console.error('Error updating bin to the database:', response.statusText);
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to save bin to the database.', life: 3000 });
+          }
+        } else {
+          console.error('Blockchain transaction failed.');
+          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Bin update reverted.', life: 3000 });
         }
-        console.log(_product);
-        const responseData = await response.json();
-
-        console.log("Réponse de l'API:", responseData);
-        fetchBins();
       } catch (error) {
-        console.error("Erreur lors de la mise à jour du Bin:", error);
+        console.error('Error updating bin:', error);
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create bin.', life: 3000 });
       }
+
+
+
+      // try {
+      //   // Utilisation de la méthode PATCH pour mettre à jour partiellement la ressource
+      //   const response = await fetch(`/api/bins/${_product._id}`, {
+      //     method: "PATCH",
+      //     body: JSON.stringify(_product),
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   });
+
+      //   if (response.ok) {
+      //     _products[index] = _product;
+      //     toast.current.show({
+      //       severity: "success",
+      //       summary: "Successful",
+      //       detail: "Bin Updated",
+      //       life: 3000,
+      //     });
+      //   }
+      //   console.log(_product);
+      //   const responseData = await response.json();
+
+      //   console.log("Réponse de l'API:", responseData);
+      //   fetchBins();
+      // } catch (error) {
+      //   console.error("Erreur lors de la mise à jour du Bin:", error);
+      // }
 
       setcapacityError("");
       setCurrentWeightError("");
@@ -243,6 +282,9 @@ function BinDemo() {
     }
   };
 
+  
+  
+  
   const editProduct = (product) => {
     setProduct({ ...product });
     setProductDialogUpdate(true);
@@ -302,12 +344,12 @@ function BinDemo() {
         // console.log(responseData.id)
 
         /*----------------------------------------blockchain-----------------------------*/
-        //deleteBin(contract,responseData.id)
+        deleteBin(contract,responseData.BlockchainID)
 
         toast.current.show({
           severity: "success",
           summary: "Successful",
-          detail: "in Deleted",
+          detail: "Bin Deleted",
           life: 3000,
         });
       } else {
