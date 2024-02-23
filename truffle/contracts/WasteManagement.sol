@@ -253,6 +253,9 @@ contract WasteManagement {
         
         // Further logic here if needed
     }
-
+    function getIsBin(string memory _binId) external view returns (bool) {
+        require(isBin[_binId], "Bin doesn't exist");
+        return isBin[_binId];
+    }
 
 }

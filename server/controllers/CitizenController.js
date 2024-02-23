@@ -111,8 +111,9 @@ const login = async (req, res) => {
 const register = async (req, res) => {
   let foundUser = await Citizen.findOne({ email: req.body.email });
   if (foundUser === null) {
-    console.log(req.body)
     let { FullName, email, password,WalletID } = req.body;
+    console.log(FullName, email, password,WalletID)
+
     if (FullName.length && email.length && password.length && WalletID.length) {
       const person = new Citizen({
         FullName: FullName,
@@ -120,8 +121,16 @@ const register = async (req, res) => {
         password: password,
         WalletID:WalletID
       });
+      
       await person.save();
-      return res.status(201).json({ person });
+      const token = jwt.sign(
+        { id: person._id, name: person.FullName },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "30d",
+        }
+      );
+      return res.status(201).json({ id:person._id,name:person.FullName ,token});
     }else{
         return res.status(400).json({msg: "Please add all values in the request body"});
     }
