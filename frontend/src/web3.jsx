@@ -33,19 +33,20 @@ const initContract = async (web3) => {
   );
   return contract;
 };
-const createBin = async (contract, location, state, capacity, currentWeight) => {
+
+
+//*********BIN**********/
+const createBin = async (contract, location, capacity, currentWeight) => {
   try {
     const web3 = await initWeb3(); // Initialize Web3 instance
     const accounts = await web3.eth.getAccounts(); // Get accounts
     const senderAddress = accounts[0]; // Assuming you want to use the first account
 
     // Send transaction to the blockchain
-    const transaction = await contract.methods.createBin(location, state, capacity, currentWeight).send({ 
+    const transaction = await contract.methods.createBin(location, capacity, currentWeight).send({ 
       from: senderAddress
     });  
-
     console.log("Bin created successfully!");
-
     // Retrieve the bin ID from the emitted event
     const binId = transaction.events.BinCreated.returnValues.id;
     console.log(binId)
@@ -55,9 +56,6 @@ const createBin = async (contract, location, state, capacity, currentWeight) => 
     return { status: 'rejected', binId: null }; // Return 'rejected' status and null bin ID if transaction fails
   }
 };
-
-
-
 
 const deleteBin = async (contract, id) => {
   const web3 = await initWeb3(); // Initialize Web3 instance
@@ -69,18 +67,21 @@ const deleteBin = async (contract, id) => {
       from: senderAddress
   });  
     console.log("Bin deleted successfully!");
+    return { status: 'accepted'}; 
+
   } catch (error) {
     console.error("Error deleting bin:", error);
+    return { status: 'rejected'};
   }
 };
 
-const modifyBin = async (contract, binId, location, state, capacity, currentWeight) => {
+const modifyBin = async (contract, binId, location,  capacity, currentWeight) => {
   try {
     const web3 = await initWeb3(); // Initialize Web3 instance
     const accounts = await web3.eth.getAccounts(); // Get accounts
     const senderAddress = accounts[0]; // Assuming you want to use the first account
     // Send transaction to the blockchain
-    await contract.methods.modifyBin(binId, location, state, capacity, currentWeight).send({ 
+    await contract.methods.modifyBin(binId, location, capacity, currentWeight).send({ 
       from: senderAddress
     });  
 
@@ -93,5 +94,130 @@ const modifyBin = async (contract, binId, location, state, capacity, currentWeig
   }
 };
 
+//*********Shipper**********/
+const createShipper = async (contract, walletId) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; // Assuming you want to use the first account
 
-export { initWeb3, initContract,createBin,deleteBin,modifyBin };
+    // Send transaction to the blockchain
+    const transaction = await contract.methods.createShipper(walletId).send({ 
+      from: senderAddress
+    });  
+    console.log("Shipper created successfully!");
+    return { status: 'accepted'}; 
+  } catch (error) {
+    console.error("Error creating shipper:", error);
+    return { status: 'rejected'}; 
+  }
+};
+
+const deleteShipper = async (contract, walletId) => {
+  const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Use web3 instance to access getAccounts
+    console.log(accounts)
+    const senderAddress = accounts[0];
+  try {
+    await contract.methods.deleteShipper(walletId).send({ 
+      from: senderAddress
+  });  
+    console.log("Shipper deleted successfully!");
+    return { status: 'accepted'}; 
+
+  } catch (error) {
+    console.error("Error deleting Shipper:", error);
+    return { status: 'rejected'};
+  }
+};
+
+const modifyShipper = async (contract,walletId) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; // Assuming you want to use the first account
+    // Send transaction to the blockchain
+    await contract.methods.modifyShipper(walletId).send({ 
+      from: senderAddress
+    });  
+
+    console.log("Shipper modified successfully!");
+
+    return { status: 'accepted' }; 
+  } catch (error) {
+    console.error("Error modifying Shipper:", error);
+    return { status: 'rejected' }; 
+  }
+};
+
+
+//*********Citizen**********/
+
+const createCitizen = async (contract, walletId) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; // Assuming you want to use the first account
+
+    // Send transaction to the blockchain
+    const transaction = await contract.methods.createCitizen(walletId).send({ 
+      from: senderAddress
+    });  
+    console.log("Citizen created successfully!");
+    return { status: 'accepted'}; 
+  } catch (error) {
+    console.error("Error creating Citizen:", error);
+    return { status: 'rejected'}; 
+  }
+};
+
+const deleteCitizen = async (contract, walletId) => {
+  const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Use web3 instance to access getAccounts
+    console.log(accounts)
+    const senderAddress = accounts[0];
+  try {
+    await contract.methods.deleteCitizen(walletId).send({ 
+      from: senderAddress
+  });  
+    console.log("Citizen deleted successfully!");
+    return { status: 'accepted'}; 
+
+  } catch (error) {
+    console.error("Error deleting Citizen:", error);
+    return { status: 'rejected'};
+  }
+};
+
+const modifyCitizen = async (contract,walletId) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; // Assuming you want to use the first account
+    // Send transaction to the blockchain
+    await contract.methods.modifyCitizen(walletId).send({ 
+      from: senderAddress
+    });  
+
+    console.log("Citizen modified successfully!");
+
+    return { status: 'accepted' }; 
+  } catch (error) {
+    console.error("Error modifying Citizen:", error);
+    return { status: 'rejected' }; 
+  }
+};
+
+
+export { initWeb3,
+         initContract,
+         createBin,
+         deleteBin,
+         modifyBin,
+         createShipper,
+         deleteShipper,
+         modifyShipper,
+         createCitizen,
+         deleteCitizen,
+         modifyCitizen
+        };

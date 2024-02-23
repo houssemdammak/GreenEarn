@@ -132,8 +132,8 @@ function BinDemo() {
       try {
   
         // Perform blockchain transaction
-        const blockchainTransactionResult = await createBin(contract, _product.location, _product.status, _product.capacity, _product.currentWeight);
-  
+        const blockchainTransactionResult = await createBin(contract, _product.location, _product.capacity, _product.currentWeight);
+       
         if (blockchainTransactionResult.status === 'accepted') {
           // Update the bin model with the returned ID
           _product.BlockchainID = blockchainTransactionResult.binId;
@@ -179,8 +179,7 @@ function BinDemo() {
   
 
   //Check if products is not null before getting its length
-
-  const saveUpdatedProduct = async () => {
+const saveUpdatedProduct = async () => {
     setSubmitted(true);
     const isValidCapacity = product.capacity !== null && product.capacity > 0;
     const capacityError = !isValidCapacity
@@ -209,9 +208,12 @@ function BinDemo() {
       setCurrentWeightError("");
       setProducts(_products);
       try {
-  //lehna ghalta toString lezmn nraj3o el status fel contrat uint
-        const blockchainTransactionResult = await modifyBin(contract,_product.BlockchainID, _product.location, _product.status, _product.capacity, _product.currentWeight);
-  
+        const blockchainTransactionResult = await modifyBin(contract,_product.BlockchainID, _product.location, _product.capacity, _product.currentWeight);
+        // console.log( _product.status.type);
+        // console.log(_product.BlockchainID);
+        // console.log(_product.location);
+        // console.log(_product.capacity);
+        // console.log(_product.currentWeight);
         if (blockchainTransactionResult.status === 'accepted') {
           
           const response = await fetch(`/api/bins/${_product._id}`, {
@@ -228,7 +230,7 @@ function BinDemo() {
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Bin Updated', life: 3000 });
           } else {
             console.error('Error updating bin to the database:', response.statusText);
-            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to save bin to the database.', life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to update bin to the database.', life: 3000 });
           }
         } else {
           console.error('Blockchain transaction failed.');
@@ -327,42 +329,51 @@ function BinDemo() {
 }
   /////////////////////////////
   const deleteProduct = async () => {
+    const BlockchainID = product.BlockchainID;
+    console.log(product.BlockchainID);
+    let blockchainTransactionResult; // Define blockchainTransactionResult here
     try {
-      const response = await fetch(`/api/bins/${product._id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        let _products = products.filter((val) => val._id !== product._id);
-        const responseData = await response.json();
-        setProducts(_products);
-        setDeleteProductDialog(false);
-        setProduct(emptyProduct);
-        // console.log(responseData.id)
-
-        /*----------------------------------------blockchain-----------------------------*/
-        deleteBin(contract,responseData.BlockchainID)
-
-        toast.current.show({
-          severity: "success",
-          summary: "Successful",
-          detail: "Bin Deleted",
-          life: 3000,
+      blockchainTransactionResult = await deleteBin(contract, BlockchainID); // Assign the result
+      console.log(blockchainTransactionResult.status);
+  
+      if (blockchainTransactionResult.status === 'accepted') {
+        const response = await fetch(`/api/bins/${product._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+  
+        if (response.ok) {
+          let _products = products.filter((val) => val._id !== product._id);
+          const responseData = await response.json();
+          setProducts(_products);
+          setDeleteProductDialog(false);
+          setProduct(emptyProduct);
+          // console.log(responseData.id)
+          toast.current.show({
+            severity: "success",
+            summary: "Successful",
+            detail: "Bin Deleted",
+            life: 3000,
+          });
+        } else {
+          console.error(
+            "Failed to delete bin. Server returned:",
+            response.status,
+            response.statusText
+          );
+        }
       } else {
-        console.error(
-          "Failed to delete bin. Server returned:",
-          response.status,
-          response.statusText
-        );
+        console.error('Blockchain transaction failed.');
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Bin deletion reverted.', life: 3000 });
       }
     } catch (error) {
       console.error("Error deleting Bin:", error.message);
+      console.error("Blockchain transaction result:", blockchainTransactionResult); // Log the blockchainTransactionResult here
     }
   };
+  
 
   const findIndexById = (id) => {
     let index = -1;
@@ -789,15 +800,15 @@ function BinDemo() {
             value={product.currentWeight}
             onChange={(e) => onInputChange(e, "currentWeight")}
             required
-            className={classNames({
-              "p-invalid": submitted && !product.currentWeight,
-            })}
+            // className={classNames({
+            //   "p-invalid": submitted && !product.currentWeight,
+            // })}
           />
-          {submitted &&
+          {/* {submitted &&
             !product.currentWeight &&
             product.currentWeight !== "0" && (
               <small className="p-error">Current Weight is required.</small>
-            )}
+            )} */}
           {currentWeightError && currentWeightError !== "" && (
             <small className="p-error">{currentWeightError}</small>
           )}
