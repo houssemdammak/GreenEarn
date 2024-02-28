@@ -13,13 +13,16 @@ import { AuthProvider } from './contexts/authSlice';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Index from './pages/index';
 import ShipperApp from './pages/App Shipper/AppShipper';
+import RecyclingCenter from './pages/RecyclingCenter/RecyclingCenter';
+
 function App() {
  return(
         <Routes>
           <Route path="/shipperApp" element={<PrivateRoute element={<ShipperApp />} Role="Shipper" />} />
           <Route path="/manager/*" element={<PrivateRoute element={<Index />} Role="Manager" />} />
-          {/* <Route path="/" element={<PrivateRoute element={<Login />} />}/> */}
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<PrivateRoute element={<Login />} Role="Login" />}/>
+          {/* <Route path="/" element={<Login />} Role="Login" /> */}
+          <Route path="/RecyclingCenter" element={<PrivateRoute element={<RecyclingCenter/> } Role="RecyclingCenter" />}/>
         </Routes>
      
 );

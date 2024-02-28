@@ -747,15 +747,15 @@ function BinDemo() {
             value={product.currentWeight}
             onChange={(e) => onInputChange(e, "currentWeight")}
             required
-            className={classNames({
-              "p-invalid": submitted && !product.currentWeight,
-            })}
+            // className={classNames({
+            //   "p-invalid": submitted && !product.currentWeight,
+            // })}
           />
-          {submitted &&
+          {/* {submitted &&
             !product.currentWeight &&
             product.currentWeight !== "0" && (
               <small className="p-error">Current Weight is required.</small>
-            )}
+            )} */}
           {currentWeightError && currentWeightError !== "" && (
             <small className="p-error">{currentWeightError}</small>
           )}

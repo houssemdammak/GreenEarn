@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef,useMemo } from 'react';
 import "./bin.css";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import NavigationBar from '../../components/navbar'
+import { Tag } from 'primereact/tag';
 import AuthContext from '../../contexts/authContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
@@ -24,23 +25,48 @@ function BinDemo() {
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
+  
   useEffect(() => {
     const fetchWasteByCitizen = async () => {
-      const response = await fetch(`/api/wastes/${id}`);
-      const products = await response.json()
-      setProducts(products)
-      console.log(products)
-    }
-    fetchWasteByCitizen()
+      try {
+        const response = await fetch(`/api/wastes/${id}`);
+        const products = await response.json();
+        setProducts(products);
+        console.log(products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+    fetchWasteByCitizen();
   }, []);
- let productsWithIndex = [];
- console.log(productsWithIndex )
- if (products !== null && typeof products === 'object' && products.error=="") {
-  Object.values(products).reverse().forEach((product, index) => {
-    productsWithIndex.push({ ...product, index: 1 + index });
-  });
-}
+  const productsWithIndex = useMemo(() => {
+    if (!products || products.error) {
+      return []; // Retourne un tableau vide si products est undefined ou s'il contient une erreur
+    }
 
+    return Object.values(products)
+      .reverse()
+      .map((product, index) => ({ ...product, index: 1 + index }));
+  }, [products]);
+  // let productsWithIndex = [];
+//   if (products !== null ) {
+//    Object.values(products).reverse().forEach((product, index) => {
+//      productsWithIndex.push({ ...product, index: 1 + index });
+//    });
+//  }
+  console.log(productsWithIndex)
+  const getRowSeverity = (status) => {
+    switch (status) {
+      case 'Waiting':
+        return 'warning'; // jaune pour waiting
+      case 'Shipped':
+        return null; // bleu pour shipped
+      case 'Recycled':
+        return 'success'; // vert pour recycled
+      default:
+        return 'info'; // couleur par défaut
+    }
+  };
   return (
 <>
 <NavigationBar />
@@ -65,10 +91,12 @@ function BinDemo() {
       >
         <Column field="index" header="Num" sortable style={{ minWidth: '12rem' }}></Column>
         <Column field="type" header="Type" sortable style={{ minWidth: '12rem' }}></Column> 
-        <Column field="status" header="Status" sortable style={{ minWidth: '16rem' }}></Column>
+        <Column field="status" header="Status" body={(rowData)=>
+        <Tag value={rowData.status} severity={getRowSeverity(rowData.status)} />
+        }sortable style={{ minWidth: '16rem' }}></Column>
         <Column field="location" header="Location" sortable style={{ minWidth: '16rem' }}></Column>
         <Column field="weight" header="Weight (Kg)" sortable style={{ minWidth: '16rem' }}></Column>
-        <Column field="dateAdded" header="Date" sortable style={{ minWidth: '16rem' }}></Column> 
+        <Column field="dateAdded" header="Date"  body={(rowData) => formatDate(rowData.dateAdded)} sortable style={{ minWidth: '16rem' }}></Column> 
         {/* <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column> */}
       </DataTable></div>  
 </div>

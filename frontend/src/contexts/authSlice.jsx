@@ -34,6 +34,11 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('role', JSON.stringify("Shipper"));
       navigate("/shipperApp")
     }
+    if(role=="RecyclingCenter"){
+      setRole("RecyclingCenter")
+      localStorage.setItem('role', JSON.stringify("RecyclingCenter"));
+      navigate("/RecyclingCenter")
+    }
     
   };
 ///login shipper

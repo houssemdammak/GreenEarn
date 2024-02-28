@@ -14,8 +14,9 @@ import { InputText } from 'primereact/inputtext';
     FullName: '',
     Location: '',
     TelephoneNum: '',
-     email: "",
+    email: "",
     password:"" ,
+    confirmpassword:"" 
 };
   /*------------------------errors sets--------------------------------*/
     const [EmailErrorExist, setEmailErrorExist] = useState("");
@@ -104,7 +105,8 @@ import { InputText } from 'primereact/inputtext';
         && product.FullName.trim() && product.Location.trim() && product.TelephoneNum.toString().trim() !== ''){            
           try {
 
-                  delete _product.confirmpassword;
+                  delete 
+                  product.confirmpassword;
 
                   const response = await fetch('/api/shippers', {
                       method: 'POST',
@@ -417,7 +419,7 @@ import { InputText } from 'primereact/inputtext';
         </div>
         <div className="field">
           <label htmlFor="FullName" className="font-bold">Full Name</label>
-          <InputText id="FullName" value={product.FullName} onChange={(e) => onInputChange(e, 'FullName')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.FullName })} />
+          <InputText id="FullName" value={product.FullName} onChange={(e) => onInputChange(e, 'FullName')} required  className={classNames({ 'p-invalid': submitted && !product.FullName })} />
           {submitted && !product.FullName && <small className="p-error">Full Name is required.</small>}
           
         </div>
@@ -428,7 +430,6 @@ import { InputText } from 'primereact/inputtext';
             value={product.email}
             onChange={(e) => onInputChange(e, "email")}
             required
-            autoFocus
             className={classNames({ "p-invalid": submitted && !product.email })}
           />
           {submitted && !product.email && (
@@ -446,7 +447,6 @@ import { InputText } from 'primereact/inputtext';
             value={product.password}
             onChange={(e) => onInputChange(e, "password")}
             required
-            autoFocus
             className={classNames({
               "p-invalid": submitted && !product.password,
             })}
@@ -466,7 +466,7 @@ import { InputText } from 'primereact/inputtext';
             value={product.confirmpassword}
             onChange={(e) => onInputChange(e, "confirmpassword")}
             required
-            autoFocus
+            
             className={classNames({
               "p-invalid": submitted && !product.confirmpassword,
             })}
@@ -483,7 +483,7 @@ import { InputText } from 'primereact/inputtext';
         </div>
         <div className="field">
           <label htmlFor="TelephoneNum" className="font-bold">Telephone Number</label>
-          <InputText id="TelephoneNum" value={product.TelephoneNum} onChange={(e) => onInputChange(e, 'TelephoneNum')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.TelephoneNum })} />
+          <InputText id="TelephoneNum" value={product.TelephoneNum} onChange={(e) => onInputChange(e, 'TelephoneNum')} required  className={classNames({ 'p-invalid': submitted && !product.TelephoneNum })} />
           {submitted && !product.TelephoneNum && <small className="p-error">Telephone Number is required.</small>}
           {phoneNumberError&& product.TelephoneNum && <small className="p-error">{phoneNumberError}</small>}
         </div>
@@ -511,7 +511,6 @@ import { InputText } from 'primereact/inputtext';
             value={product.email}
             onChange={(e) => onInputChange(e, "email")}
             required
-            autoFocus
             className={classNames({ "p-invalid": submitted && !product.email })}
           />
           {submitted && !product.email && (<small className="p-error">Email is required.</small>)}
@@ -525,7 +524,7 @@ import { InputText } from 'primereact/inputtext';
         </div>
         <div className="field">
           <label htmlFor="TelephoneNum" className="font-bold">Telephone Number</label>
-          <InputText id="TelephoneNum" value={product.TelephoneNum} onChange={(e) => onInputChange(e, 'TelephoneNum')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.TelephoneNum })} />
+          <InputText id="TelephoneNum" value={product.TelephoneNum} onChange={(e) => onInputChange(e, 'TelephoneNum')} required  className={classNames({ 'p-invalid': submitted && !product.TelephoneNum })} />
           {submitted && !product.TelephoneNum && <small className="p-error">Telephone Number is required.</small>}
           {phoneNumberError && <small className="p-error">{phoneNumberError}</small>}
         </div>

@@ -9,9 +9,9 @@ import { Badge } from "primereact/badge";
 import { Avatar } from "primereact/avatar";
 import logo from "../../images/EarnGreen Icons/icon_black.png";
 import AuthContext from "../../contexts/authSlice";
-import "./AppShipper.css";
+import "./RecyclingCenter.css";
 
-function ShipperApp() {
+function RecyclingCenter() {
  const {id, name, logout } = useContext(AuthContext);
   const [confirm, setDialogConfirm] = useState(false);
   const [collections, setCollections] = useState(null);
@@ -22,7 +22,7 @@ const [globalFilter, setGlobalFilter] = useState(null);
   const dt = useRef(null);
   const countTasksAdded = (collections) => {
     if (collections !== null) {
-      return collections.filter((c) => c.shippingdate==null)
+      return collections.filter((c) => c.recyclingdatedate==null)
         .length;
     }
     return 0;
@@ -31,7 +31,7 @@ const [globalFilter, setGlobalFilter] = useState(null);
   
 
   const fetchCollection = async () => {
-    const response = await fetch(`/api/shippers/getCollection/${id}`);
+    const response = await fetch(`/api/collection/`);
     const collection = await response.json();
     setCollections(collection);
     console.log(collection);
@@ -83,7 +83,7 @@ const [globalFilter, setGlobalFilter] = useState(null);
     logout();
   };
   const actionBodyTemplate = (rowData) => {
-    if (rowData.shippingdate) {
+    if (rowData.status==="Recycled") {
       return (
         <React.Fragment>
           <Button
@@ -169,16 +169,16 @@ const [globalFilter, setGlobalFilter] = useState(null);
   };
    const updateCollectionByshipper = async () => {
     // const response = await fetch(`/api/collection/updateCollectionByshipper/${collection.binID._id}`);
-    const response = await fetch(`/api/collection/updateCollectionByshipper`, {
+    const response = await fetch(`/api/collection/updateCollectionByCenter`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ binID:collection.binID._id, collectionID:collection._id })
+      body: JSON.stringify({collectionID:collection._id,binID:collection.binID._id,collectionshippingdate:collection.shippingdate  })
     });
     const newCollection = await response.json();
     console.log(newCollection)
-    console.log(formatDate(newCollection.collection.shippingdate));
+    //console.log(formatDate(newCollection.collection.date));
     fetchCollection()
     setDialogConfirm(false);
    };
@@ -200,8 +200,8 @@ const [globalFilter, setGlobalFilter] = useState(null);
             globalFilter={globalFilter}
           >
             <Column
-              field="binID._id"
-              header="Bin ID"
+              field="_id"
+              header="Collection ID"
               sortable
               style={{ minWidth: "12rem" }}
             ></Column>
@@ -212,8 +212,8 @@ const [globalFilter, setGlobalFilter] = useState(null);
               style={{ minWidth: "12rem" }}
             ></Column>
             <Column
-              field="binID.location"
-              header="Location"
+              field="shipperID.FullName"
+              header="Shipper Name"
               sortable
               style={{ minWidth: "16rem" }}
             ></Column>
@@ -226,7 +226,7 @@ const [globalFilter, setGlobalFilter] = useState(null);
             />
             <Column
               field="binID.capacity"
-              header="Capacity (Kg)"
+              header="Weight"
               sortable
               style={{ minWidth: "16rem" }}
             ></Column>
@@ -276,4 +276,4 @@ const [globalFilter, setGlobalFilter] = useState(null);
   );
 }
 
-export default ShipperApp;
+export default RecyclingCenter;
