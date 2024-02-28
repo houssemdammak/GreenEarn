@@ -1,11 +1,13 @@
 const Collection = require('../models/CollectionModel')
 const Waste= require('../models/WasteModel')
 const Bin=require('../models/BinModel')
+const Shipper = require("../models/ShipperModel");
+
 const mongoose = require('mongoose')
 const createCollection= async (req, res) => {
-    const { binID, shipperID } = req.body;
+    const { binID, shipperID ,BlockchainID} = req.body;
     try{
-        collection = await Collection.create({ binID, shipperID,status:"Waiting"});
+        collection = await Collection.create({BlockchainID, binID, shipperID,status:"Waiting"});
         const updatedBin = await Bin.findOneAndUpdate(
             { _id: binID },
             { shipperSelected: true }, // Mise à jour du champ shipperSelected à true
@@ -60,10 +62,11 @@ const getCollectionByShipper=async (req,res)=>{
 
     // Utilisez la méthode find de Mongoose pour récupérer les collections avec le shipperID spécifié
     const collections = await Collection.find({ shipperID: id });
-
+    const shipper = await Shipper.findOne({_id: id })
+    console.log(shipper)
     // Envoyez les collections trouvées en réponse
-    res.status(200).json(collections);
-  } catch (error) {
+    res.status(200).json({ collections, ShipperWalletID: shipper });
+    } catch (error) {
     // En cas d'erreur, renvoyez un statut d'erreur avec un message d'erreur
     res.status(500).json({ message: error.message });
   }

@@ -1,9 +1,9 @@
 {
   "contractName": "CitizenContract",
   "abi": [],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/CitizenContract.sol\":\"CitizenContract\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/CitizenContract.sol\":{\"keccak256\":\"0xa2b1c7201d8d3ccc1785acd4d807d605d2da8eae0b91044f01b0b2f447c468dc\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9371f6820e213c32bf18921ffa24e29c9218507c43ff732b71f1ed51c7761563\",\"dweb:/ipfs/Qmdnhas5bsFrK1nP2EPnA6rH5Foj9hpaw4yXc3PHPXv7t4\"]},\"project:/contracts/WasteManagement.sol\":{\"keccak256\":\"0xc975ef3e82b6bf3c99bfe7fa49759fca208117ae54db593de88a7f5837f514f9\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0fa81377a1b55931789cf7453460812609a470c3c9008fd8670ce56d3d577382\",\"dweb:/ipfs/QmUPuyPnxpp3kxwLGoxH2dabYgNDyLrhjTj6Q7GUD5e29g\"]}},\"version\":1}",
-  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea26469706673582212202467d0aa6b703daac3861c5de9435a454499b1f06c55ee9991ed832bca493d1864736f6c63430008130033",
-  "deployedBytecode": "0x6080604052600080fdfea26469706673582212202467d0aa6b703daac3861c5de9435a454499b1f06c55ee9991ed832bca493d1864736f6c63430008130033",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/CitizenContract.sol\":\"CitizenContract\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/CitizenContract.sol\":{\"keccak256\":\"0xa2b1c7201d8d3ccc1785acd4d807d605d2da8eae0b91044f01b0b2f447c468dc\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9371f6820e213c32bf18921ffa24e29c9218507c43ff732b71f1ed51c7761563\",\"dweb:/ipfs/Qmdnhas5bsFrK1nP2EPnA6rH5Foj9hpaw4yXc3PHPXv7t4\"]},\"project:/contracts/WasteManagement.sol\":{\"keccak256\":\"0x51a2610fee79e2ed3dd0a34ac96d8308e4a10c7aeb1eaabba53ab896cb999a34\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://14cfe7c9b7aa65efaec39737d053c75cbac74bfe2fc0af6e52ca64ba761861b3\",\"dweb:/ipfs/QmNYfoh4rgEgUpFF8mXCaVV42gZ5nRScwVnabrx75o4aTa\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220fa8261837e5dc59dccd905aefa6a96f45088d7fd15dc1130598a7ff9321458fa64736f6c63430008130033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220fa8261837e5dc59dccd905aefa6a96f45088d7fd15dc1130598a7ff9321458fa64736f6c63430008130033",
   "immutableReferences": {},
   "generatedSources": [],
   "deployedGeneratedSources": [],
@@ -18,7 +18,7 @@
         3
       ],
       "WasteManagement": [
-        885
+        775
       ]
     },
     "id": 4,
@@ -43,7 +43,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 4,
-        "sourceUnit": 886,
+        "sourceUnit": 776,
         "src": "59:31:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -76,7 +76,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-02-28T15:14:49.368Z",
+  "updatedAt": "2024-02-28T18:00:37.076Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

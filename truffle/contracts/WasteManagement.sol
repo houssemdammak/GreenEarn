@@ -17,30 +17,37 @@ contract WasteManagement {
         address recyclerId;
         string binId; // Changed type to string
     }
-    struct Notif {
+    struct Collection {
+        string idCollection;
         address shipperNotified;
         string binNotif; // Changed type to string
         bool done;
         string date;
+        string status;
     }
     event BinCreated(string id);
+    event CollectionCreated(string id);
     event ModifShipper(string message);
     event ModifCitizen(string message);
     uint256 public wasteCount;
     uint256 public binCount;
+    uint256 public collectionCount;
     mapping(string => Bin) public bins; // Changed key type to string
+    mapping(string => Collection) public collections;
     string[] binIds; // Changed type to string
+    string[] collectionIds;
     string[] public wasteIds; // Changed type to string
     mapping(string => Waste) public wastes; // Changed key type to string
     address[] citizens;
     address recycler = address(0x4494f3bb19F95BB33EC116887b9dbd728C008f9b);
     address[] shippers;
     mapping(string => bool) isBin;
+    mapping(string => bool) isCollection;
     mapping(string => bool) isWaste;
     mapping(address => bool) isCitizen;
     mapping(address => bool) isShipper;
     address public owner;
-    mapping(address => mapping(string => Notif)) public notifications; // Changed key type to string
+    //mapping(address => mapping(string => Notif)) public notifications; // Changed key type to string
     mapping(address => uint256) public citizenRewards;
     
 
@@ -160,46 +167,64 @@ contract WasteManagement {
     //     notifications[_shipper][_idBin] = Notif(_shipper, _idBin, false);
     // }
 
-    function getNotifByShipper(address _shipper) public view returns (Notif[] memory) {
-        Notif[] memory shipperNotifications = new Notif[](binCount);
-
-        for (uint256 i = 0; i < binCount; i++) {
-            string memory binId = binIds[i];
-            if (isBin[binId]) {
-                shipperNotifications[i] = notifications[_shipper][binId];
-            }
-        }
-
-        return shipperNotifications;
+    function createCollection (address _shipper, string memory _idBin, string memory _date)external onlyOwner returns(string memory) {
+        string memory _idCollection = generateUniqueId();
+        require(!isCollection[_idCollection], "Generated IDCollection already exists");
+        require(isShipper[_shipper], "Shipper doesn't exist");
+        require(isBin[_idBin], "Bin doesn't exist");
+        collections[_idCollection] = Collection(_idCollection, _shipper,  _idBin, false,_date,"Waiting");
+        collectionIds.push(_idCollection);
+        collectionCount++;
+        isCollection[_idCollection] = true;
+        emit CollectionCreated(_idCollection);
+        return _idCollection;
     }
-
-    function getAllNotif() public view returns (Notif[] memory) {
-        uint256 totalNotifications = 0;
-        for (uint256 i = 0; i < shippers.length; i++) {
-            for (uint256 j = 0; j < binCount; j++) {
-                string memory binId = binIds[j];
-                if (isBin[binId] && notifications[shippers[i]][binId].shipperNotified != address(0)) {
-                    totalNotifications++;
-                }
-            }
-        }
-
-        Notif[] memory allNotifications = new Notif[](totalNotifications);
-
-        uint256 index = 0;
-        for (uint256 i = 0; i < shippers.length; i++) {
-            for (uint256 j = 0; j < binCount; j++) {
-                string memory binId = binIds[j];
-                Notif memory notification = notifications[shippers[i]][binId];
-                if (isBin[binId] && notification.shipperNotified != address(0)) {
-                    allNotifications[index] = notification;
-                    index++;
-                }
-            }
-        }
-
-        return allNotifications;
+    function ShipWasteById(string memory _idCollection, address _shipperId) external onlyOwner {
+        require(isShipper[_shipperId], "Shipper doesn't exist");
+        require(isCollection[_idCollection], "Collection doesn't exist");
+        collections[_idCollection].status = "Shipped";
+        collections[_idCollection].shipperNotified = _shipperId;
     }
+    // function getNotifByShipper(address _shipper) public view returns (Notif[] memory) {
+    //     Notif[] memory shipperNotifications = new Notif[](binCount);
+
+    //     for (uint256 i = 0; i < binCount; i++) {
+    //         string memory binId = binIds[i];
+    //         if (isBin[binId]) {
+    //             shipperNotifications[i] = notifications[_shipper][binId];
+    //         }
+    //     }
+
+    //     return shipperNotifications;
+    // }
+
+    // function getAllNotif() public view returns (Notif[] memory) {
+    //     uint256 totalNotifications = 0;
+    //     for (uint256 i = 0; i < shippers.length; i++) {
+    //         for (uint256 j = 0; j < binCount; j++) {
+    //             string memory binId = binIds[j];
+    //             if (isBin[binId] && notifications[shippers[i]][binId].shipperNotified != address(0)) {
+    //                 totalNotifications++;
+    //             }
+    //         }
+    //     }
+
+    //     Notif[] memory allNotifications = new Notif[](totalNotifications);
+
+    //     uint256 index = 0;
+    //     for (uint256 i = 0; i < shippers.length; i++) {
+    //         for (uint256 j = 0; j < binCount; j++) {
+    //             string memory binId = binIds[j];
+    //             Notif memory notification = notifications[shippers[i]][binId];
+    //             if (isBin[binId] && notification.shipperNotified != address(0)) {
+    //                 allNotifications[index] = notification;
+    //                 index++;
+    //             }
+    //         }
+    //     }
+
+    //     return allNotifications;
+    // }
 
     function deleteShipper(address _shipperAddress) external onlyOwner {
         for (uint256 i = 0; i < shippers.length; i++) {

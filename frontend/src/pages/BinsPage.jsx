@@ -11,7 +11,7 @@ import { Message } from 'primereact/message';
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { useWeb3 } from "../contexts/web3Context";
-import { createBin, deleteBin ,modifyBin,notifyShipper} from "../web3";
+import { createBin, deleteBin ,modifyBin,createCollection} from "../web3";
 import ProgressBar from "react-percent-bar";
 
 function BinDemo() {
@@ -315,31 +315,38 @@ const saveUpdatedProduct = async () => {
       ...prevProduct,
       shipperID: selectedShipper._id // Assurez-vous que _id est le bon champ contenant l'ID du shipper
     }));
-    console.log(product);
+   // console.log(product);
 
-
+    const currentDate=new Date();
+    console.log(currentDate.toString());
+    console.log("shhipper id ",selectedShipper.ID);
+    console.log("product id",product.BlockchainID);
     /*khedmat bc tebda lena*/
     try {
-    const blockchainTransactionResult = await notifyShipper(contract,selectedShipper._id,product._id);
+    const blockchainTransactionResult = await createCollection(contract,selectedShipper.ID,product.BlockchainID,currentDate.toString());
     console.log(blockchainTransactionResult);
     if (blockchainTransactionResult.status === 'accepted') {
+      
+      console.log(blockchainTransactionResult.collectionId)
     const response = await fetch("/api/collection/", {
           method: "POST",
-          body: JSON.stringify({binID:product._id,shipperID :selectedShipper}),
+          body: JSON.stringify({binID:product._id,shipperID :selectedShipper,BlockchainID:blockchainTransactionResult.collectionId}),
           headers: {
             "Content-Type": "application/json",
           },
         });
         if (response.ok) {
-          _products[indexDB] = _product;
-          toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Shipper Updated', life: 3000 });
+          fetchBins()
+          setSelectedShipperError(false); // Mettre à jour l'état de l'erreur
+          setselectShipperDialog(false);
+          toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Collection created ', life: 3000 });
       } else {
-        console.error('Error updating Shipper to the database:', response.statusText);
-        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to update Shipper to the database.', life: 3000 });
+        console.error('Error adding Collection to the database:', response.statusText);
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to add Collection to the database.', life: 3000 });
       }
     } else {
       console.error('Blockchain transaction failed.');
-      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Shipper update reverted.', life: 3000 });
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Collection creation reverted.', life: 3000 });
     }
 
   }
@@ -347,10 +354,8 @@ const saveUpdatedProduct = async () => {
   catch (error) {
     console.error('Erreur lors de la mise à jour du Shipper:', error);
   }
-  console.log(response.json())
-  fetchBins()
-  setSelectedShipperError(false); // Mettre à jour l'état de l'erreur
-  setselectShipperDialog(false);
+  //console.log(response.json())
+
   }
 }
   /////////////////////////////

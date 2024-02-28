@@ -208,24 +208,63 @@ const modifyCitizen = async (contract,walletId) => {
   }
 };
 
-const notifyShipper = async (contract,shipperID,BinID) => {
+const createCollection = async (contract, shipperId, binId, date) => {
   try {
     const web3 = await initWeb3(); // Initialize Web3 instance
     const accounts = await web3.eth.getAccounts(); // Get accounts
     const senderAddress = accounts[0]; // Assuming you want to use the first account
+
     // Send transaction to the blockchain
-    await contract.methods.notifyShipper(shipperID,BinID).send({ 
+    const transaction = await contract.methods.createCollection(shipperId, binId, date).send({ 
       from: senderAddress
     });  
-
-    console.log("shipper notified successfully!");
-
-    return { status: 'accepted' }; 
+    console.log("Collection created successfully!");
+    // Retrieve the bin ID from the emitted event
+    const collectionId = transaction.events.CollectionCreated.returnValues.id;
+    console.log(binId)
+    return { status: 'accepted', collectionId }; // Return 'accepted' status along with bin ID
   } catch (error) {
-    console.error("Error notifing shipper:", error);
-    return { status: 'rejected' }; 
+    console.error("Error creating Collection:", error);
+    return { status: 'rejected', collectionId: null }; // Return 'rejected' status and null bin ID if transaction fails
   }
 };
+const shipCollection = async (contract, collectionId,shipperId) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; // Assuming you want to use the first account
+
+    // Send transaction to the blockchain
+    const transaction = await contract.methods.ShipWasteById(collectionId,shipperId).send({ 
+      from: senderAddress
+    });  
+    console.log("Collection shipped successfully!");
+    return { status: 'accepted', collectionId }; // Return 'accepted' status along with bin ID
+  } catch (error) {
+    console.error("Error shipping Collection:", error);
+    return { status: 'rejected', collectionId: null }; // Return 'rejected' status and null bin ID if transaction fails
+  }
+};
+
+
+// const notifyShipper = async (contract,shipperID,BinID) => {
+//   try {
+//     const web3 = await initWeb3(); // Initialize Web3 instance
+//     const accounts = await web3.eth.getAccounts(); // Get accounts
+//     const senderAddress = accounts[0]; // Assuming you want to use the first account
+//     // Send transaction to the blockchain
+//     await contract.methods.notifyShipper(shipperID,BinID).send({ 
+//       from: senderAddress
+//     });  
+
+//     console.log("shipper notified successfully!");
+
+//     return { status: 'accepted' }; 
+//   } catch (error) {
+//     console.error("Error notifing shipper:", error);
+//     return { status: 'rejected' }; 
+//   }
+// };
 
 export { initWeb3,
          initContract,
@@ -238,5 +277,6 @@ export { initWeb3,
          createCitizen,
          deleteCitizen,
          modifyCitizen,
-         notifyShipper
+         createCollection,
+         shipCollection
         };

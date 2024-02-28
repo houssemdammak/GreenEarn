@@ -10,8 +10,10 @@ import { Avatar } from "primereact/avatar";
 import logo from "../../images/EarnGreen Icons/icon_black.png";
 import AuthContext from "../../contexts/authSlice";
 import "./AppShipper.css";
-
+import { useWeb3 } from "../../contexts/web3Context";
+import { shipCollection} from "../../web3";
 function ShipperApp() {
+  const { contract } = useWeb3();
  const {id, name, logout } = useContext(AuthContext);
   const [confirm, setDialogConfirm] = useState(false);
   const [collections, setCollections] = useState(null);
@@ -168,6 +170,11 @@ const [globalFilter, setGlobalFilter] = useState(null);
     );
   };
    const updateCollectionByshipper = async () => {
+    try {
+      const blockchainTransactionResult = await shipCollection(contract,collection.BlockchainID,collection.shipperID.ID);
+      console.log(collection.BlockchainID,id)
+      if (blockchainTransactionResult.status === 'accepted') {
+
     // const response = await fetch(`/api/collection/updateCollectionByshipper/${collection.binID._id}`);
     const response = await fetch(`/api/collection/updateCollectionByshipper`, {
       method: 'PATCH',
@@ -176,12 +183,27 @@ const [globalFilter, setGlobalFilter] = useState(null);
       },
       body: JSON.stringify({ binID:collection.binID._id, collectionID:collection._id })
     });
-    const newCollection = await response.json();
-    console.log(newCollection)
-    console.log(formatDate(newCollection.collection.shippingdate));
-    fetchCollection()
-    setDialogConfirm(false);
-   };
+
+    if (response.status === 200) {
+      const newCollection = await response.json();
+      console.log(newCollection)
+      console.log(formatDate(newCollection.collection.shippingdate));
+      fetchCollection()
+      setDialogConfirm(false);
+       toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Collection shipped', life: 3000 });
+     } else {
+       console.error('Error shipping collection', response.statusText);
+       toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed shipping collection', life: 3000 });
+     }
+   } else {
+     console.error('Blockchain transaction failed.');
+     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Bin update reverted.', life: 3000 });
+   }
+ } catch (error) {
+   console.error('Error shipping collection:', error);
+   toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to ship collection.', life: 3000 });
+ }
+  };
   return (
     <div className="BodyShipper">
       <Navbar />

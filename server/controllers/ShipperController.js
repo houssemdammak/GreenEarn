@@ -144,8 +144,9 @@ const getCollectionByShipper=async (req,res)=>{
     const { id } = req.params;
 
     // Utilisez la méthode find de Mongoose pour récupérer les collections avec le shipperID spécifié
-    const collections = await Collection.find({ shipperID: id }).populate('binID');
-
+    const collections = await Collection.find({ shipperID: id }).populate('binID').populate('shipperID');
+    // Envoyez les collections trouvées en réponse
+    //res.status(200).json( collections );
     // Envoyez les collections trouvées en réponse
     res.status(200).json(collections);
   } catch (error) {
