@@ -94,10 +94,12 @@ const createBin = async (req, res) => {
   }
 
     try {
+      //console.log(type, location, capacity, currentWeight)
       // Vérifie si l'ID est déjà utilisé
         bin = await Bin.create({ BlockchainID,type, location, capacity, currentWeight });
         return res.status(200).json(bin);
     } catch (error) {
+      console.log(error)
       // Gérer les erreurs de base de données
       return res.status(500).json({ error: 'Internal server error' });
     }

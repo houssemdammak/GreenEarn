@@ -12,9 +12,13 @@ const collectionSchema = new Schema({
         ref: 'Shipper', // Remplacez 'Bin' par le nom du modèle référencé
         required: true
       },
-  date:{
-    type:Date ,
+    status:{
+        type:String ,
+    },
+    shippingdate:{
+      type:Date ,
   }
+ 
 }, { timestamps: true })
 
 module.exports = mongoose.model('Collection', collectionSchema)

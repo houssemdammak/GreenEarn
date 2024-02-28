@@ -62,6 +62,7 @@ const Login = () => {
         //   }
         // }
         try {
+          //////ythabet shipper
           let response = await axios.post("/api/shippers/login", formData, {
               headers: { "Content-Type": "application/json" }
           });
@@ -77,20 +78,34 @@ const Login = () => {
               setPasswordError("Incorrect password");
               return;
           }else if (response.data.msg === "Bad credentials"){
-            
+            ////ythabet f manager 
             let response = await axios.post("/api/auth/login", formData, {
               headers: { "Content-Type": "application/json" }});
           console.log(response.data);
           if (response.data.msg === "user logged in") {
               login(response.data.token, response.data.name, response.data.id,"Manager");
-              
               return;
           } else if (response.data.msg === "Bad password") {
               setPasswordError("Incorrect password");
               return;
-          } else if (response.data.msg === "Bad credentials") {
+          } 
+          
+          else if (response.data.msg === "Bad credentials") {
+            //////////////////////////////////
+            let response = await axios.post("/api/recycledcenter/login", formData, {
+              headers: { "Content-Type": "application/json" }});
+              console.log(response.data);
+          if (response.data.msg === "user logged in") {
+              login(response.data.token, response.data.name, response.data.id,"RecyclingCenter");
+              return;
+          } else if (response.data.msg === "Bad password") {
+              setPasswordError("Incorrect password");
+              return;
+          } 
+            else if (response.data.msg === "Bad credentials") {
             setEmailError("User does not exist");
             return;
+        }
         }
           }
       } catch (error) {

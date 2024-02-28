@@ -37,6 +37,7 @@ const getWastes = async (req, res) => {
 //     res.status(500).json({ error: error.message });
 //   }
 // };
+//get waste pour la page citizen filtrer les wastes par citizen 
 const getWaste = async (req, res) => {
   const { id } = req.params;
 
@@ -162,6 +163,7 @@ const updateWaste = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 module.exports = {

@@ -27,7 +27,7 @@ const binSchema = new Schema({
       return (this.currentWeight / this.capacity) * 100;
     } 
    },
-   shipperSelected:{
+  shipperSelected:{
     type:Boolean,
     default:false 
    }

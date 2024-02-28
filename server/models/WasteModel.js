@@ -25,6 +25,13 @@ const wasteSchema = new Schema({
         ref: 'Bin', // Remplacez 'Bin' par le nom du modèle référencé
         required: true
       },
+    recyclingdate:{
+        type:Date ,
+    },
+    shippingdate:{
+        type:Date ,
+      }
+
     ///binid et status
 });
 

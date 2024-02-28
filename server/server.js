@@ -9,6 +9,7 @@ const shipperRoutes =require('./routes/shippers')
 const citizenRoutes= require ('./routes/citizens')
 const binRoutes= require ('./routes/bins')
 const mainRouter = require("./routes/user");
+const RecycledCenterRoutes =require('./routes/RecyclingCenter')
 
 // app.use(cors());
 
@@ -26,6 +27,7 @@ app.use('/api/shippers', shipperRoutes);
 app.use('/api/citizens', citizenRoutes);
 app.use('/api/bins', binRoutes);
 app.use('/api/wastes', wasteRoutes);
+app.use('/api/recycledcenter', RecycledCenterRoutes);
 
 mongoose.connect(process.env.MONG_URI)
 .then(()=>{
