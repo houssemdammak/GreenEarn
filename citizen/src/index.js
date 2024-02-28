@@ -9,6 +9,7 @@ import "primereact/resources/primereact.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/authContext"
+import { Web3Provider } from './contexts/web3Context';
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -16,9 +17,11 @@ root.render(
   <BrowserRouter>
     <React.StrictMode>
     <AuthProvider>
-      <PrimeReactProvider>
-      <App />
-      </PrimeReactProvider>
+    <Web3Provider>
+          <PrimeReactProvider>
+            <App />
+          </PrimeReactProvider>
+        </Web3Provider>
       </AuthProvider>
     </React.StrictMode>
   </BrowserRouter>

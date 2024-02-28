@@ -21,6 +21,7 @@ contract WasteManagement {
         address shipperNotified;
         string binNotif; // Changed type to string
         bool done;
+        string date;
     }
     event BinCreated(string id);
     event ModifShipper(string message);
@@ -29,7 +30,7 @@ contract WasteManagement {
     uint256 public binCount;
     mapping(string => Bin) public bins; // Changed key type to string
     string[] binIds; // Changed type to string
-    string[] wasteIds; // Changed type to string
+    string[] public wasteIds; // Changed type to string
     mapping(string => Waste) public wastes; // Changed key type to string
     address[] citizens;
     address recycler = address(0x4494f3bb19F95BB33EC116887b9dbd728C008f9b);
@@ -152,11 +153,12 @@ contract WasteManagement {
         return shippers;
     }
 
-    function notifyShipper(address _shipper, string memory _idBin) external onlyOwner {
-        require(isShipper[_shipper], "Shipper doesn't exist");
-        require(isBin[_idBin], "Bin doesn't exist");
-        notifications[_shipper][_idBin] = Notif(_shipper, _idBin, false);
-    }
+    // function notifyShipper(address _shipper, string memory _idBin, string memory _date) external onlyOwner {
+
+    //     require(isShipper[_shipper], "Shipper doesn't exist");
+    //     require(isBin[_idBin], "Bin doesn't exist");
+    //     notifications[_shipper][_idBin] = Notif(_shipper, _idBin, false);
+    // }
 
     function getNotifByShipper(address _shipper) public view returns (Notif[] memory) {
         Notif[] memory shipperNotifications = new Notif[](binCount);
@@ -221,41 +223,65 @@ contract WasteManagement {
         // Further logic here if needed
     }
                         //*****************Citizen********************//
-    function createCitizen(address _citizen) external onlyOwner {
-        require(!isCitizen[_citizen], "Citizen already exists");
-        require(_citizen != owner, "Cannot create citizen with owner's address");
+    // function createCitizen(address _citizen) external onlyOwner {
+    //     require(!isCitizen[_citizen], "Citizen already exists");
+    //     require(_citizen != owner, "Cannot create citizen with owner's address");
 
-        citizens.push(_citizen);
-        isCitizen[_citizen] = true;
-    }
+    //     citizens.push(_citizen);
+    //     isCitizen[_citizen] = true;
+    // }
 
-    function getCitizens() public view returns (address[] memory) {
-        return citizens;
-    }
+    // function getCitizens() public view returns (address[] memory) {
+    //     return citizens;
+    // }
 
-    function deleteCitizen(address _citizenAddress) external onlyOwner {
-        for (uint256 i = 0; i < citizens.length; i++) {
-            if (citizens[i] == _citizenAddress) {
-                citizens[i] = citizens[
-                    citizens.length - 1
-                ];
-                citizens.pop();
-                isCitizen[_citizenAddress]=false;
-                break;
-            }
-        }
-    }
-    function modifyCitizen(address _citizenAddress) external onlyOwner {
-        require(isCitizen[ _citizenAddress], "Citizen does not exist");
+    // function deleteCitizen(address _citizenAddress) external onlyOwner {
+    //     for (uint256 i = 0; i < citizens.length; i++) {
+    //         if (citizens[i] == _citizenAddress) {
+    //             citizens[i] = citizens[
+    //                 citizens.length - 1
+    //             ];
+    //             citizens.pop();
+    //             isCitizen[_citizenAddress]=false;
+    //             break;
+    //         }
+    //     }
+    // }
+    // function modifyCitizen(address _citizenAddress) external onlyOwner {
+    //     require(isCitizen[ _citizenAddress], "Citizen does not exist");
         
-        // Emit a message after the require statement
-        emit ModifCitizen("Citizen can be modified");
+    //     // Emit a message after the require statement
+    //     emit ModifCitizen("Citizen can be modified");
         
-        // Further logic here if needed
-    }
-    function getIsBin(string memory _binId) external view returns (bool) {
-        require(isBin[_binId], "Bin doesn't exist");
-        return isBin[_binId];
-    }
+    //     // Further logic here if needed
+    // }
+    // function getIsBin(string memory _binId) external view returns (bool) {
+    //     require(isBin[_binId], "Bin doesn't exist");
+    //     return isBin[_binId];
+    // }
 
+    // function getIsCitizen(address _citizenId) external view returns (bool) {
+    //     require(isCitizen[_citizenId], "Citizen doesn't exist");
+    //     return isCitizen[_citizenId];
+    // }
+
+    // function getIsWaste(string memory _wasteId) external view returns (bool) {
+    //     require(isWaste[_wasteId], "Watse doesn't exist");
+    //     return isWaste[_wasteId];
+    // }
+
+    // function setWaste(string memory _wasteId) external  {
+    //     require(isWaste[_wasteId], "Watse doesn't exist");
+    //      isWaste[_wasteId]=true;
+    // }
+    //  function setWasteCount(uint256 _count) external {
+    //     wasteCount = _count;
+    // }
+    // function getWasteCount() external view returns (uint256) {
+    //     return wasteCount;
+    // }
+    // function setWastes(string memory _wasteId,Waste memory waste) external{
+    //     wastes[_wasteId]=waste;
+
+//    }
 }

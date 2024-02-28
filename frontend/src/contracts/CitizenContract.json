@@ -1,0 +1,90 @@
+{
+  "contractName": "CitizenContract",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/CitizenContract.sol\":\"CitizenContract\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/CitizenContract.sol\":{\"keccak256\":\"0xa2b1c7201d8d3ccc1785acd4d807d605d2da8eae0b91044f01b0b2f447c468dc\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9371f6820e213c32bf18921ffa24e29c9218507c43ff732b71f1ed51c7761563\",\"dweb:/ipfs/Qmdnhas5bsFrK1nP2EPnA6rH5Foj9hpaw4yXc3PHPXv7t4\"]},\"project:/contracts/WasteManagement.sol\":{\"keccak256\":\"0xc975ef3e82b6bf3c99bfe7fa49759fca208117ae54db593de88a7f5837f514f9\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0fa81377a1b55931789cf7453460812609a470c3c9008fd8670ce56d3d577382\",\"dweb:/ipfs/QmUPuyPnxpp3kxwLGoxH2dabYgNDyLrhjTj6Q7GUD5e29g\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea26469706673582212202467d0aa6b703daac3861c5de9435a454499b1f06c55ee9991ed832bca493d1864736f6c63430008130033",
+  "deployedBytecode": "0x6080604052600080fdfea26469706673582212202467d0aa6b703daac3861c5de9435a454499b1f06c55ee9991ed832bca493d1864736f6c63430008130033",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "92:739:0:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "92:739:0:-:0;;;;;",
+  "source": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.19;\r\nimport \"./WasteManagement.sol\";\r\ncontract CitizenContract {\r\n    // WasteManagement WasteManage;\r\n    // function createWaste(string memory _id, uint256 _weight, address _citizenId, string memory _binId) external {\r\n    //     require(WasteManage.getIsBin(_binId), \"Bin doesn't exist\");\r\n    //     require(WasteManage.getIsCitizen(_citizenId), \"Citizen doesn't exist\");\r\n    //     require(!WasteManage.getIsWaste(_id), \"Waste already exists\");\r\n    //     uint wastecount=WasteManage.getWasteCount();\r\n    //     WasteManage.setWasteCount(wastecount + 1);\r\n\r\n\r\n\r\n       //WasteManage.Waste newWaste =new Waste(_id, \"In Bin\", _weight, _citizenId, address(0), address(0), _binId);\r\n\r\n        //WasteManage.wasteIds.push(_id);\r\n       // WasteManage.setWaste(_id) ;\r\n//}\r\n}",
+  "sourcePath": "C:\\Users\\MSI\\Desktop\\PFA_GUI - Copie\\truffle\\contracts\\CitizenContract.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/CitizenContract.sol",
+    "exportedSymbols": {
+      "CitizenContract": [
+        3
+      ],
+      "WasteManagement": [
+        885
+      ]
+    },
+    "id": 4,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".19"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "33:24:0"
+      },
+      {
+        "absolutePath": "project:/contracts/WasteManagement.sol",
+        "file": "./WasteManagement.sol",
+        "id": 2,
+        "nameLocation": "-1:-1:-1",
+        "nodeType": "ImportDirective",
+        "scope": 4,
+        "sourceUnit": 886,
+        "src": "59:31:0",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "CitizenContract",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 3,
+        "linearizedBaseContracts": [
+          3
+        ],
+        "name": "CitizenContract",
+        "nameLocation": "101:15:0",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 4,
+        "src": "92:739:0",
+        "usedErrors": []
+      }
+    ],
+    "src": "33:798:0"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.19+commit.7dd6d404.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.16",
+  "updatedAt": "2024-02-28T15:14:49.368Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

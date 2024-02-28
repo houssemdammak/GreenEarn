@@ -11,7 +11,7 @@ import { Message } from 'primereact/message';
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { useWeb3 } from "../contexts/web3Context";
-import { createBin, deleteBin ,modifyBin} from "../web3";
+import { createBin, deleteBin ,modifyBin,notifyShipper} from "../web3";
 import ProgressBar from "react-percent-bar";
 
 function BinDemo() {
@@ -303,6 +303,9 @@ const saveUpdatedProduct = async () => {
     setselectShipperDialog(true);
     fetchShipper()
   };
+
+
+
   const saveShipper=async()=>{
    
   if (!selectedShipper) {
@@ -313,6 +316,13 @@ const saveUpdatedProduct = async () => {
       shipperID: selectedShipper._id // Assurez-vous que _id est le bon champ contenant l'ID du shipper
     }));
     console.log(product);
+
+
+    /*khedmat bc tebda lena*/
+    try {
+    const blockchainTransactionResult = await notifyShipper(contract,selectedShipper._id,product._id);
+    console.log(blockchainTransactionResult);
+    if (blockchainTransactionResult.status === 'accepted') {
     const response = await fetch("/api/collection/", {
           method: "POST",
           body: JSON.stringify({binID:product._id,shipperID :selectedShipper}),
@@ -320,11 +330,27 @@ const saveUpdatedProduct = async () => {
             "Content-Type": "application/json",
           },
         });
+        if (response.ok) {
+          _products[indexDB] = _product;
+          toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Shipper Updated', life: 3000 });
+      } else {
+        console.error('Error updating Shipper to the database:', response.statusText);
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to update Shipper to the database.', life: 3000 });
+      }
+    } else {
+      console.error('Blockchain transaction failed.');
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Shipper update reverted.', life: 3000 });
+    }
 
-    console.log(response.json())
-    fetchBins()
-    setSelectedShipperError(false); // Mettre à jour l'état de l'erreur
-    setselectShipperDialog(false);
+  }
+
+  catch (error) {
+    console.error('Erreur lors de la mise à jour du Shipper:', error);
+  }
+  console.log(response.json())
+  fetchBins()
+  setSelectedShipperError(false); // Mettre à jour l'état de l'erreur
+  setselectShipperDialog(false);
   }
 }
   /////////////////////////////

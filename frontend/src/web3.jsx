@@ -208,6 +208,24 @@ const modifyCitizen = async (contract,walletId) => {
   }
 };
 
+const notifyShipper = async (contract,shipperID,BinID) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; // Assuming you want to use the first account
+    // Send transaction to the blockchain
+    await contract.methods.notifyShipper(shipperID,BinID).send({ 
+      from: senderAddress
+    });  
+
+    console.log("shipper notified successfully!");
+
+    return { status: 'accepted' }; 
+  } catch (error) {
+    console.error("Error notifing shipper:", error);
+    return { status: 'rejected' }; 
+  }
+};
 
 export { initWeb3,
          initContract,
@@ -219,5 +237,6 @@ export { initWeb3,
          modifyShipper,
          createCitizen,
          deleteCitizen,
-         modifyCitizen
+         modifyCitizen,
+         notifyShipper
         };

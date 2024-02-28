@@ -57,6 +57,7 @@ module.exports = {
    * $ truffle test --network <network-name>
   */
  
+  //contracts_build_directory: "../citizen/src/contracts",
   contracts_build_directory: "../frontend/src/contracts",
 
   networks: {   
