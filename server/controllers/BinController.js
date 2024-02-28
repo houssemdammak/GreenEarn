@@ -69,7 +69,7 @@ const getBin = async (req, res) => {
 //   res.status(200).json(bin);
 // };
 const createBin = async (req, res) => {
-  const { type, location, capacity, currentWeight } = req.body;
+  const { type, location, capacity, currentWeight,BlockchainID } = req.body;
 
   let emptyFields = [];
 
@@ -89,11 +89,14 @@ const createBin = async (req, res) => {
   if (emptyFields.length > 0) {
     return res.status(400).json({ error: 'Please fill in all fields', emptyFields });
   }
+  if (!BlockchainID) {
+    emptyFields.push('BlockchainID');
+  }
 
     try {
       //console.log(type, location, capacity, currentWeight)
       // Vérifie si l'ID est déjà utilisé
-        bin = await Bin.create({ type, location, capacity, currentWeight });
+        bin = await Bin.create({ BlockchainID,type, location, capacity, currentWeight });
         return res.status(200).json(bin);
     } catch (error) {
       console.log(error)

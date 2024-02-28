@@ -7,7 +7,10 @@ import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
+import { createCitizen,deleteCitizen,modifyCitizen } from '../web3';
+import { useWeb3 } from "../contexts/web3Context";
 function CitizensDemo() {
+  const { contract } = useWeb3();
   let emptyProduct = {
     email: "",
     password:"" ,
@@ -112,27 +115,32 @@ function CitizensDemo() {
     product.email.trim() !== "" &&product.FullName.trim()!== "" &&product.password.trim() !=="" && product.confirmpassword.trim() !==""&& product.WalletID.trim() !== ""
     ) {
       try {
-        delete _product.confirmpassword;
-        console.log(_product)
+        const blockchainTransactionResult = await createCitizen(contract, _product.WalletID);
+        console.log(blockchainTransactionResult);
+        if (blockchainTransactionResult.status === 'accepted') {
+          delete _product.confirmpassword;
+          console.log(_product)
 
-        const response = await fetch("/api/citizens/register", {
-          method: "POST",
-          body: JSON.stringify(_product),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        _products.push(_product);
-        toast.current.show({
-          severity: "success",
-          summary: "Successful",
-          detail: "Citizen Created",
-          life: 3000,
-        });
-        fetchCitizens();
-        setEmailErrorExist("");
-        setWalletIDError("") ;setconfirmpasswordError("");setpasswordError("") ;
-        setProducts(_products);setProduct(emptyProduct);setProductDialog(false);
+          const response = await fetch("/api/citizens/register", {
+            method: "POST",
+            body: JSON.stringify(_product),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          console.log(response.status);
+          if (response.status === 201) {
+            _products.push(_product);
+            toast.current.show({severity: "success",summary: "Successful",detail: "Citizen Created",life: 3000,});
+          }else {
+            console.error('Error saving Shipper to the database:', response.statusText);
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to save bin to the database.', life: 3000 });
+          }
+        }else {
+          console.error('Blockchain transaction failed.');
+          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Shipper creation reverted.', life: 3000 });
+        }   
+        
         //console.log(_product)
         // const responseData = await response.json();
         // fetchCitizens();
@@ -140,7 +148,10 @@ function CitizensDemo() {
       } catch (error) {
         console.error("Erreur lors de l'envoi des données à l'API:", error);
       }
-
+      fetchCitizens();
+      setEmailErrorExist("");
+      setWalletIDError("") ;setconfirmpasswordError("");setpasswordError("") ;
+      setProducts(_products);setProduct(emptyProduct);setProductDialog(false);
     
     } else {
       
@@ -181,24 +192,30 @@ function CitizensDemo() {
       delete product.confirmpassword 
       delete product.password 
       try {
+        const blockchainTransactionResult = await modifyCitizen(contract,_product.WalletID);
+        console.log(blockchainTransactionResult);
         console.log(_product)
-        const response = await fetch(`/api/citizens/${_product._id}`, {
-          method: "PATCH",
-          body: JSON.stringify(_product),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        //fetchCitizens();
-        
-        if (response.ok) {
-          _products[indexDB] = _product;
-          toast.current.show({
-            severity: "success",
-            summary: "Successful",
-            detail: "Citizen Updated",
-            life: 3000,
+        if (blockchainTransactionResult.status === 'accepted') {
+          const response = await fetch(`/api/citizens/${_product._id}`, {
+            method: "PATCH",
+            body: JSON.stringify(_product),
+            headers: {
+              "Content-Type": "application/json",
+            },
           });
+          //fetchCitizens();
+          
+          if (response.ok) {
+            _products[indexDB] = _product;
+            toast.current.show({severity: "success",summary: "Successful",detail: "Citizen Updated",life: 3000,});
+          }
+          else {
+            console.error('Error updating Citizen to the database:', response.statusText);
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to update Citizen to the database.', life: 3000 });
+          }
+        } else {
+          console.error('Blockchain transaction failed.');
+          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Citizen update reverted.', life: 3000 });
         }
       } catch (error) {
         console.error("Erreur lors de la mise à jour du citizen:", error);
@@ -231,33 +248,41 @@ function CitizensDemo() {
   };
 
   const deleteProduct = async () => {
+    let blockchainTransactionResult;
     try {
-      const response = await fetch(`/api/citizens/${product._id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        let _products = products.filter((val) => val._id !== product._id);
-
-        setProducts(_products);
-        setDeleteProductDialog(false);
-        setProduct(emptyProduct);
-        toast.current.show({
-          severity: "success",
-          summary: "Successful",
-          detail: "Citizen Deleted",
-          life: 3000,
+      blockchainTransactionResult = await deleteCitizen(contract, product.WalletID); // Assign the result
+      console.log(blockchainTransactionResult.status);
+      if (blockchainTransactionResult.status === 'accepted') {
+        const response = await fetch(`/api/citizens/${product._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
-      } else {
-        console.error(
-          "Failed to delete citizen. Server returned:",
-          response.status,
-          response.statusText
-        );
-      }
+
+        if (response.ok) {
+          let _products = products.filter((val) => val._id !== product._id);
+
+          setProducts(_products);
+          setDeleteProductDialog(false);
+          setProduct(emptyProduct);
+          toast.current.show({
+            severity: "success",
+            summary: "Successful",
+            detail: "Citizen Deleted",
+            life: 3000,
+          });
+        } else {
+          console.error(
+            "Failed to delete Citizen. Server returned:",
+            response.status,
+            response.statusText
+          );
+        }
+    } else {
+      console.error('Blockchain transaction failed.');
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Citizen deletion reverted.', life: 3000 });
+    }
     } catch (error) {
       console.error("Error deleting citizen:", error.message);
     }
@@ -415,12 +440,12 @@ function CitizensDemo() {
               sortable
               style={{ minWidth: "12rem" }}
             ></Column>
-            <Column
+            {/* <Column
               field="WalletID"
               header="Wallet Number"
               sortable
               style={{ minWidth: "16rem" }}
-            ></Column>
+            ></Column> */}
 
             {/* <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column> */}
             <Column
@@ -574,7 +599,7 @@ function CitizensDemo() {
           {EmailErrorExist && product.email&& <small className="p-error">{EmailErrorExist}</small>}
         </div>
        
-        <div className="field">
+        {/* <div className="field">
           <label htmlFor="WalletID" className="font-bold"> Wallet ID </label>
           <InputText
             id="WalletID"
@@ -592,7 +617,7 @@ function CitizensDemo() {
           {WalletIdError && product.WalletID && (
             <small className="p-error">{WalletIdError}</small>
           )}
-        </div>
+        </div> */}
       </Dialog>
       <Dialog
         visible={deleteProductDialog}

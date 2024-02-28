@@ -138,9 +138,12 @@ const Login = ({  })  => {
     // if(fullname.length > 0 && walletid.length > 0 && email.length > 0 && password.length > 0 &&
     //   confirmPassword.length > 0 &&validatePassword && confirmpass &&isValidemail
     //   ){
-    const formData = { fullname, email, password, walletid };
-
+    const formData = { "FullName":fullname,"email":email, password, "WalletID":walletid };
+    console.log(formData)
     try {
+      // const blockchainTransactionResult = await createCitizen(contract,walletid );
+      // console.log(blockchainTransactionResult);
+      // if (blockchainTransactionResult.status === 'accepted') {
       const response = await axios.post("/api/citizens/register", formData, {
         headers: { "Content-Type": "application/json" },
       });
@@ -151,13 +154,14 @@ const Login = ({  })  => {
       //     'Content-Type': 'application/json'
       //   }
       // })
-      //console.log(response.token);
+      //console.log(response);
 
       //localStorage.setItem('citizensAuth', JSON.stringify(response.data.token));
       ////login teb3a contexte
-      login(response.data.token);
+      login(response.data.token,response.data.id,response.data.name);
       //navigate("/Home");
-    } catch (err) {
+    // } 
+  }catch (err) {
       console.log(err);
       console.log(err.response);
       console.log(err.response.data.msg);

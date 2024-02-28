@@ -2,10 +2,9 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const binSchema = new Schema({
-  // id: {
-  //   type: Number,
-  //   unique:true 
-  // },
+  BlockchainID: {
+    type: String
+  },
   type: {
     type: String,
     required: true

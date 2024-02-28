@@ -8,7 +8,11 @@ import { Toolbar } from 'primereact/toolbar';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { createShipper,deleteShipper,modifyShipper } from '../web3';
+import { useWeb3 } from "../contexts/web3Context";
+
  function ShipperDemo() {
+  const { contract } = useWeb3();
   let emptyProduct = {
     ID: '',
     FullName: '',
@@ -88,50 +92,66 @@ import { InputText } from 'primereact/inputtext';
       const isExistEmail = index2 !== -1;
       const isExistEmailError = isExistEmail ? "Email already exist ." : "";
           //verifier le password confirm 
-      const confirmationpass =(product.confirmpassword == product.password) 
+      const confirmationpass =(product.confirmpassword == product.password);
       //password not strong 
-    
+      console.log(confirmationpass)
       const validatePassword=isPasswordStrong(_product.password) ;
       /* ------------------------------------------------------------------------ */
       const index = findIndexById(_product.ID);
-      const isValidID = /^[a-zA-Z0-9]{8}$/.test(product.ID);
+      //const isValidID = /^[a-zA-Z0-9]{8}$/.test(product.ID);
       const isExistID= index !==-1 ;
       const isExistIDError=isExistID ? 'ID Card already exist .' : '';
       const isValidPhoneNumber = /^\d{8}$/.test(product.TelephoneNum);
-      const idError = !isValidID ? 'ID Card should be 8 digits.' : '';
+      //const idError = !isValidID ? 'ID Card should be 8 digits.' : '';
       const phoneNumberError = !isValidPhoneNumber ? 'Telephone Number should be 8 digits.' : '';
-      if ( validatePassword && confirmationpass &&isExistEmailError ==""  && product.email.trim() !== ""&& product.confirmpassword.trim() !== "" &&product.password.trim() !==""&&
-        isValidID && !isExistID && isValidPhoneNumber && product.ID.trim() !== '' 
+      if ( validatePassword  &&isExistEmailError ==""  && product.email.trim() !== ""&& confirmationpass &&
+      product.confirmpassword.trim() !== "" &&
+      product.password.trim() !==""&&
+         !isExistID && isValidPhoneNumber && product.ID.trim() !== '' 
         && product.FullName.trim() && product.Location.trim() && product.TelephoneNum.toString().trim() !== ''){            
+          
           try {
-
-                  delete 
-                  product.confirmpassword;
-
-                  const response = await fetch('/api/shippers', {
-                      method: 'POST',
-                      body: JSON.stringify(_product),
-                      headers: {
-                          'Content-Type': 'application/json'
-                      }
-                  });
-                  _products.push(_product);
+            const blockchainTransactionResult = await createShipper(contract, _product.ID);
+            console.log(blockchainTransactionResult);
+            if (blockchainTransactionResult.status === 'accepted') {
+            delete product.confirmpassword;
+            const response = await fetch('/api/shippers', {
+                method: 'POST',
+                body: JSON.stringify(_product),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(response.status);
+            if (response.status === 201) {
+              _products.push(_product);
               toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Shipper Created', life: 3000 });
-                  console.log(_product)
-                  // const responseData = await response.json();
-                  // console.log('Réponse de l\'API:', responseData);
-              } catch (error) {
-                  console.error('Erreur lors de l\'envoi des données à l\'API:', error);
+              console.log(_product);
+            }
+                // const responseData = await response.json();
+                // console.log('Réponse de l\'API:', responseData);
+            else {
+                console.error('Error saving Shipper to the database:', response.statusText);
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to save bin to the database.', life: 3000 });
               }
-              fetchShippers();
-              setIDError('');
-              setIDErrorExist('');
-              setPhoneNumberError('');
-              setIDErrorExistUpdate('')
-              setProducts(_products);
-              setProduct(emptyProduct);
-              setEmailErrorExist("");setconfirmpasswordError("");setpasswordError("") ;
-              setProductDialog(false);
+            }else {
+              console.error('Blockchain transaction failed.');
+              toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Shipper creation reverted.', life: 3000 });
+            }            
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi des données à l\'API:', error);
+          }
+            fetchShippers();
+            setIDError('');
+            setIDErrorExist('');
+            setPhoneNumberError('');
+            setIDErrorExistUpdate('')
+            setProducts(_products);
+            setProduct(emptyProduct);
+            setEmailErrorExist("");
+            setconfirmpasswordError("");
+            setpasswordError("") ;
+            setProductDialog(false);
           
       }else {
         if(!validatePassword){
@@ -145,10 +165,10 @@ import { InputText } from 'primereact/inputtext';
          }
         // Mise à jour de l'état d'erreur pour chaque champ
         
-        if(!isValidID ){
-          setIDError(idError);
-          setIDErrorExistUpdate('')
-        }
+        // if(!isValidID ){
+        //   setIDError(idError);
+        //   setIDErrorExistUpdate('')
+        // }
         if(isExistID){
           setIDErrorExistUpdate(isExistIDError);
           setIDError('');
@@ -168,11 +188,13 @@ import { InputText } from 'primereact/inputtext';
     const isTheSameID = _product.ID ==_products[indexDB].ID;
     const isExistID = index !== -1 && !isTheSameID;
     const isExistIDError=isExistID ? 'ID Card already exist .' : '';
-    const isValidID = /^[a-zA-Z0-9]{8}$/.test(product.ID);
+    //const isValidID = /^[a-zA-Z0-9]{8}$/.test(product.ID);
     const isValidPhoneNumber = /^\d{8}$/.test(product.TelephoneNum);
-    const idError = !isValidID ? 'ID should be 8 digits.' : '';
+    //const idError = !isValidID ? 'ID should be 8 digits.' : '';
     const phoneNumberError = !isValidPhoneNumber ? 'Telephone Number should be 8 digits.' : '';
-    if ( isValidID && isValidPhoneNumber &&
+    if ( 
+      //isValidID && 
+      isValidPhoneNumber &&
       !isExistEmailError  &&
       product.email.trim() !== "" &&
       product.ID.trim() !== '' &&
@@ -188,17 +210,27 @@ import { InputText } from 'primereact/inputtext';
               // Utilisation de la méthode PATCH pour mettre à jour partiellement la ressource
               //console.log(_product._id)
               //console.log(_product.ID)
-              const response = await fetch(`/api/shippers/${_product._id}`, {
-                  method: 'PATCH',
-                  body: JSON.stringify(_product),
-                  headers: {
-                      'Content-Type': 'application/json'
-                  }
-              }); 
-              if (response.ok) {
-                  _products[indexDB] = _product;
-                  toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Shipper Updated', life: 3000 });
-              } 
+              const blockchainTransactionResult = await modifyShipper(contract,_product.ID);
+              console.log(blockchainTransactionResult);
+              if (blockchainTransactionResult.status === 'accepted') {
+                const response = await fetch(`/api/shippers/${_product._id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify(_product),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }); 
+                if (response.ok) {
+                    _products[indexDB] = _product;
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Shipper Updated', life: 3000 });
+                } else {
+                  console.error('Error updating Shipper to the database:', response.statusText);
+                  toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to update Shipper to the database.', life: 3000 });
+                }
+              } else {
+                console.error('Blockchain transaction failed.');
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Shipper update reverted.', life: 3000 });
+              }
           } catch (error) {
               console.error('Erreur lors de la mise à jour du Shipper:', error);
           }
@@ -218,10 +250,10 @@ import { InputText } from 'primereact/inputtext';
       }
       // Mise à jour de l'état d'erreur pour chaque champ
      
-      if( !isValidID ){
-        setIDError(idError);
-        setIDErrorExistUpdate('')
-      }
+      // if( !isValidID ){
+      //   setIDError(idError);
+      //   setIDErrorExistUpdate('')
+      // }
       if(isExistID){
         setIDErrorExistUpdate(isExistIDError);
         setIDError('');
@@ -240,13 +272,17 @@ import { InputText } from 'primereact/inputtext';
     };
 
     const deleteProduct = async() => {
+      let blockchainTransactionResult;
       try {
-          const response = await fetch(`/api/shippers/${product._id}`, {
-              method: 'DELETE',
-              headers: {
-                  'Content-Type': 'application/json'
-              }
-          });
+        blockchainTransactionResult = await deleteShipper(contract, product.ID); // Assign the result
+        console.log(blockchainTransactionResult.status);
+        if (blockchainTransactionResult.status === 'accepted') {
+            const response = await fetch(`/api/shippers/${product._id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
   
           if (response.ok) {
               let _products = products.filter((val) => val._id !== product._id);
@@ -256,8 +292,16 @@ import { InputText } from 'primereact/inputtext';
               setProduct(emptyProduct);
               toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Shipper Deleted', life: 3000 });
           } else {
-              console.error('Failed to delete Shipper. Server returned:', response.status, response.statusText);
+            console.error(
+              "Failed to delete Shipper. Server returned:",
+              response.status,
+              response.statusText
+            );
           }
+        } else {
+          console.error('Blockchain transaction failed.');
+          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Shipper deletion reverted.', life: 3000 });
+        }
       } catch (error) {
           console.error('Error deleting Shipper:', error.message);
       }
@@ -394,7 +438,7 @@ import { InputText } from 'primereact/inputtext';
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" globalFilter={globalFilter} header={header}>
                           
-                    <Column field="ID" header="ID Card" sortable style={{ minWidth: '12rem' }}></Column>
+                    {/* <Column field="ID" header="ID Card" sortable style={{ minWidth: '12rem' }}></Column> */}
                     <Column field="FullName" header="Full Name" sortable  style={{ minWidth: '16rem' }}></Column>
                     <Column field="email" header="Email" sortable sortablestyle={{ minWidth: "12rem" }}></Column>
                     <Column field="Location" header="Location" sortable style={{ minWidth: '16rem' }}></Column>
@@ -466,7 +510,6 @@ import { InputText } from 'primereact/inputtext';
             value={product.confirmpassword}
             onChange={(e) => onInputChange(e, "confirmpassword")}
             required
-            
             className={classNames({
               "p-invalid": submitted && !product.confirmpassword,
             })}
@@ -483,24 +526,24 @@ import { InputText } from 'primereact/inputtext';
         </div>
         <div className="field">
           <label htmlFor="TelephoneNum" className="font-bold">Telephone Number</label>
-          <InputText id="TelephoneNum" value={product.TelephoneNum} onChange={(e) => onInputChange(e, 'TelephoneNum')} required  className={classNames({ 'p-invalid': submitted && !product.TelephoneNum })} />
+          <InputText id="TelephoneNum" value={product.TelephoneNum} onChange={(e) => onInputChange(e, 'TelephoneNum')} required className={classNames({ 'p-invalid': submitted && !product.TelephoneNum })} />
           {submitted && !product.TelephoneNum && <small className="p-error">Telephone Number is required.</small>}
           {phoneNumberError&& product.TelephoneNum && <small className="p-error">{phoneNumberError}</small>}
         </div>
       </Dialog>
       <Dialog visible={productDialogUpdate} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Shipper Details" modal className="p-fluid" footer={productDialogUpdateFooter} onHide={hideDialog}>
-        <div className="field">
+        {/* <div className="field">
           <label htmlFor="ID" className="font-bold">ID Card</label>
-          <InputText id="ID" value={product.ID} onChange={(e) => onInputChange(e, 'ID')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.ID })} />
+          <InputText id="ID" value={product.ID} onChange={(e) => onInputChange(e, 'ID')} required className={classNames({ 'p-invalid': submitted && !product.ID })} />
           {submitted && !product.ID && (
             <small className="p-error">ID Card is required. <br></br></small>
           )}
           {IDError && <small className="p-error">{IDError}</small>}
           {IDErrorExistUpdate && <small className="p-error">{IDErrorExistUpdate}</small>}
-        </div>
+        </div> */}
         <div className="field">
           <label htmlFor="FullName" className="font-bold">Full Name</label>
-          <InputText id="FullName" value={product.FullName} onChange={(e) => onInputChange(e, 'FullName')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.FullName })} />
+          <InputText id="FullName" value={product.FullName} onChange={(e) => onInputChange(e, 'FullName')} required className={classNames({ 'p-invalid': submitted && !product.FullName })} />
           {submitted && !product.FullName && <small className="p-error">Full Name is required.</small>}
           
         </div>
@@ -511,6 +554,7 @@ import { InputText } from 'primereact/inputtext';
             value={product.email}
             onChange={(e) => onInputChange(e, "email")}
             required
+            autoFocus
             className={classNames({ "p-invalid": submitted && !product.email })}
           />
           {submitted && !product.email && (<small className="p-error">Email is required.</small>)}
@@ -524,7 +568,7 @@ import { InputText } from 'primereact/inputtext';
         </div>
         <div className="field">
           <label htmlFor="TelephoneNum" className="font-bold">Telephone Number</label>
-          <InputText id="TelephoneNum" value={product.TelephoneNum} onChange={(e) => onInputChange(e, 'TelephoneNum')} required  className={classNames({ 'p-invalid': submitted && !product.TelephoneNum })} />
+          <InputText id="TelephoneNum" value={product.TelephoneNum} onChange={(e) => onInputChange(e, 'TelephoneNum')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.TelephoneNum })} />
           {submitted && !product.TelephoneNum && <small className="p-error">Telephone Number is required.</small>}
           {phoneNumberError && <small className="p-error">{phoneNumberError}</small>}
         </div>
