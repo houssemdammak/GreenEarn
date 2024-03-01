@@ -16,6 +16,7 @@ contract WasteManagement {
         address shipperId;
         address recyclerId;
         string binId; // Changed type to string
+        string dateCollection;
     }
     struct Collection {
         string idCollection;
@@ -122,11 +123,7 @@ contract WasteManagement {
     }
     function generateUniqueId() internal view returns (string memory) {
         bytes32 hash = keccak256(abi.encodePacked(block.timestamp, block.prevrandao, binCount));
-        return toStringUniqueId((uint256(hash)));
-    }
-    //ena zedt fazat uint64 bech nsa8arha
-
-    function toStringUniqueId(uint256 value) internal pure returns (string memory) {
+        uint256 value=(uint256(hash));
         if (value == 0) {
             return "0";
         }
@@ -145,10 +142,8 @@ contract WasteManagement {
         return string(buffer);
     }
 
+
                    //*****************Shipper********************//
-
-
-
     function createShipper(address _shipper) external onlyOwner {
         require(!isShipper[_shipper], "Shipper already exists");
 
@@ -156,9 +151,9 @@ contract WasteManagement {
         isShipper[_shipper] = true;
     }
 
-    function getShippers() public view returns (address[] memory) {
-        return shippers;
-    }
+    // function getShippers() public view returns (address[] memory) {
+    //     return shippers;
+    // }
 
     // function notifyShipper(address _shipper, string memory _idBin, string memory _date) external onlyOwner {
 
@@ -172,6 +167,12 @@ contract WasteManagement {
         require(!isCollection[_idCollection], "Generated IDCollection already exists");
         require(isShipper[_shipper], "Shipper doesn't exist");
         require(isBin[_idBin], "Bin doesn't exist");
+        for (uint256 i = 0; i < wasteIds.length; i++) {
+            Waste storage waste = wastes[wasteIds[i]];
+            if (keccak256(bytes(waste.binId)) == keccak256(bytes(_idBin)) && (keccak256(bytes(waste.status)) == keccak256(bytes("Waiting")))) {
+                waste.dateCollection = _date;
+            }
+        }
         collections[_idCollection] = Collection(_idCollection, _shipper,  _idBin, false,_date,"Waiting");
         collectionIds.push(_idCollection);
         collectionCount++;
@@ -179,52 +180,26 @@ contract WasteManagement {
         emit CollectionCreated(_idCollection);
         return _idCollection;
     }
-    function ShipCollection(string memory _idCollection, address _shipperId) external onlyOwner {
+
+    function ShipCollection(string memory _idCollection, address _shipperId,string memory _date) external onlyOwner  {
         require(isShipper[_shipperId], "Shipper doesn't exist");
         require(isCollection[_idCollection], "Collection doesn't exist");
         collections[_idCollection].status = "Shipped";
         collections[_idCollection].shipperNotified = _shipperId;
-    }
-    // function getNotifByShipper(address _shipper) public view returns (Notif[] memory) {
-    //     Notif[] memory shipperNotifications = new Notif[](binCount);
-
-    //     for (uint256 i = 0; i < binCount; i++) {
-    //         string memory binId = binIds[i];
-    //         if (isBin[binId]) {
-    //             shipperNotifications[i] = notifications[_shipper][binId];
-    //         }
-    //     }
-
-    //     return shipperNotifications;
-    // }
-
-    // function getAllNotif() public view returns (Notif[] memory) {
-    //     uint256 totalNotifications = 0;
-    //     for (uint256 i = 0; i < shippers.length; i++) {
-    //         for (uint256 j = 0; j < binCount; j++) {
-    //             string memory binId = binIds[j];
-    //             if (isBin[binId] && notifications[shippers[i]][binId].shipperNotified != address(0)) {
-    //                 totalNotifications++;
-    //             }
-    //         }
-    //     }
-
-    //     Notif[] memory allNotifications = new Notif[](totalNotifications);
-
-    //     uint256 index = 0;
-    //     for (uint256 i = 0; i < shippers.length; i++) {
-    //         for (uint256 j = 0; j < binCount; j++) {
-    //             string memory binId = binIds[j];
-    //             Notif memory notification = notifications[shippers[i]][binId];
-    //             if (isBin[binId] && notification.shipperNotified != address(0)) {
-    //                 allNotifications[index] = notification;
-    //                 index++;
-    //             }
-    //         }
-    //     }
-
-    //     return allNotifications;
-    // }
+        for (uint256 i = 0; i < wasteIds.length; i++) {
+            Waste storage waste = wastes[wasteIds[i]];
+            if (keccak256(bytes(waste.binId)) == keccak256(bytes(collections[_idCollection].binNotif)) &&
+                waste.shipperId == _shipperId &&
+                keccak256(bytes(waste.dateCollection)) == keccak256(bytes(collections[_idCollection].date))) {
+                if (keccak256(bytes(waste.status)) == keccak256(bytes("Waiting"))) {
+                    collections[_idCollection].date=_date;
+                    waste.dateCollection=_date;
+                    waste.status = "Shipped";
+                }
+            }
+        }
+        
+    }  
 
     function deleteShipper(address _shipperAddress) external onlyOwner {
         for (uint256 i = 0; i < shippers.length; i++) {
@@ -250,12 +225,21 @@ contract WasteManagement {
     
                          //*****************Recycler********************//
     
-    function RecycleCollection(string memory _idCollection, address _recyclerId) external onlyOwner {
-        require(isShipper[_recyclerId], "Shipper doesn't exist");
+    function RecycleCollection(string memory _idCollection,string memory _date) external  {
         require(isCollection[_idCollection], "Collection doesn't exist");
-        collections[_idCollection].status = "Shipped";
-        collections[_idCollection].shipperNotified = _shipperId;
-    }                           
+        collections[_idCollection].status = "Recyled";
+        for (uint256 i = 0; i < wasteIds.length; i++) {
+            Waste storage waste = wastes[wasteIds[i]];
+            if (keccak256(bytes(waste.binId)) == keccak256(bytes(collections[_idCollection].binNotif)) &&
+                keccak256(bytes(waste.dateCollection)) == keccak256(bytes(collections[_idCollection].date))) {
+                if (keccak256(bytes(waste.status)) == keccak256(bytes("Shipped"))) {
+                    collections[_idCollection].date=_date;
+                    waste.dateCollection=_date;
+                    waste.status = "Recyled";
+                }
+            }
+        }
+    }                         
                      
                      
                         //*****************Citizen********************//
@@ -265,10 +249,6 @@ contract WasteManagement {
 
         citizens.push(_citizen);
         isCitizen[_citizen] = true;
-    }
-
-    function getCitizens() public view returns (address[] memory) {
-        return citizens;
     }
 
     function deleteCitizen(address _citizenAddress) external onlyOwner {
@@ -283,6 +263,7 @@ contract WasteManagement {
             }
         }
     }
+
     function modifyCitizen(address _citizenAddress) external onlyOwner {
         require(isCitizen[ _citizenAddress], "Citizen does not exist");
         
@@ -291,6 +272,7 @@ contract WasteManagement {
         
         // Further logic here if needed
     }
+
     function getIsBin(string memory _binId) external view returns (bool) {
         require(isBin[_binId], "Bin doesn't exist");
         return isBin[_binId];
@@ -306,19 +288,50 @@ contract WasteManagement {
         return !isWaste[_wasteId];
     }
 
+    function setWaste(string memory _wasteId,uint256 _weight,address _citizenId,string memory _binId) external {
+        wastes[_wasteId]=Waste(_wasteId, "Waiting", _weight, _citizenId, address(0), address(0), _binId, "");
+        wasteIds.push(_wasteId);
+        isWaste[_wasteId]=true;
+        wasteCount++;
+       // emit WasteCreated(_wasteId);
 
-    function setWaste(string memory _wasteId) external  {
-        require(!isWaste[_wasteId], "Watse exist");
-         isWaste[_wasteId]=true;
+       
     }
-     function setWasteCount(uint256 _count) external {
-        wasteCount = _count;
-    }
-    function getWasteCount() external view returns (uint256) {
+
+
+    /*TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESTS */
+    function getCountWaste() view external onlyOwner() returns (uint256){
         return wasteCount;
     }
-    function setWastes(string memory _wasteId,Waste memory waste) external{
-        wastes[_wasteId]=waste;
 
-   }
+    function getWastes()view external onlyOwner returns (Waste[]memory){
+        Waste[] memory trash = new Waste[](wasteIds.length);
+         for (uint256 i = 0; i < wasteIds.length; i++) {
+            Waste storage waste = wastes[wasteIds[i]];
+            trash[i]=waste;
+         }
+        return trash;
+    }
+
+    // function getWastesIDs()view external onlyOwner returns (string[] memory){
+       
+    //     return wasteIds;
+    // }
+
+    function getWastesStatus()view external onlyOwner returns (string[] memory,string[] memory){
+        string[] memory Status = new string[](wasteIds.length);
+        for (uint256 i = 0; i < wasteIds.length; i++) {
+            Waste storage waste = wastes[wasteIds[i]];
+            Status[i] = waste.status;
+        }
+        return(wasteIds,Status);
+    }
+
+    function getCollectionsIds()view external onlyOwner returns(string[] memory) {
+         return collectionIds;
+    } 
+    // function getCitizens() public view returns (address[] memory) {
+    //     return citizens;
+    // }
+
 }
