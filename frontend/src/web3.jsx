@@ -247,6 +247,25 @@ const shipCollection = async (contract, collectionId,shipperId) => {
 };
 
 
+const RecycleCollection = async (contract, collectionId) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; // Assuming you want to use the first account
+
+    // Send transaction to the blockchain
+    const transaction = await contract.methods.RecycleCollection(collectionId).send({ 
+      from: senderAddress
+    });  
+    console.log("Collection recycled successfully!");
+    return { status: 'accepted', collectionId }; 
+  } catch (error) {
+    console.error("Error recycling Collection:", error);
+    return { status: 'rejected', collectionId: null }; 
+  }
+};
+
+
 // const notifyShipper = async (contract,shipperID,BinID) => {
 //   try {
 //     const web3 = await initWeb3(); // Initialize Web3 instance
@@ -278,5 +297,6 @@ export { initWeb3,
          deleteCitizen,
          modifyCitizen,
          createCollection,
-         shipCollection
+         shipCollection,
+         RecycleCollection
         };

@@ -197,7 +197,7 @@ const [globalFilter, setGlobalFilter] = useState(null);
      }
    } else {
      console.error('Blockchain transaction failed.');
-     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Bin update reverted.', life: 3000 });
+     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Collection shipping reverted.', life: 3000 });
    }
  } catch (error) {
    console.error('Error shipping collection:', error);
