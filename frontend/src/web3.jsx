@@ -235,7 +235,7 @@ const shipCollection = async (contract, collectionId,shipperId) => {
     const senderAddress = accounts[0]; // Assuming you want to use the first account
 
     // Send transaction to the blockchain
-    const transaction = await contract.methods.ShipWasteById(collectionId,shipperId).send({ 
+    const transaction = await contract.methods.ShipCollection(collectionId,shipperId).send({ 
       from: senderAddress
     });  
     console.log("Collection shipped successfully!");

@@ -179,7 +179,7 @@ contract WasteManagement {
         emit CollectionCreated(_idCollection);
         return _idCollection;
     }
-    function ShipWasteById(string memory _idCollection, address _shipperId) external onlyOwner {
+    function ShipCollection(string memory _idCollection, address _shipperId) external onlyOwner {
         require(isShipper[_shipperId], "Shipper doesn't exist");
         require(isCollection[_idCollection], "Collection doesn't exist");
         collections[_idCollection].status = "Shipped";
@@ -247,66 +247,78 @@ contract WasteManagement {
         
         // Further logic here if needed
     }
+    
+                         //*****************Recycler********************//
+    
+    function RecycleCollection(string memory _idCollection, address _recyclerId) external onlyOwner {
+        require(isShipper[_recyclerId], "Shipper doesn't exist");
+        require(isCollection[_idCollection], "Collection doesn't exist");
+        collections[_idCollection].status = "Shipped";
+        collections[_idCollection].shipperNotified = _shipperId;
+    }                           
+                     
+                     
                         //*****************Citizen********************//
-    // function createCitizen(address _citizen) external onlyOwner {
-    //     require(!isCitizen[_citizen], "Citizen already exists");
-    //     require(_citizen != owner, "Cannot create citizen with owner's address");
+    function createCitizen(address _citizen) external onlyOwner {
+        require(!isCitizen[_citizen], "Citizen already exists");
+        require(_citizen != owner, "Cannot create citizen with owner's address");
 
-    //     citizens.push(_citizen);
-    //     isCitizen[_citizen] = true;
-    // }
+        citizens.push(_citizen);
+        isCitizen[_citizen] = true;
+    }
 
-    // function getCitizens() public view returns (address[] memory) {
-    //     return citizens;
-    // }
+    function getCitizens() public view returns (address[] memory) {
+        return citizens;
+    }
 
-    // function deleteCitizen(address _citizenAddress) external onlyOwner {
-    //     for (uint256 i = 0; i < citizens.length; i++) {
-    //         if (citizens[i] == _citizenAddress) {
-    //             citizens[i] = citizens[
-    //                 citizens.length - 1
-    //             ];
-    //             citizens.pop();
-    //             isCitizen[_citizenAddress]=false;
-    //             break;
-    //         }
-    //     }
-    // }
-    // function modifyCitizen(address _citizenAddress) external onlyOwner {
-    //     require(isCitizen[ _citizenAddress], "Citizen does not exist");
+    function deleteCitizen(address _citizenAddress) external onlyOwner {
+        for (uint256 i = 0; i < citizens.length; i++) {
+            if (citizens[i] == _citizenAddress) {
+                citizens[i] = citizens[
+                    citizens.length - 1
+                ];
+                citizens.pop();
+                isCitizen[_citizenAddress]=false;
+                break;
+            }
+        }
+    }
+    function modifyCitizen(address _citizenAddress) external onlyOwner {
+        require(isCitizen[ _citizenAddress], "Citizen does not exist");
         
-    //     // Emit a message after the require statement
-    //     emit ModifCitizen("Citizen can be modified");
+        // Emit a message after the require statement
+        emit ModifCitizen("Citizen can be modified");
         
-    //     // Further logic here if needed
-    // }
-    // function getIsBin(string memory _binId) external view returns (bool) {
-    //     require(isBin[_binId], "Bin doesn't exist");
-    //     return isBin[_binId];
-    // }
+        // Further logic here if needed
+    }
+    function getIsBin(string memory _binId) external view returns (bool) {
+        require(isBin[_binId], "Bin doesn't exist");
+        return isBin[_binId];
+    }
 
-    // function getIsCitizen(address _citizenId) external view returns (bool) {
-    //     require(isCitizen[_citizenId], "Citizen doesn't exist");
-    //     return isCitizen[_citizenId];
-    // }
+    function getIsCitizen(address _citizenId) external view returns (bool) {
+        require(isCitizen[_citizenId], "Citizen doesn't exist");
+        return isCitizen[_citizenId];
+    }
 
-    // function getIsWaste(string memory _wasteId) external view returns (bool) {
-    //     require(isWaste[_wasteId], "Watse doesn't exist");
-    //     return isWaste[_wasteId];
-    // }
+    function CheckWaste(string memory _wasteId) external view returns (bool) {
+        require(!isWaste[_wasteId], "Watse exist");
+        return !isWaste[_wasteId];
+    }
 
-    // function setWaste(string memory _wasteId) external  {
-    //     require(isWaste[_wasteId], "Watse doesn't exist");
-    //      isWaste[_wasteId]=true;
-    // }
-    //  function setWasteCount(uint256 _count) external {
-    //     wasteCount = _count;
-    // }
-    // function getWasteCount() external view returns (uint256) {
-    //     return wasteCount;
-    // }
-    // function setWastes(string memory _wasteId,Waste memory waste) external{
-    //     wastes[_wasteId]=waste;
 
-//    }
+    function setWaste(string memory _wasteId) external  {
+        require(!isWaste[_wasteId], "Watse exist");
+         isWaste[_wasteId]=true;
+    }
+     function setWasteCount(uint256 _count) external {
+        wasteCount = _count;
+    }
+    function getWasteCount() external view returns (uint256) {
+        return wasteCount;
+    }
+    function setWastes(string memory _wasteId,Waste memory waste) external{
+        wastes[_wasteId]=waste;
+
+   }
 }
