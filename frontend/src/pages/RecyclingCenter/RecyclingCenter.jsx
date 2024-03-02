@@ -10,14 +10,17 @@ import { Avatar } from "primereact/avatar";
 import logo from "../../images/EarnGreen Icons/icon_black.png";
 import AuthContext from "../../contexts/authSlice";
 import "./RecyclingCenter.css";
+import { useWeb3 } from "../../contexts/web3Context";
+import { recycleCollection} from "../../web3";
 
 function RecyclingCenter() {
+  const { contract } = useWeb3();
  const {id, name, logout } = useContext(AuthContext);
   const [confirm, setDialogConfirm] = useState(false);
   const [collections, setCollections] = useState(null);
   const [collection, setCollection] = useState(null);
   const [numTasksAdded, setNumTasksAdded] = useState(0); // État pour stocker le nombre de tâches ajoutées
-const [globalFilter, setGlobalFilter] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
   const countTasksAdded = (collections) => {
@@ -167,21 +170,41 @@ const [globalFilter, setGlobalFilter] = useState(null);
       </nav>
     );
   };
-   const updateCollectionByshipper = async () => {
+  const updateCollectionByshipper = async () => {
     // const response = await fetch(`/api/collection/updateCollectionByshipper/${collection.binID._id}`);
-    const response = await fetch(`/api/collection/updateCollectionByCenter`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({collectionID:collection._id,binID:collection.binID._id,collectionshippingdate:collection.shippingdate  })
-    });
-    const newCollection = await response.json();
-    console.log(newCollection)
-    //console.log(formatDate(newCollection.collection.date));
-    fetchCollection()
-    setDialogConfirm(false);
-   };
+    const currentDate=new Date();
+    try {
+      const blockchainTransactionResult = await recycleCollection(contract,collection.BlockchainID,currentDate);
+      console.log(collection.BlockchainID,id)
+      if (blockchainTransactionResult.status === 'accepted') {
+
+        const response = await fetch(`/api/collection/updateCollectionByCenter`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({collectionID:collection._id,binID:collection.binID._id,collectionshippingdate:collection.shippingdate  })
+        });
+        if (response.status === 200) {
+          const newCollection = await response.json();
+          console.log(newCollection)
+          //console.log(formatDate(newCollection.collection.date));
+          fetchCollection()
+          setDialogConfirm(false);
+        }else {
+          console.error('Error recycling collection', response.statusText);
+          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed recyclig collection', life: 3000 });
+        }
+      } else {
+        console.error('Blockchain transaction failed.');
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. recycle collection  reverted.', life: 3000 });
+      }
+    } 
+    catch (error) {
+      console.error('Error recycling collection:', error);
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to recycle collection.', life: 3000 });
+    }
+  };
   return (
     <div className="BodyShipper">
       <Navbar />

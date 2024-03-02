@@ -14,12 +14,12 @@ import { useWeb3 } from "../../contexts/web3Context";
 import { shipCollection} from "../../web3";
 function ShipperApp() {
   const { contract } = useWeb3();
- const {id, name, logout } = useContext(AuthContext);
+  const {id, name, logout } = useContext(AuthContext);
   const [confirm, setDialogConfirm] = useState(false);
   const [collections, setCollections] = useState(null);
   const [collection, setCollection] = useState(null);
   const [numTasksAdded, setNumTasksAdded] = useState(0); // État pour stocker le nombre de tâches ajoutées
-const [globalFilter, setGlobalFilter] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
   const countTasksAdded = (collections) => {
@@ -169,9 +169,11 @@ const [globalFilter, setGlobalFilter] = useState(null);
       </nav>
     );
   };
+
    const updateCollectionByshipper = async () => {
+    const currentDate=new Date();
     try {
-      const blockchainTransactionResult = await shipCollection(contract,collection.BlockchainID,collection.shipperID.ID);
+      const blockchainTransactionResult = await shipCollection(contract,collection.BlockchainID,collection.shipperID.ID,currentDate);
       console.log(collection.BlockchainID,id)
       if (blockchainTransactionResult.status === 'accepted') {
 
@@ -197,7 +199,7 @@ const [globalFilter, setGlobalFilter] = useState(null);
      }
    } else {
      console.error('Blockchain transaction failed.');
-     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Bin update reverted.', life: 3000 });
+     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. ship collection reverted.', life: 3000 });
    }
  } catch (error) {
    console.error('Error shipping collection:', error);

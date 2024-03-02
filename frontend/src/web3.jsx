@@ -228,14 +228,15 @@ const createCollection = async (contract, shipperId, binId, date) => {
     return { status: 'rejected', collectionId: null }; // Return 'rejected' status and null bin ID if transaction fails
   }
 };
-const shipCollection = async (contract, collectionId,shipperId) => {
+
+const shipCollection = async (contract, collectionId,shipperId,date) => {
   try {
     const web3 = await initWeb3(); // Initialize Web3 instance
     const accounts = await web3.eth.getAccounts(); // Get accounts
     const senderAddress = accounts[0]; // Assuming you want to use the first account
 
     // Send transaction to the blockchain
-    const transaction = await contract.methods.ShipCollection(collectionId,shipperId).send({ 
+    const transaction = await contract.methods.shipCollection(collectionId,shipperId,date).send({ 
       from: senderAddress
     });  
     console.log("Collection shipped successfully!");
@@ -247,24 +248,26 @@ const shipCollection = async (contract, collectionId,shipperId) => {
 };
 
 
-// const notifyShipper = async (contract,shipperID,BinID) => {
-//   try {
-//     const web3 = await initWeb3(); // Initialize Web3 instance
-//     const accounts = await web3.eth.getAccounts(); // Get accounts
-//     const senderAddress = accounts[0]; // Assuming you want to use the first account
-//     // Send transaction to the blockchain
-//     await contract.methods.notifyShipper(shipperID,BinID).send({ 
-//       from: senderAddress
-//     });  
+const recycleCollection = async (contract, collectionId,date) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; // Assuming you want to use the first account
 
-//     console.log("shipper notified successfully!");
+    // Send transaction to the blockchain
+    const transaction = await contract.methods.recycleCollection(collectionId,date).send({ 
+      from: senderAddress
+    });  
+    console.log("Collection recycled successfully!");
+    return { status: 'accepted', collectionId }; // Return 'accepted' status along with bin ID
+  } catch (error) {
+    console.error("Error recycling Collection:", error);
+    return { status: 'rejected', collectionId: null }; // Return 'rejected' status and null bin ID if transaction fails
+  }
+};
 
-//     return { status: 'accepted' }; 
-//   } catch (error) {
-//     console.error("Error notifing shipper:", error);
-//     return { status: 'rejected' }; 
-//   }
-// };
+
+
 
 export { initWeb3,
          initContract,
@@ -278,5 +281,6 @@ export { initWeb3,
          deleteCitizen,
          modifyCitizen,
          createCollection,
-         shipCollection
+         shipCollection,
+         recycleCollection
         };
