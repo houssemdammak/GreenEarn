@@ -199,6 +199,7 @@ function ShipperApp() {
      }
    } else {
      console.error('Blockchain transaction failed.');
+
      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. ship collection reverted.', life: 3000 });
    }
  } catch (error) {
