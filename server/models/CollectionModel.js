@@ -22,8 +22,12 @@ const collectionSchema = new Schema(
     shippingdate: {
       type: Date,
     },
+    isNew: {
+      type: Boolean,
+      default: true // Par défaut, toutes les collections seront marquées comme nouvelles
+  }
   },
-  { timestamps: true }
+  { timestamps: true ,suppressReservedKeysWarning: true }
 );
 
 module.exports = mongoose.model("Collection", collectionSchema);
