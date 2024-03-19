@@ -12,14 +12,15 @@ import AuthContext from "../../contexts/authSlice";
 import "./AppShipper.css";
 
 function ShipperApp() {
- const {id, name, logout } = useContext(AuthContext);
+  const { contract } = useWeb3();
+  const {id, name, logout } = useContext(AuthContext);
   const [confirm, setDialogConfirm] = useState(false);
   const [collections, setCollections] = useState(null);
   const [notifications, setNotifications] = useState(null);
 
   const [collection, setCollection] = useState(null);
   const [numTasksAdded, setNumTasksAdded] = useState(0); // État pour stocker le nombre de tâches ajoutées
-const [globalFilter, setGlobalFilter] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
 ///////////////////////
@@ -209,7 +210,14 @@ const [visible, setVisible] = useState(false);
       </nav>
     );
   };
+
    const updateCollectionByshipper = async () => {
+    const currentDate=new Date();
+    try {
+      const blockchainTransactionResult = await shipCollection(contract,collection.BlockchainID,collection.shipperID.ID,currentDate);
+      console.log(collection.BlockchainID,id)
+      if (blockchainTransactionResult.status === 'accepted') {
+
     // const response = await fetch(`/api/collection/updateCollectionByshipper/${collection.binID._id}`);
     const response = await fetch(`/api/collection/updateCollectionByshipper`, {
       method: 'PATCH',
@@ -218,12 +226,28 @@ const [visible, setVisible] = useState(false);
       },
       body: JSON.stringify({ binID:collection.binID._id, collectionID:collection._id })
     });
-    const newCollection = await response.json();
-    console.log(newCollection)
-    console.log(formatDate(newCollection.collection.shippingdate));
-    fetchCollection()
-    setDialogConfirm(false);
-   };
+
+    if (response.status === 200) {
+      const newCollection = await response.json();
+      console.log(newCollection)
+      console.log(formatDate(newCollection.collection.shippingdate));
+      fetchCollection()
+      setDialogConfirm(false);
+       toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Collection shipped', life: 3000 });
+     } else {
+       console.error('Error shipping collection', response.statusText);
+       toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed shipping collection', life: 3000 });
+     }
+   } else {
+     console.error('Blockchain transaction failed.');
+
+     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. ship collection reverted.', life: 3000 });
+   }
+ } catch (error) {
+   console.error('Error shipping collection:', error);
+   toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to ship collection.', life: 3000 });
+ }
+  };
   return (
     <div className="BodyShipper">
       <Navbar />
