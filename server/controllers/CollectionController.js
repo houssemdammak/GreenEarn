@@ -14,10 +14,10 @@ const createCollection= async (req, res) => {
             { new: true }
         ).exec(); // exécuter la requête et attendre la réponse
 
-        await Waste.updateMany(
-          {binID:binID, status: 'Waiting' }, // Filtrer les déchets avec le statut "waiting" et le bon binID
-          { $set: { collectionID: collection._id } } // Attribuer l'ID de la nouvelle collection
-      );
+      //   await Waste.updateMany(
+      //     {binID:binID, status: 'Waiting' }, // Filtrer les déchets avec le statut "waiting" et le bon binID
+      //     { $set: { collectionID: collection._id } } // Attribuer l'ID de la nouvelle collection
+      // );
       res.status(200).json(collection);
     } catch (error) {
       // Gérer les erreurs de base de données
@@ -127,7 +127,30 @@ const deleteAllWastes = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 }
+const markAsRead= async (req, res) => {
+  try {
+    const { notifications } = req.body; // Supposons que les IDs à marquer comme lus sont envoyés dans le corps de la requête sous la clé "ids"
+    const notifIDs = notifications.map(notification => notification._id);
+    console.log(notifIDs);
+        
+    // Vérifier si des IDs ont été envoyés
+    if (!notifIDs || !Array.isArray(notifIDs) || notifIDs.length === 0) {
+        return res.status(400).json({ message: "Aucun ID valide fourni." });
+    }
+
+    // Mettre à jour les collections avec les IDs fournis
+    await Collection.updateMany(
+        { _id: { $in: notifIDs } }, // Sélectionner les collections avec les IDs fournis
+        { $set: { isNew: false } } // Mettre à jour l'attribut isNew à false
+    );
+
+    return res.status(200).json({ message: "Les collections ont été marquées comme lues avec succès." });
+} catch (error) {
+    console.error("Erreur lors de la mise à jour des collections:", error);
+    return res.status(500).json({ message: "Une erreur est survenue lors de la mise à jour des collections." });
+}
+}
 module.exports = {
-    createCollection,deleteAllWastes,
+    createCollection,deleteAllWastes,markAsRead,
     getCollectionByShipper,updateCollectionByshipper,getShippedCollection,updateCollectionByCenter
   };

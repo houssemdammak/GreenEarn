@@ -1,5 +1,5 @@
 const express = require('express')
-const {createCollection,getCollectionByShipper,updateCollectionByCenter,deleteAllWastes,
+const {createCollection,getCollectionByShipper,updateCollectionByCenter,deleteAllWastes,markAsRead,
   updateCollectionByshipper,getShippedCollection}=require('../controllers/CollectionController')
   const router = express.Router()
   router.post('/',createCollection)
@@ -7,7 +7,7 @@ const {createCollection,getCollectionByShipper,updateCollectionByCenter,deleteAl
   //get collection by shipper
   router.get('/:id',getCollectionByShipper)
   router.get('/',getShippedCollection)
-
+  router.patch('/markAsRead',markAsRead)
   //delete all bins
 router.delete('/',deleteAllWastes)
 
