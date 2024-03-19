@@ -57,7 +57,7 @@ contract WasteManagement {
     //mapping(address => mapping(string => Notif)) public notifications; // Changed key type to string
     mapping(address => uint256) public citizenRewards;
     uint256 shipCount=0;
-     mapping(address => mapping(string => Notif))  notifications;
+    mapping(address => mapping(string => Notif))  notifications;
 
 
     modifier onlyOwner() {
@@ -128,27 +128,62 @@ contract WasteManagement {
 
         return (ids, locations, capacities, currentWeights);
     }
-    function generateUniqueId() internal view returns (string memory) {
-        bytes32 hash = keccak256(abi.encodePacked(block.timestamp, block.prevrandao, binCount));
-        uint256 value=(uint256(hash));
-        if (value == 0) {
-            return "0";
-        }
-        uint256 temp = value;
-        uint256 digits;
-        while (temp != 0) {
-            digits++;
-            temp /= 10;
-        }
-        bytes memory buffer = new bytes(digits);
-        while (value != 0) {
-            digits -= 1;
-            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
-            value /= 10;
-        }
-        return string(buffer);
-    }
+    // function generateUniqueId() internal view returns (string memory) {
+    //     bytes32 hash = keccak256(abi.encodePacked(block.timestamp, block.prevrandao, binCount));
+    //     uint256 value=(uint256(hash));
+    //     if (value == 0) {
+    //         return "0";
+    //     }
+    //     uint256 temp = value;
+    //     uint256 digits;
+    //     while (temp != 0) {
+    //         digits++;
+    //         temp /= 10;
+    //     }
+    //     bytes memory buffer = new bytes(digits);
+    //     while (value != 0) {
+    //         digits -= 1;
+    //         buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+    //         value /= 10;
+    //     }
+    //     return string(buffer);
+    // }
 
+// Function to generate a unique ID
+function generateUniqueId() internal view returns (string memory) {
+    bytes32 hash = keccak256(abi.encodePacked(
+        block.timestamp,
+        block.prevrandao,
+        block.coinbase,
+        msg.sender,
+        binCount,
+        collectionCount // Assuming this is a counter for collections
+    ));
+
+    // Convert hash to string
+    uint256 value = uint256(hash);
+    if (value == 0) {
+        return "0";
+    }
+    
+    uint256 temp = value;
+    uint256 digits;
+    
+    while (temp != 0) {
+        digits++;
+        temp /= 10;
+    }
+    
+    bytes memory buffer = new bytes(digits);
+    
+    while (value != 0) {
+        digits -= 1;
+        buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+        value /= 10;
+    }
+    
+    return string(buffer);
+}
 
                    //*****************Shipper********************//
     function createShipper(address _shipper) external onlyOwner {
@@ -197,8 +232,12 @@ contract WasteManagement {
         collectionIds.push(_idCollection);
         collectionCount++;
         isCollection[_idCollection] = true;
-        notifications[_shipper][_idBin] = Notif(_shipper, _idBin, false);
+         if (!notifications[_shipper][_date].done) {
+            // If not, create a new notification
+            notifications[_shipper][_date] = Notif(_shipper, _idBin, false);
+        }
         emit CollectionCreated(_idCollection);
+
         return _idCollection;
     }
 
@@ -208,20 +247,21 @@ contract WasteManagement {
         if (collections[_idCollection].shipperNotified != _shipperId) {
             revert("This collection doesn't concern this shipper");
         }
-                // Update collection status and shipper notification
-        collections[_idCollection].status = "Shipped";
-        collections[_idCollection].date = _date;
-
+        string storage date= collections[_idCollection].date;
+        // Update collection status and shipper notification
         // Update waste status and dateCollection for all wastes in the collection
         for (uint256 i = 0; i < wasteIds.length; i++) {
             Waste storage waste = wastes[wasteIds[i]];
-            if (keccak256(bytes(waste.binId)) == keccak256(bytes(collections[_idCollection].binNotif)) &&
-                waste.shipperId == _shipperId ) {
+            if ((keccak256(bytes(waste.binId)) == keccak256(bytes(collections[_idCollection].binNotif)) )&&
+                (waste.shipperId == _shipperId) && (keccak256(bytes(waste.dateCollection)) == keccak256(bytes(collections[_idCollection].date)))) {
                     waste.dateCollection = _date;
                     waste.status = "Shipped"; 
                     shipCount++; // Increment shipCount for each waste that meets the conditions
             }
         }
+        collections[_idCollection].date = _date;
+        collections[_idCollection].status = "Shipped";
+        notifications[_shipperId][date].done=true;
     }
  
     // function deleteShipper(address _shipperAddress) external onlyOwner {
@@ -250,18 +290,19 @@ contract WasteManagement {
     
     function recycleCollection(string memory _idCollection,string memory _date) external  {
         require(isCollection[_idCollection], "Collection doesn't exist");
-        collections[_idCollection].status = "Recyled";
+        
         for (uint256 i = 0; i < wasteIds.length; i++) {
             Waste storage waste = wastes[wasteIds[i]];
             if (keccak256(bytes(waste.binId)) == keccak256(bytes(collections[_idCollection].binNotif)) &&
                 keccak256(bytes(waste.dateCollection)) == keccak256(bytes(collections[_idCollection].date))) {
                 if (keccak256(bytes(waste.status)) == keccak256(bytes("Shipped"))) {
-                    collections[_idCollection].date=_date;
                     waste.dateCollection=_date;
                     waste.status = "Recyled";
                 }
             }
         }
+        collections[_idCollection].date=_date;
+        collections[_idCollection].status = "Recyled";
     }                         
                      
                      
@@ -327,41 +368,41 @@ contract WasteManagement {
     //     return wasteCount;
     // }
 
-    // function getWastes()view external onlyOwner returns (Waste[]memory){
-    //     Waste[] memory trash = new Waste[](wasteIds.length);
-    //      for (uint256 i = 0; i < wasteIds.length; i++) {
-    //         Waste storage waste = wastes[wasteIds[i]];
-    //         trash[i]=waste;
-    //      }
-    //     return trash;
-    // }
+    function getWastes()view external onlyOwner returns (Waste[]memory){
+        Waste[] memory trash = new Waste[](wasteIds.length);
+         for (uint256 i = 0; i < wasteIds.length; i++) {
+            Waste storage waste = wastes[wasteIds[i]];
+            trash[i]=waste;
+         }
+        return trash;
+    }
 
-    // // function getWastesIDs()view external onlyOwner returns (string[] memory){
+    function getWastesIDs()view external onlyOwner returns (string[] memory){
        
-    // //     return wasteIds;
-    // // }
+        return wasteIds;
+    }
 
-    // function getWastesStatus()view external onlyOwner returns (string[] memory,string[] memory){
-    //     string[] memory Status = new string[](wasteIds.length);
-    //     for (uint256 i = 0; i < wasteIds.length; i++) {
-    //         Waste storage waste = wastes[wasteIds[i]];
-    //         Status[i] = waste.status;
-    //     }
-    //     return(wasteIds,Status);
-    // }
+    function getWastesStatus()view external onlyOwner returns (string[] memory,string[] memory){
+        string[] memory Status = new string[](wasteIds.length);
+        for (uint256 i = 0; i < wasteIds.length; i++) {
+            Waste storage waste = wastes[wasteIds[i]];
+            Status[i] = waste.status;
+        }
+        return(wasteIds,Status);
+    }
 
-    // function getCollectionsIds()view external onlyOwner returns(string[] memory) {
-    //      return collectionIds;
-    // } 
+    function getCollectionsIds()view external onlyOwner returns(string[] memory) {
+         return collectionIds;
+    } 
 
-    // function getCollectionsStatus()view external onlyOwner returns(string[] memory) {
-    //       string[] memory Status = new string[](collectionIds.length);
-    //     for (uint256 i = 0; i < collectionIds.length; i++) {
-    //         Collection storage coll = collections[collectionIds[i]];
-    //         Status[i] = coll.status;
-    //     }
-    //     return(Status);
-    // } 
+    function getCollectionsStatus()view external onlyOwner returns(string[] memory) {
+          string[] memory Status = new string[](collectionIds.length);
+        for (uint256 i = 0; i < collectionIds.length; i++) {
+            Collection storage coll = collections[collectionIds[i]];
+            Status[i] = coll.status;
+        }
+        return(Status);
+    } 
 
     // function getShipCount() view external onlyOwner() returns(uint256){
     //     return shipCount;
