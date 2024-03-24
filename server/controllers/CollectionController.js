@@ -14,10 +14,10 @@ const createCollection= async (req, res) => {
             { new: true }
         ).exec(); // exécuter la requête et attendre la réponse
 
-        await Waste.updateMany(
-          {binID:binID, status: 'Waiting' }, // Filtrer les déchets avec le statut "waiting" et le bon binID
-          { $set: { collectionID: collection._id } } // Attribuer l'ID de la nouvelle collection
-      );
+      //   await Waste.updateMany(
+      //     {binID:binID, status: 'Waiting' }, // Filtrer les déchets avec le statut "waiting" et le bon binID
+      //     { $set: { collectionID: collection._id } } // Attribuer l'ID de la nouvelle collection
+      // );
       res.status(200).json(collection);
     } catch (error) {
       // Gérer les erreurs de base de données
