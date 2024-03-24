@@ -2,45 +2,64 @@ import React, { useState,useEffect, useRef, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
-import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { useClickOutside } from 'primereact/hooks';
 import { Dialog } from "primereact/dialog";
 import { Badge } from "primereact/badge";
 import { Avatar } from "primereact/avatar";
 import logo from "../../images/EarnGreen Icons/icon_black.png";
 import AuthContext from "../../contexts/authSlice";
 import "./AppShipper.css";
-import { useWeb3 } from "../../contexts/web3Context";
-import { shipCollection} from "../../web3";
+
 function ShipperApp() {
   const { contract } = useWeb3();
- const {id, name, logout } = useContext(AuthContext);
+  const {id, name, logout } = useContext(AuthContext);
   const [confirm, setDialogConfirm] = useState(false);
   const [collections, setCollections] = useState(null);
+  const [notifications, setNotifications] = useState(null);
+
   const [collection, setCollection] = useState(null);
   const [numTasksAdded, setNumTasksAdded] = useState(0); // État pour stocker le nombre de tâches ajoutées
-const [globalFilter, setGlobalFilter] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
-  const countTasksAdded = (collections) => {
-    if (collections !== null) {
-      return collections.filter((c) => c.shippingdate==null)
-        .length;
-    }
-    return 0;
-  };
+///////////////////////
+const [visible, setVisible] = useState(false);
+    const overlayRef = useRef(null);
 
-  
+    useClickOutside(overlayRef,async () => {
+      const response = await fetch(`/api/collection/markAsRead`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({notifications})
+      });
+      console.log(response)
+      setVisible(false);
+      setNumTasksAdded("0");
+      //setNotifications(null)
+    });
+/////////////////////////////
+  const getNotification = (collections) => {
+    if (collections && collections.length > 0) {
+        const newNotifications = collections.filter((c) => c.isNew === true);
+        // Retourner le tableau filtré des nouvelles notifications
+        return newNotifications;
+    } else {
+        // S'il n'y a pas de collections ou si collections est null, retourner un tableau vide
+        return [];
+    }
+};
 
   const fetchCollection = async () => {
     const response = await fetch(`/api/shippers/getCollection/${id}`);
     const collection = await response.json();
     setCollections(collection);
     console.log(collection);
+    console.log(notifications)
     
   };
-
-
   const fetchCollectionCalled = useRef(false);
 
   useEffect(() => {
@@ -51,28 +70,12 @@ const [globalFilter, setGlobalFilter] = useState(null);
   }, [fetchCollectionCalled]);
   useEffect(() => {
     if (collections !== null) {
-      const numAdded = countTasksAdded(collections);
-      setNumTasksAdded(numAdded);
+      const numAdded = getNotification(collections);
+      setNumTasksAdded(numAdded.length|| "0");
+      setNotifications(numAdded)
       console.log(numAdded); // Utilisez numAdded plutôt que numTasksAdded pour obtenir la valeur mise à jour
     }
   }, [collections]);
-  
-  const header = (
-    <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-      <h4 className="m-0">Manage Bins</h4>
-      <span
-        className="p-input-icon-left"
-        style={{ display: "flex", alignItems: "center" }}
-      >
-        <InputText
-          type="search"
-          onInput={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Search..."
-        />
-      </span>
-    </div>
-  );
-
   let productsWithIndex = [];
   if (collections !== null) {
     productsWithIndex = collections.map((product, index) => ({
@@ -155,10 +158,48 @@ const [globalFilter, setGlobalFilter] = useState(null);
             <span className="user-name">{name}</span>
             <Avatar icon="pi pi-user" shape="circle" className="mr-2" style={{  backgroundColor: 'transparent' ,color: "black", fontSize: "1.5rem" }} />
 
-          <i className="pi pi-bell p-overlay-badge mr-2" style={{ color: "black", fontSize: "1.1rem" }}>
-           
+          {/* <i className="pi pi-bell p-overlay-badge mr-2" style={{ color: "black", fontSize: "1.1rem" }}>
+         
+        
             <Badge severity="success" value={numTasksAdded} style={{ fontSize: '0.65rem'}}></Badge>
-          </i>
+          </i> */}
+         
+         {/* partie jdiiiiiiiiiiiiiiiiiiiddddddddddaaaaaaaa */}
+         <div className="relative" >
+    <i
+        className="pi pi-bell p-overlay-badge mr-2"
+        onClick={() => setVisible(true)}
+        style={{ color: "black", fontSize: "1.1rem", zIndex: 10 }}
+    >
+        {numTasksAdded !== "0" && (
+            <Badge severity="success" value={numTasksAdded} style={{ fontSize: '0.65rem'}}></Badge>
+        )}
+        {visible ? (
+            <div ref={overlayRef} className="absolute z-50 top-5 right-0 border rounded shadow-lg p-2 whitespace-nowrap" style={{ width:"310px", borderRadius:"15px", backgroundColor:"white"}}>
+                <div className="notification-container" style={{ overflowX: "auto" ,maxHeight: "250px"}}>
+                    {notifications.map(notification => (
+                        <div
+                            key={notification._id}
+                            className="notification-item flex items-center p-2 bg-white border rounded-lg shadow-sm mb-3"
+                            style={{ borderStyle: "white", borderColor: "black", borderRadius: "11px" }}
+                        >
+                            <div className="flex justify-center items-center mr-2 rounded-full">
+                                <i className="pi pi-trash " style={{ fontSize: '3rem', color:"gray"}}></i>
+                            </div>
+                            <div className="flex-grow">
+                                <h4 className="text-lg font-semibold mb-1">New Task</h4>
+                                <p className="text-sm text-gray-700">
+                                    Location: {notification.binID.location}
+                                </p>
+                                <p className="text-sm text-gray-700">Date: {formatDate(notification.createdAt)}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        ) : null}
+    </i>
+</div>
 
           {/* Avatar pour se déconnecter */}
           <Avatar icon="pi pi-sign-out" shape="circle" onClick={handleLogout} style={{backgroundColor: 'transparent' , color: "black", fontSize: "1.5rem" }} />
@@ -169,9 +210,11 @@ const [globalFilter, setGlobalFilter] = useState(null);
       </nav>
     );
   };
+
    const updateCollectionByshipper = async () => {
+    const currentDate=new Date();
     try {
-      const blockchainTransactionResult = await shipCollection(contract,collection.BlockchainID,collection.shipperID.ID);
+      const blockchainTransactionResult = await shipCollection(contract,collection.BlockchainID,collection.shipperID.ID,currentDate);
       console.log(collection.BlockchainID,id)
       if (blockchainTransactionResult.status === 'accepted') {
 
@@ -197,7 +240,8 @@ const [globalFilter, setGlobalFilter] = useState(null);
      }
    } else {
      console.error('Blockchain transaction failed.');
-     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Collection shipping reverted.', life: 3000 });
+
+     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. ship collection reverted.', life: 3000 });
    }
  } catch (error) {
    console.error('Error shipping collection:', error);
