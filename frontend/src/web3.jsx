@@ -248,14 +248,14 @@ const shipCollection = async (contract, collectionId,shipperId,date) => {
 };
 
 
-const RecycleCollection = async (contract, collectionId) => {
+const RecycleCollection = async (contract, collectionId,date) => {
   try {
     const web3 = await initWeb3(); // Initialize Web3 instance
     const accounts = await web3.eth.getAccounts(); // Get accounts
     const senderAddress = accounts[0]; // Assuming you want to use the first account
 
     // Send transaction to the blockchain
-    const transaction = await contract.methods.RecycleCollection(collectionId).send({ 
+    const transaction = await contract.methods.recycleCollection(collectionId,date).send({ 
       from: senderAddress
     });  
     console.log("Collection recycled successfully!");

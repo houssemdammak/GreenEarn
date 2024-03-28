@@ -1,8 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState,useRef } from 'react';
 import AppContext from './Context';
 import './styles.css';
 import AuthContext from '../../contexts/authContext';
+import { useWeb3 } from "../../contexts/web3Context";
+import { Toast } from "primereact/toast";
+import { createWaste } from "../../web3";
+//import { toast } from 'react-toastify';
+
 const FormThree = () => {
+  const toast = useRef(null);
+  const { citizenContract } = useWeb3();
   const {id} = useContext(AuthContext);
     const myContext = useContext(AppContext);
     const updateContext = myContext.wasteDetails;
@@ -10,6 +17,9 @@ const FormThree = () => {
     const addToBin = async (binID, citizenID, weight) => {
       console.log(binID, citizenID, weight)
         try {
+          const blockchainTransactionResult = await createWaste(citizenContract,weight, "0xe6bc3286Fb3778876c4044BA6cFB704415551490",binID);
+          if (blockchainTransactionResult.status === 'accepted') {
+
           const response = await fetch('/api/wastes', {
             method: 'POST',
             headers: {
@@ -21,12 +31,21 @@ const FormThree = () => {
           if (!response.ok) {
             throw new Error('Erreur lors de l\'ajout du déchet à la poubelle');
           }
-      
+
           const waste = await response.json();
-      
+          console.log('success');
+          //toast.current.show({ severity: 'success', summary: 'Successful', detail: 'wastes Created', life: 3000 });
           return waste;
+
+        }
+          else {
+          
+            console.error('Blockchain transaction failed.');
+           // toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. waste creation reverted.', life: 3000 });
+          }
         } catch (error) {
-          throw new Error(error.message);
+          console.error('Error creating wastes:', error);
+         // toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create waste.', life: 3000 });
         }
       };
       
@@ -38,6 +57,8 @@ const FormThree = () => {
 
     }
     return (
+      <div>
+      <Toast ref={toast} />
         <div className="container-home">
             <p>Are you sur to validate ?</p>
             <div className="multipleButtons">
@@ -45,6 +66,7 @@ const FormThree = () => {
             <button className="doneSubmit" onClick={finish}>Done</button>
             </div>
         </div>
+      </div>
     );
 };
 

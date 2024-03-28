@@ -171,8 +171,9 @@ function RecyclingCenter() {
     );
   };
    const updateCollectionByRecycler = async () => {
+    const currentDate=new Date().toString();
     try {
-      const blockchainTransactionResult = await RecycleCollection(contract,collection.BlockchainID);
+      const blockchainTransactionResult = await RecycleCollection(contract,collection.BlockchainID,currentDate);
       console.log(collection.BlockchainID,id)
       if (blockchainTransactionResult.status === 'accepted') {
 
