@@ -343,22 +343,22 @@ function generateUniqueId() internal view returns (string memory) {
         // Further logic here if needed
     }
 
-    function getIsBin(string memory _binId) external view returns (bool) {
+    function getIsBin(string memory _binId) internal view returns (bool) {
         require(isBin[_binId], "Bin doesn't exist");
         return isBin[_binId];
     }
 
-    function getIsCitizen(address _citizenId) external view returns (bool) {
+    function getIsCitizen(address _citizenId) internal view returns (bool) {
         require(isCitizen[_citizenId], "Citizen doesn't exist");
         return isCitizen[_citizenId];
     }
 
-    function CheckWaste(string memory _wasteId) external view returns (bool) {
+    function CheckWaste(string memory _wasteId) internal view returns (bool) {
         require(!isWaste[_wasteId], "Watse exist");
         return !isWaste[_wasteId];
     }
 
-    function setWaste(string memory _wasteId,uint256 _weight,address _citizenId,string memory _binId) external {
+    function setWaste(string memory _wasteId,uint256 _weight,address _citizenId,string memory _binId) internal {
         wastes[_wasteId]=Waste(_wasteId, "Waiting", _weight, _citizenId, address(0), address(0), _binId, "");
         wasteIds.push(_wasteId);
         isWaste[_wasteId]=true;
@@ -429,4 +429,21 @@ function generateUniqueId() internal view returns (string memory) {
     //     return shipperNotifications;
     // }
 
+    function createWaste(uint256 _weight, address _citizenId, string memory _binId) external {
+        string memory _id =generateUniqueId();
+       //require(getIsBin(_binId), "Bin doesn't exist");
+        require(isBin[_binId], "Bin doesn't exist");
+        require(isCitizen[_citizenId], "Citizen doesn't exist");
+        //require(getIsCitizen(_citizenId), "Citizen doesn't exist");
+        require(!isWaste[_id], "Watse exist");
+
+        //setWaste(_id,  _weight, _citizenId, _binId);
+        wastes[_id]=Waste(_id, "Waiting", _weight, _citizenId, address(0), address(0), _binId, "");
+        wasteIds.push(_id);
+        isWaste[_id]=true;
+        wasteCount++;
+
+
+        // emit WasteCreated(_id);
+    }
 }

@@ -5,11 +5,12 @@ import AuthContext from '../../contexts/authContext';
 import { useWeb3 } from "../../contexts/web3Context";
 import { Toast } from "primereact/toast";
 import { createWaste } from "../../web3";
+
 //import { toast } from 'react-toastify';
 
 const FormThree = () => {
   const toast = useRef(null);
-  const { citizenContract } = useWeb3();
+  const { contract } = useWeb3();
   const {id} = useContext(AuthContext);
     const myContext = useContext(AppContext);
     const updateContext = myContext.wasteDetails;
@@ -17,7 +18,7 @@ const FormThree = () => {
     const addToBin = async (binID, citizenID, weight) => {
       console.log(binID, citizenID, weight)
         try {
-          const blockchainTransactionResult = await createWaste(citizenContract,weight, "0xe6bc3286Fb3778876c4044BA6cFB704415551490",binID);
+          const blockchainTransactionResult = await createWaste(contract,weight, "0xe6bc3286Fb3778876c4044BA6cFB704415551490","17089293973053443058608115042584247761808000131898204140481830366382155519993");
           if (blockchainTransactionResult.status === 'accepted') {
 
           const response = await fetch('/api/wastes', {

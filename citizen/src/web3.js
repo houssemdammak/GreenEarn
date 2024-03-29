@@ -1,6 +1,6 @@
 import Web3 from "web3";
-import WasteManagement from "./contracts/WasteManagement.json"; 
-import CitizenContract from "./contracts/CitizenContract.json";
+//import WasteManagement from "./contracts/WasteManagement.json"; 
+import WasteManagement from "./frontend/src/contracts/WasteManagement.json"; 
 
 const initWeb3 = async () => {
   let web3;
@@ -10,8 +10,6 @@ const initWeb3 = async () => {
       // Request account access
       await window.ethereum.request({ method: "eth_requestAccounts" });
       console.log("ethereum enabled");
-      console.log("Accounts", web3.eth.getAccounts());
-
     } catch (error) {
       // User denied account access...
       console.error("User denied account access");
@@ -29,29 +27,23 @@ const initWeb3 = async () => {
 };
 
 const initContract = async (web3) => {
-  const wasteManagementContract = new web3.eth.Contract(
+  const contract = new web3.eth.Contract(
     WasteManagement.abi,
     WasteManagement.networks[5777].address
   );
-
-  const citizenContract = new web3.eth.Contract(
-    CitizenContract.abi,
-    CitizenContract.networks[5777].address
-);
-
-  return { wasteManagementContract, citizenContract };
+  return contract;
 };
 
 
 //*********waste**********/
-const createWaste = async (citizenContract,Weight, CitizenId,BinId) => {
+const createWaste = async (contract,Weight, CitizenId,BinId) => {
   try {
     const web3 = await initWeb3(); // Initialize Web3 instance
     const accounts = await web3.eth.getAccounts(); // Get accounts
     const senderAddress = accounts[1]; //the citizen address
 
     // Send transaction to the blockchain
-    const transaction = await citizenContract.methods.createWaste(Weight, CitizenId,BinId).send({ 
+    const transaction = await contract.methods.createWaste(Weight, CitizenId,BinId).send({ 
       from: senderAddress
     });  
     console.log("Wastes created successfully!");
