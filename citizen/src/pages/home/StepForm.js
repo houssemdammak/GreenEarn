@@ -11,6 +11,7 @@ import ProgressBar from "./ProgressBar";
 import icon from "../../images/icon_black.png";
 import NavigationBar from "../../components/navbar";
 const StepForm = () => {
+  const [BlockchainID, setBlockchainID] = useState(null); // blockchain id de bin
   const [step, setStep] = useState(0);
   const [BinID, setBinID] = useState(null);
   const [wasteType, setwasteType] = useState(null);
@@ -35,7 +36,9 @@ const [currentWeight, setcurrentweight] = useState(null);
     capacity:capacity ,
     type:type ,
     currentweight:currentWeight,
-    setType,setCapacity,setcurrentweight
+    BlockchainID:BlockchainID,
+    setType,setCapacity,setcurrentweight,setBlockchainID
+
   }
   return (
     

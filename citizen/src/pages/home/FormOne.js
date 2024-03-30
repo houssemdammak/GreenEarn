@@ -14,6 +14,7 @@ const FormOne = () => {
             const response = await fetch(`/api/bins/${updateContext.binID}`);
             const products = await response.json();
             console.log(products);
+            console.log("blockChainID :",binContext.BlockchainID);
             return products;
         } catch (error) {
             console.error('Error fetching bin details:', error);
@@ -34,7 +35,8 @@ const FormOne = () => {
                     binContext.setType(products.type)
                     binContext.setcurrentweight(products.currentWeight)
                     binContext.setCapacity(products.capacity)
-                    
+                    binContext.setBlockchainID(products.BlockchainID)
+
                 }else {
                     console.log('No bin details found');
                 }

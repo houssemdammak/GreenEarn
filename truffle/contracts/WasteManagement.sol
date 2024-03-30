@@ -343,30 +343,30 @@ function generateUniqueId() internal view returns (string memory) {
         // Further logic here if needed
     }
 
-    function getIsBin(string memory _binId) internal view returns (bool) {
-        require(isBin[_binId], "Bin doesn't exist");
-        return isBin[_binId];
-    }
+    // function getIsBin(string memory _binId) internal view returns (bool) {
+    //     require(isBin[_binId], "Bin doesn't exist");
+    //     return isBin[_binId];
+    // }
 
-    function getIsCitizen(address _citizenId) internal view returns (bool) {
-        require(isCitizen[_citizenId], "Citizen doesn't exist");
-        return isCitizen[_citizenId];
-    }
+    // function getIsCitizen(address _citizenId) internal view returns (bool) {
+    //     require(isCitizen[_citizenId], "Citizen doesn't exist");
+    //     return isCitizen[_citizenId];
+    // }
 
-    function CheckWaste(string memory _wasteId) internal view returns (bool) {
-        require(!isWaste[_wasteId], "Watse exist");
-        return !isWaste[_wasteId];
-    }
+    // function CheckWaste(string memory _wasteId) internal view returns (bool) {
+    //     require(!isWaste[_wasteId], "Watse exist");
+    //     return !isWaste[_wasteId];
+    // }
 
-    function setWaste(string memory _wasteId,uint256 _weight,address _citizenId,string memory _binId) internal {
-        wastes[_wasteId]=Waste(_wasteId, "Waiting", _weight, _citizenId, address(0), address(0), _binId, "");
-        wasteIds.push(_wasteId);
-        isWaste[_wasteId]=true;
-        wasteCount++;
-       // emit WasteCreated(_wasteId);
+    // function setWaste(string memory _wasteId,uint256 _weight,address _citizenId,string memory _binId) internal {
+    //     wastes[_wasteId]=Waste(_wasteId, "Waiting", _weight, _citizenId, address(0), address(0), _binId, "");
+    //     wasteIds.push(_wasteId);
+    //     isWaste[_wasteId]=true;
+    //     wasteCount++;
+    //    // emit WasteCreated(_wasteId);
 
        
-    }
+    // }
 
 
     /*TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESTS */

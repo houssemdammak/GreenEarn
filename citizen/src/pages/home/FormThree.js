@@ -11,14 +11,16 @@ import { createWaste } from "../../web3";
 const FormThree = () => {
   const toast = useRef(null);
   const { contract } = useWeb3();
-  const {id} = useContext(AuthContext);
+  const {id,WalletID} = useContext(AuthContext);
     const myContext = useContext(AppContext);
     const updateContext = myContext.wasteDetails;
+    const binContext=myContext.binDetail ;
+
    
-    const addToBin = async (binID, citizenID, weight) => {
-      console.log(binID, citizenID, weight)
+    const addToBin = async (binID, citizenID, weight,BlockchainID,citizenWalletID) => {
+      console.log(binID, citizenID, weight,BlockchainID)
         try {
-          const blockchainTransactionResult = await createWaste(contract,weight, "0xe6bc3286Fb3778876c4044BA6cFB704415551490","17089293973053443058608115042584247761808000131898204140481830366382155519993");
+          const blockchainTransactionResult = await createWaste(contract,weight, citizenWalletID,BlockchainID);
           if (blockchainTransactionResult.status === 'accepted') {
 
           const response = await fetch('/api/wastes', {
@@ -26,7 +28,7 @@ const FormThree = () => {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ binID, citizenID, weight })
+            body: JSON.stringify({ binID, citizenID, weight,BlockchainID })
           });
       
           if (!response.ok) {
@@ -35,6 +37,7 @@ const FormThree = () => {
 
           const waste = await response.json();
           console.log('success');
+          console.log('citizenID:',typeof id)
           //toast.current.show({ severity: 'success', summary: 'Successful', detail: 'wastes Created', life: 3000 });
           return waste;
 
@@ -52,9 +55,9 @@ const FormThree = () => {
       
 
     const finish = () => {
-        console.log(updateContext);
+        console.log("updateContext",updateContext);
         updateContext.setStep(updateContext.currentPage +1)
-        addToBin(updateContext.binID,id,updateContext.quantity)
+        addToBin(updateContext.binID,id,updateContext.quantity,binContext.BlockchainID,WalletID)
 
     }
     return (

@@ -97,7 +97,7 @@ const login = async (req, res) => {
         }
       );
 
-      return res.status(200).json({ id: foundUser._id, name: foundUser.FullName, token });
+      return res.status(200).json({ id: foundUser._id, name: foundUser.FullName, token,WalletID: foundUser.WalletID});
     } else {
       return res.status(400).json({ msg: "Bad password" });
     }
@@ -130,7 +130,7 @@ const register = async (req, res) => {
           expiresIn: "30d",
         }
       );
-      return res.status(201).json({ id:person._id,name:person.FullName ,token});
+      return res.status(201).json({ id:person._id,name:person.FullName ,token,WalletID:person.WalletID});
     }else{
         return res.status(400).json({msg: "Please add all values in the request body"});
     }

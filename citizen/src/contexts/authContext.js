@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(JSON.parse(localStorage.getItem('citizienAuth')) || null);
   const [id, setID] = useState(JSON.parse(localStorage.getItem('citizienID')) || null);
   const [name, setName] = useState(JSON.parse(localStorage.getItem('citizienName')) || null);
+  const [WalletID, setWalletID] = useState(JSON.parse(localStorage.getItem('WalletID')) || null);
   console.log(name ,id)
 
   useEffect(() => {
@@ -17,13 +18,16 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  const login = (token,id,name) => {
+  const login = (token,id,name,WalletID) => {
     setToken(token);
     setID(id)
     setName(name)
+    setWalletID(WalletID)
     localStorage.setItem('citizienAuth', JSON.stringify(token) );
     localStorage.setItem('citizienID', JSON.stringify(id) );
     localStorage.setItem('citizienName', JSON.stringify(name) );
+    localStorage.setItem('WalletID', JSON.stringify(WalletID) );
+
     navigate("/Home")
   };
 
@@ -32,11 +36,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('citizienAuth');
     localStorage.removeItem('citizienID');
     localStorage.removeItem('citizienName');
+    localStorage.removeItem('WalletID');
+
+
     navigate("/Login");
   };
 
   return (
-    <AuthContext.Provider value={{ token, name ,id ,login, logout }}>
+    <AuthContext.Provider value={{ token, name ,id,WalletID ,login, logout }}>
       {children}
     </AuthContext.Provider>
   );
