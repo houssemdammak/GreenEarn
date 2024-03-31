@@ -62,7 +62,7 @@ contract WasteManagement is ERC20, Ownable {
     mapping(address => mapping(string => Notif))  notifications;
 
 
-  uint public maxSupply;
+    uint public maxSupply;
     constructor() ERC20("GreenEarn Transfer", "GRN") Ownable(msg.sender) {
         maxSupply = 1000000000000000000000; // 1000000000000000000000 GRN
         mint(msg.sender, 1000000000000000000000); // Mint initial supply to contract deployer
@@ -153,40 +153,41 @@ contract WasteManagement is ERC20, Ownable {
     // }
 
 // Function to generate a unique ID
-function generateUniqueId() internal view returns (string memory) {
-    bytes32 hash = keccak256(abi.encodePacked(
-        block.timestamp,
-        block.prevrandao,
-        block.coinbase,
-        msg.sender,
-        binCount,
-        collectionCount // Assuming this is a counter for collections
-    ));
+    function generateUniqueId() internal  returns (string memory) {
+        bytes32 hash = keccak256(abi.encodePacked(
+            block.timestamp,
+            block.prevrandao,
+            block.coinbase,
+            msg.sender,
+            binCount,
+            wasteCount,
+            collectionCount // Assuming this is a counter for collections
+        ));
 
-    // Convert hash to string
-    uint256 value = uint256(hash);
-    if (value == 0) {
-        return "0";
+        // Convert hash to string
+        uint256 value = uint256(hash);
+        if (value == 0) {
+            return "0";
+        }
+        
+        uint256 temp = value;
+        uint256 digits;
+        
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+        
+        bytes memory buffer = new bytes(digits);
+        
+        while (value != 0) {
+            digits -= 1;
+            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+            value /= 10;
+        }
+        
+        return string(buffer);
     }
-    
-    uint256 temp = value;
-    uint256 digits;
-    
-    while (temp != 0) {
-        digits++;
-        temp /= 10;
-    }
-    
-    bytes memory buffer = new bytes(digits);
-    
-    while (value != 0) {
-        digits -= 1;
-        buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
-        value /= 10;
-    }
-    
-    return string(buffer);
-}
 
                    //*****************Shipper********************//
     function createShipper(address _shipper) external onlyOwner {
@@ -206,6 +207,21 @@ function generateUniqueId() internal view returns (string memory) {
     //     require(isBin[_idBin], "Bin doesn't exist");
     //     notifications[_shipper][_idBin] = Notif(_shipper, _idBin, false);
     // }
+
+    function createWaste(uint256 _weight, address _citizenId, string memory _binId) external {
+        string memory _id = generateUniqueId();
+
+        require(isBin[_binId], "Bin doesn't exist");
+        require(isCitizen[_citizenId], "Citizen doesn't exist");
+        require(!isWaste[_id], "Waste already exists");
+        require(bins[_binId].capacity - bins[_binId].currentWeight > _weight, "Bin capacity exceeded");
+
+        // Create waste
+        wastes[_id] = Waste(_id, "Waiting", _weight, _citizenId, address(0), address(0), _binId, "");
+        wasteIds.push(_id);
+        isWaste[_id] = true;
+        wasteCount++;
+    }
 
     function createCollection(address _shipper, string memory _idBin, string memory _date) external onlyOwner returns (string memory) {
         require(isShipper[_shipper], "Shipper doesn't exist");
@@ -429,21 +445,6 @@ function generateUniqueId() internal view returns (string memory) {
     //     return shipperNotifications;
     // }
 
-    function createWaste(uint256 _weight, address _citizenId, string memory _binId) external {
-        string memory _id =generateUniqueId();
-       //require(getIsBin(_binId), "Bin doesn't exist");
-        require(isBin[_binId], "Bin doesn't exist");
-        require(isCitizen[_citizenId], "Citizen doesn't exist");
-        //require(getIsCitizen(_citizenId), "Citizen doesn't exist");
-        require(!isWaste[_id], "Watse exist");
+    
 
-        //setWaste(_id,  _weight, _citizenId, _binId);
-        wastes[_id]=Waste(_id, "Waiting", _weight, _citizenId, address(0), address(0), _binId, "");
-        wasteIds.push(_id);
-        isWaste[_id]=true;
-        wasteCount++;
-
-
-        // emit WasteCreated(_id);
-    }
 }
