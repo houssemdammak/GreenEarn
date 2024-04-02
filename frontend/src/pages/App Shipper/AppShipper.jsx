@@ -7,6 +7,9 @@ import { useClickOutside } from 'primereact/hooks';
 import { Dialog } from "primereact/dialog";
 import { Badge } from "primereact/badge";
 import { Avatar } from "primereact/avatar";
+import { useWeb3 } from "../../contexts/web3Context";
+import { shipCollection} from "../../web3";
+
 import logo from "../../images/EarnGreen Icons/icon_black.png";
 import AuthContext from "../../contexts/authSlice";
 import "./AppShipper.css";
@@ -212,10 +215,10 @@ const [visible, setVisible] = useState(false);
   };
 
    const updateCollectionByshipper = async () => {
-    const currentDate=new Date();
+    const currentDate=new Date().toString();
     try {
       const blockchainTransactionResult = await shipCollection(contract,collection.BlockchainID,collection.shipperID.ID,currentDate);
-      console.log(collection.BlockchainID,id)
+      console.log(collection.BlockchainID,id,collection.shipperID.ID)
       if (blockchainTransactionResult.status === 'accepted') {
 
     // const response = await fetch(`/api/collection/updateCollectionByshipper/${collection.binID._id}`);

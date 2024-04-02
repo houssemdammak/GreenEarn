@@ -15,6 +15,7 @@ const FormOne = () => {
             const products = await response.json();
             
             console.log(products);
+            console.log("blockChainID :",binContext.BlockchainID);
             return products;
         } catch (error) {
             console.error('Error fetching bin details:', error);
@@ -37,6 +38,8 @@ const FormOne = () => {
                     binContext.setCapacity(products.capacity)
                     setBinIdError(false);
                     updateContext.setStep(updateContext.currentPage + 1);
+                    binContext.setBlockchainID(products.BlockchainID)
+
                 }else {
                     console.log('No bin details found');
                     setBinIdError(true);

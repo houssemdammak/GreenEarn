@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
@@ -34,9 +34,12 @@ const wasteSchema = new Schema({
     isNew:{
         type: Boolean,
         default: true // Par défaut, toutes les collections seront marquées comme nouvelles
-    }
-    ///binid et status
+    },
+  BlockchainID: {
+    type: String,
+  }
+  
+  ///binid et status
 });
 
-
-module.exports = mongoose.model('Waste', wasteSchema);
+module.exports = mongoose.model("Waste", wasteSchema);

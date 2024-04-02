@@ -1,43 +1,68 @@
-import React, { useContext} from 'react';
+import React, { useContext, useEffect, useState,useRef } from 'react';
 import AppContext from './Context';
 import './styles.css';
 import AuthContext from '../../contexts/authContext';
+import { useWeb3 } from "../../contexts/web3Context";
+import { Toast } from "primereact/toast";
+import { createWaste } from "../../web3";
+
+//import { toast } from 'react-toastify';
+
 const FormThree = () => {
-  const {id} = useContext(AuthContext);
+  const toast = useRef(null);
+  const { contract } = useWeb3();
+  const {id,WalletID} = useContext(AuthContext);
     const myContext = useContext(AppContext);
     const updateContext = myContext.wasteDetails;
+    const binContext=myContext.binDetail ;
+
    
-    const addToBin = async (binID, citizenID, weight) => {
-      console.log(binID, citizenID, weight)
+    const addToBin = async (binID, citizenID, weight,BlockchainID,citizenWalletID) => {
+      console.log(binID, citizenID, weight,BlockchainID)
         try {
+          const blockchainTransactionResult = await createWaste(contract,weight, citizenWalletID,BlockchainID);
+          if (blockchainTransactionResult.status === 'accepted') {
+
           const response = await fetch('/api/wastes', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ binID, citizenID, weight })
+            body: JSON.stringify({ binID, citizenID, weight,BlockchainID })
           });
       
           if (!response.ok) {
             throw new Error('Erreur lors de l\'ajout du déchet à la poubelle');
           }
-      
+
           const waste = await response.json();
-      
+          console.log('success');
+          console.log('citizenID:',typeof id)
+          //toast.current.show({ severity: 'success', summary: 'Successful', detail: 'wastes Created', life: 3000 });
           return waste;
+
+        }
+          else {
+          
+            console.error('Blockchain transaction failed.');
+           // toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. waste creation reverted.', life: 3000 });
+          }
         } catch (error) {
-          throw new Error(error.message);
+          console.error('Error creating wastes:', error);
+         // toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create waste.', life: 3000 });
         }
       };
       
 
     const finish = () => {
-        console.log(updateContext);
+        console.log("updateContext",updateContext);
         updateContext.setStep(updateContext.currentPage +1)
-        addToBin(updateContext.binID,id,updateContext.quantity)
+        addToBin(updateContext.binID,id,updateContext.quantity,binContext.BlockchainID,WalletID)
 
     }
     return (
+      <div>
+      <Toast ref={toast} />
         <div className="container-home">
             <p>Are you sur to validate ?</p>
             <div className="multipleButtons">
@@ -45,6 +70,7 @@ const FormThree = () => {
             <button className="doneSubmit" onClick={finish}>Done</button>
             </div>
         </div>
+      </div>
     );
 };
 

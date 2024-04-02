@@ -82,7 +82,7 @@ const Login = ()  => {
 
         //localStorage.setItem('citizensAuth', JSON.stringify(response.data.token));
         ////login teb3a contexte
-        login(response.data.token,response.data.id,response.data.name);
+        login(response.data.token,response.data.id,response.data.name,response.data.WalletID);
         //navigate("/Home");
       } catch (err) {
         console.log(err);
@@ -158,7 +158,7 @@ const Login = ()  => {
 
       //localStorage.setItem('citizensAuth', JSON.stringify(response.data.token));
       ////login teb3a contexte
-      login(response.data.token,response.data.id,response.data.name);
+      login(response.data.token,response.data.id,response.data.name,response.data.WalletID);
       //navigate("/Home");
     // } 
   }catch (err) {

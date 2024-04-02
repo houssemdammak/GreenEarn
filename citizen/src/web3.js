@@ -1,7 +1,6 @@
-// web3.js
 import Web3 from "web3";
-
-import WasteManagement from "./contracts/WasteManagement.json"; 
+//import WasteManagement from "./contracts/WasteManagement.json"; 
+import WasteManagement from "./frontend/src/contracts/WasteManagement.json"; 
 
 const initWeb3 = async () => {
   let web3;
@@ -36,8 +35,24 @@ const initContract = async (web3) => {
 };
 
 
+//*********waste**********/
+const createWaste = async (contract,Weight, CitizenId,BinId) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[1]; //the citizen address
 
+    // Send transaction to the blockchain
+    const transaction = await contract.methods.createWaste(Weight, CitizenId,BinId).send({ 
+      from: senderAddress
+    });  
+    console.log("Wastes created successfully!");
+    // Retrieve the bin ID from the emitted event
+    return { status: 'accepted'}; // Return 'accepted' status along with bin ID
+  } catch (error) {
+    console.error("Error creating Wastes:", error);
+    return { status: 'rejected'}; // Return 'rejected' status and null bin ID if transaction fails
+  }
+};
 
-export { initWeb3,
-         initContract,
-        };
+export { initWeb3, initContract,createWaste };

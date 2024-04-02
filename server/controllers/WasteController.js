@@ -73,7 +73,7 @@ const getWaste = async (req, res) => {
 
 // Créer un nouveau sac
 const createWaste = async (req, res) => {
-  const { weight, citizenID, binID } = req.body;
+  const { weight, citizenID, binID,BlockchainID } = req.body;
 
   // Formater la date au format "JJ/MM/AAAA HH:MM"
   const currentDate = new Date();
@@ -84,7 +84,8 @@ const createWaste = async (req, res) => {
           weight: weight,
           dateAdded: currentDate, // Ajoutez la date actuelle
           citizenID: citizenID,
-          binID: binID
+          binID: binID,
+          BlockchainID:BlockchainID
       });
 
       // Enregistrez le nouveau déchet dans la base de données
