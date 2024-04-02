@@ -1,17 +1,17 @@
-import React, { useState,useContext,useEffect} from "react";
+import React, { useState,useContext} from "react";
 import "./login.css";
 import register from "../../images/bitcoin.svg";
 import log from "../../images/recycle.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //import { byPrefixAndName } from '@awesome.me/kit-KIT_CODE/icons'
-import {  faCheck,  faEnvelope,  faIdBadge,  faLock,  faUser,  faWallet,  faSquareCheck,} from "@fortawesome/free-solid-svg-icons";
-import { useNavigate ,Link} from "react-router-dom";
+import {    faEnvelope,  faLock,  faUser,  faWallet,  faSquareCheck,} from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import  AuthContext  from "../../contexts/authContext";
 
 import icon from "../../images/icon_black.png";
 
-const Login = ({  })  => {
+const Login = ()  => {
   //for login
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");

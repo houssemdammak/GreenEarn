@@ -1,4 +1,7 @@
 const Bin = require('../models/BinModel')
+const qr = require('qrcode'); // Importer le package pour générer le code QR
+// commande lezma :npm install qrcode --force
+
 const mongoose = require('mongoose')
 // get all bins
 const getBins = async (req, res) => {
@@ -96,8 +99,18 @@ const createBin = async (req, res) => {
     try {
       //console.log(type, location, capacity, currentWeight)
       // Vérifie si l'ID est déjà utilisé
-        bin = await Bin.create({ BlockchainID,type, location, capacity, currentWeight });
-        return res.status(200).json(bin);
+          bin = await Bin.create({ BlockchainID,type, location, capacity, currentWeight });
+          //////////////
+          // Générez le code QR avec les données du nouveau bac
+          const qrData = JSON.stringify({BinID:bin._id,Type:type,currentWeight:currentWeight});
+          // Générez le code QR
+      const qrCode = await qr.toDataURL(qrData);
+      // Enregistrez le code QR dans la base de données
+      bin.qrCode = qrCode;
+      await bin.save();
+        //////////
+        console.log(bin)
+      return res.status(200).json(bin);
     } catch (error) {
       console.log(error)
       // Gérer les erreurs de base de données

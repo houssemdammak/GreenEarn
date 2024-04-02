@@ -13,6 +13,7 @@ const FormOne = () => {
         try {
             const response = await fetch(`/api/bins/${updateContext.binID}`);
             const products = await response.json();
+            
             console.log(products);
             return products;
         } catch (error) {
@@ -28,18 +29,19 @@ const FormOne = () => {
         } else {
             try {
                 const products = await getBindetail();
-                if (products) {
+                if (!products.error) {
                     updateContext.setwasteType(products.type);
                     updateContext.setBinID(products._id)
                     binContext.setType(products.type)
                     binContext.setcurrentweight(products.currentWeight)
                     binContext.setCapacity(products.capacity)
-                    
+                    setBinIdError(false);
+                    updateContext.setStep(updateContext.currentPage + 1);
                 }else {
                     console.log('No bin details found');
-                }
-                updateContext.setStep(updateContext.currentPage + 1);
-                setBinIdError(false);
+                    setBinIdError(true);
+                }              
+                
             } catch (error) {
                 console.error('Error getting bin details:', error);
                 setBinIdError(true);

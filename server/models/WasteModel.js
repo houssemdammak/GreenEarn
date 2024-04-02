@@ -30,8 +30,11 @@ const wasteSchema = new Schema({
     },
     shippingdate:{
         type:Date ,
-      }
-
+      },
+    isNew:{
+        type: Boolean,
+        default: true // Par défaut, toutes les collections seront marquées comme nouvelles
+    }
     ///binid et status
 });
 

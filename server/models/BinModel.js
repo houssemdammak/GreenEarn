@@ -21,6 +21,9 @@ const binSchema = new Schema({
     type: Number,
     required: true
   },
+  qrCode:{
+    type :String ,
+  },
   status :{
     type: Number,
     default: function() {

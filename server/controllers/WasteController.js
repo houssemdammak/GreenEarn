@@ -123,9 +123,6 @@ const createWaste = async (req, res) => {
       res.status(400).json({ error: error.message });
   }
 };
-
-  
-
 // Supprimer un sac
 const deleteWaste = async (req, res) => {
   const { id } = req.params;
@@ -163,7 +160,33 @@ const updateWaste = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const getRewarded = async (req, res) => {
+  try {
+      const { id } = req.params; // Supposons que l'ID du citoyen est passé en tant que paramètre dans la requête
 
+      // Récupérer les déchets avec citizenID=id et recycledDate != null
+      const rewardedWastes = await Waste.find({
+          citizenID: id,
+          recyclingdate: { $ne: null }
+      });
+
+      res.status(200).json(rewardedWastes);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des déchets récompensés." });
+  }
+};
+const markAsReadWaste = async (req, res) => {
+  const { ids } = req.body;
+  try {
+    // Mettre à jour les produits avec les IDs fournis pour marquer les notifications comme lues
+    await Waste.updateMany({ _id: { $in: ids } }, { isNew: false });
+    res.status(200).json({ message: 'Notifications marked as read successfully.' });
+  } catch (error) {
+    console.error('Error marking notifications as read:', error);
+    res.status(500).json({ message: 'Failed to mark notifications as read.' });
+  }
+};
 
 
 module.exports = {
@@ -171,5 +194,6 @@ module.exports = {
   createWaste,
   deleteWaste,
   updateWaste,
-  getWaste
+  getWaste,
+  getRewarded,markAsReadWaste
 };
