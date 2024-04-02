@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const wasteSchema = new Schema({
+  BlockchainID: {
+    type: String,
+  },
     status: {
         type: String,
         required: true
@@ -35,9 +38,7 @@ const wasteSchema = new Schema({
         type: Boolean,
         default: true // Par défaut, toutes les collections seront marquées comme nouvelles
     },
-  BlockchainID: {
-    type: String,
-  }
+ 
   
   ///binid et status
 });
