@@ -453,7 +453,7 @@ import { useWeb3 } from "../contexts/web3Context";
  
       <Dialog visible={productDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Shipper Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
         <div className="field">
-          <label htmlFor="ID" className="font-bold">ID Card</label>
+          <label htmlFor="ID" className="font-bold">External Owned Account</label>
           <InputText id="ID" value={product.ID} onChange={(e) => onInputChange(e, 'ID')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.ID })} />
           {submitted && !product.ID && <small className="p-error">ID Card is required.</small>}
           {IDErrorExist && <small className="p-error">{IDErrorExist}</small>}

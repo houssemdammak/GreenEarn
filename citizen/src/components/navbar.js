@@ -74,7 +74,7 @@ const NavigationBar=()=> {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/Home">Home</Nav.Link>
-            <Nav.Link as={Link} to="/Bin">Bin Status</Nav.Link>
+            <Nav.Link as={Link} to="/Bin">Waste Status</Nav.Link>
           </Nav>
           <Nav>
             <div className="d-flex align-items-center">

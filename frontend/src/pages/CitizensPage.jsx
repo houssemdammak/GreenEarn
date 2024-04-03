@@ -540,7 +540,7 @@ function CitizensDemo() {
         </div>
         <div className="field">
           <label htmlFor="BankCardNumber" className="font-bold">
-            Wallet ID
+          External Owned Account
           </label>
           <InputText
             id="WalletID"
