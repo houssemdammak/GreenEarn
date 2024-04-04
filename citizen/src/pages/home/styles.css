@@ -39,7 +39,7 @@
  }
  .form {
      display: flex;
-     padding: 20px;
+     padding-top: 20px;
      flex-direction: column;
      /* width: 380px;
      height: 200px; */
@@ -90,10 +90,6 @@
 .multipleButtons {
     padding: 10px;
     align-self: flex-end;
-  
-
-
-
 }
 .multipleButton {
     margin-right: 5px;

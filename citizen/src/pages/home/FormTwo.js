@@ -37,8 +37,9 @@ const FormTwo = () => {
         <div className="container-home">
             <p>Enter your waste details</p>
             <div className="formContainer">
+            <label>{updateContext.wasteType}</label>
+
                 <form className="form">
-                    <label>{updateContext.wasteType}</label>
                     <input className="formInput" type="text" placeholder="Quantity in kg"
                     value={updateContext.quantity !== null ? updateContext.quantity : ''} 
                      onChange={e => updateContext.setQuantity(e.target.value)} />

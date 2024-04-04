@@ -10,7 +10,7 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/authContext"
 import { Web3Provider } from './contexts/web3Context';
-import "react-toastify/dist/ReactToastify.css";
+// import "react-toastify/dist/ReactToastify.css";
 
 
 

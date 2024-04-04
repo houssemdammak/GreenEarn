@@ -1,4 +1,6 @@
 const Citizen = require('../models/CitizenModel')
+const Waste = require('../models/WasteModel')
+
 const mongoose = require('mongoose')
 const jwt = require("jsonwebtoken");
 // get all Citizens
@@ -53,9 +55,7 @@ const deleteCitizen = async (req, res) => {
   
     res.status(200).json(citizen)
   }
-  
-  // update a Citizen
-
+    // update a Citizen
   const updateCitizen = async (req, res) => {
     const { id } = req.params
   
@@ -73,7 +73,6 @@ const deleteCitizen = async (req, res) => {
   
     res.status(200).json(citizen)
   }
-
 //login for citizen page 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -105,8 +104,6 @@ const login = async (req, res) => {
     return res.status(400).json({ msg: "Bad credentails" });
   }
 };
-
-
 //resgister for citizen page 
 const register = async (req, res) => {
   let foundUser = await Citizen.findOne({ email: req.body.email });
@@ -138,6 +135,30 @@ const register = async (req, res) => {
     return res.status(400).json({ msg: "Email already in use" });
   }
 };
+const getBalance = async (req, res) => {
+  const { citizenID } = req.params; // Supposons que citizenID est envoyé en tant que paramètre dans la requête
+
+  try {
+    // Récupérer tous les déchets recyclés du citoyen
+    const recycledWastes = await Waste.find({ citizenID, status: 'Recycled' });
+
+    // Calculer la balance en multipliant le poids de chaque déchet recyclé par 1000
+    let balance = 0;
+    recycledWastes.forEach(waste => {
+      balance += waste.weight * 1000;
+    });
+
+    // Mettre à jour la balance du citoyen dans la base de données
+    await Citizen.findByIdAndUpdate(citizenID, { balance });
+
+    return res.status(200).json({ balance });
+  } catch (error) {
+    console.error('Error fetching balance:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+module.exports = { getBalance };
   module.exports = {
     getCitizens,
     getCitizen,
@@ -145,5 +166,6 @@ const register = async (req, res) => {
     deleteCitizen,
     updateCitizen,
     register,
-    login
+    login,
+    getBalance
   }
