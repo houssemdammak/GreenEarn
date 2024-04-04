@@ -9,11 +9,13 @@ import {faUserCircle ,faBell } from '@fortawesome/free-solid-svg-icons'; // Exam
 import AuthContext from '../contexts/authContext';
 import { useContext ,useEffect, useState } from 'react';
 
-import {faCoins,faCalendarAlt, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import {faCoins,faCalendarAlt, faCheckCircle,faRightFromBracket,faUser } from '@fortawesome/free-solid-svg-icons';
 
 const NavigationBar=()=> {
   const { name ,logout ,id} = useContext(AuthContext);
   const [products, setProducts] = useState(null);
+  const [balance, setBalance] = useState(0);
+
   const unreadCount = products?.filter(product => product.isNew).length || 0; // Compter les produits avec isNew=true
   useEffect(() => {
     const getRewarded = async () => {
@@ -26,6 +28,17 @@ const NavigationBar=()=> {
         console.error('Error fetching products:', error);
       }
     };
+    const getBalance = async () => {
+      try {
+        const response = await fetch(`/api/citizens//balance/${id}`);
+        const balance = await response.json();
+        setBalance(balance.balance);
+        console.log(balance.balance);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+    getBalance();
     getRewarded();
   }, []);
   const handleNotificationClick = async () => {
@@ -69,16 +82,18 @@ const NavigationBar=()=> {
   return (
     <Navbar expand="lg" style={{ backgroundColor: "transparent" }}>
       <Container>
-        <Navbar.Brand as={Link} to="/Home">GreenEarn</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/Home">Home</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/Home">Home</Nav.Link>
+            {/* <Nav.Link as={Link} to="/Home">Home</Nav.Link> */}
             <Nav.Link as={Link} to="/Bin">Waste Status</Nav.Link>
           </Nav>
           <Nav>
+            
             <div className="d-flex align-items-center">
-              
+            <FontAwesomeIcon icon={faUser} style={{color:"rgb(89 89 89)"}} />
+            <span style={{fontSize: '1em',fontFamily:"Arial",padding:"5px",marginRight: '5px' }}>{name}</span>
 
             <NavDropdown
       title={
@@ -123,16 +138,22 @@ const NavigationBar=()=> {
           {index < products.length - 1 && <NavDropdown.Divider />} {/* Add divider except for the last item */}
         </>
       ))}
-    </NavDropdown>
-
-
-
-
-              <NavDropdown title={<FontAwesomeIcon icon={faUserCircle} />} align="end">
+              </NavDropdown>
+              {/* <NavDropdown title={<FontAwesomeIcon icon={faUserCircle} />} align="end">
                 <NavDropdown.Item>{name}</NavDropdown.Item>
                 <NavDropdown.Divider />
+                <NavDropdown.Item >
+                <div className="balance-container">
+                  <FontAwesomeIcon icon={faCoins} className="balance-icon" size="1x" />
+                  <span className="balance-text" style={{ fontSize: '15px' }}>      Balance: {balance} GRN</span>
+                </div>
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
-              </NavDropdown>
+              </NavDropdown> */}
+               
+              <FontAwesomeIcon onClick={handleLogout} icon={faRightFromBracket} style={{color:"rgb(89 89 89)"}} />
+              
             </div>
           </Nav>
         </Navbar.Collapse>

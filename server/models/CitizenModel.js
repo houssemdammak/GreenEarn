@@ -28,15 +28,15 @@ const CitizenSchema= new Schema({
         type:String,
         required:true
     },
+    balance:{
+        type:Number ,
+    },
 
 },{timestamps:true})
 CitizenSchema.pre("save", async function(){
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 })
-
-
-
 CitizenSchema.methods.comparePassword = async function(candidatePassword){
     const isMatch = await bcrypt.compare(candidatePassword, this.password);
     return isMatch;

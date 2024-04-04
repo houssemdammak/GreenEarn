@@ -7,7 +7,8 @@ import NavigationBar from '../../components/navbar'
 import { Tag } from 'primereact/tag';
 import AuthContext from '../../contexts/authContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationCircle, faCoins } from '@fortawesome/free-solid-svg-icons';
+
 import { useContext } from 'react';
 function BinDemo() {
   const {id } = useContext(AuthContext);
@@ -22,6 +23,8 @@ function BinDemo() {
   };
   // const [IDError, setIDError] = useState('');
   const [products, setProducts] = useState(null);
+  const [balance, setBalance] = useState(0);
+
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
@@ -37,6 +40,17 @@ function BinDemo() {
         console.error('Error fetching products:', error);
       }
     };
+    const getBalance = async () => {
+      try {
+        const response = await fetch(`/api/citizens//balance/${id}`);
+        const balance = await response.json();
+        setBalance(balance.balance);
+        console.log(balance.balance);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+    getBalance();
     fetchWasteByCitizen();
   }, []);
   const productsWithIndex = useMemo(() => {
@@ -72,7 +86,10 @@ function BinDemo() {
 <NavigationBar />
 
       <Toast ref={toast} />
-      
+      <div className="balance-container">
+        <FontAwesomeIcon icon={faCoins} className="balance-icon" size="2x" />
+        <span className="balance-text" style={{ fontSize: '17px' }}>      Balance: {balance} GRN</span>
+      </div>
  
     {productsWithIndex.length > 0 ? (
       <div className="card">
@@ -108,10 +125,6 @@ function BinDemo() {
       </div>
     </div>
     )}
-
-
-
-
     </>
   );
 }
