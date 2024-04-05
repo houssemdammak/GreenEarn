@@ -12,6 +12,7 @@ import AuthContext from "../../contexts/authSlice";
 import "./RecyclingCenter.css";
 import { useWeb3 } from "../../contexts/web3Context";
 import { RecycleCollection} from "../../web3";
+import iconShipper from "../../images/icon_recycle.gif";
 
 function RecyclingCenter() {
   const { contract } = useWeb3();
@@ -143,13 +144,22 @@ function RecyclingCenter() {
   const Navbar = () => {
     return (
       <nav className="navbar">
-        <div className="navbar-logo">
+       <div className="navbar-logo">
           <img
             src={logo}
             style={{ width: "200px", height: "45px" }}
             alt="Logo"
             className="logo"
           />
+          <p style={{fontFamily:"Slackey",fontSize:"20px",fontWeight:"normal"}}>Recycling Center</p>
+          <div className="navbar-items">
+        <img
+            src={iconShipper}
+            style={{ width: "90px", height: "90px" }}
+            alt="Logo"
+            className="logo"
+          />
+          </div>
         </div>
         <div className="navbar-items">
           <div className="navbar-user">
@@ -211,15 +221,15 @@ function RecyclingCenter() {
 
 
   return (
-    <div className="BodyShipper">
+    <div className="BodyRecycler">
       <Navbar />
       <Toast ref={toast} />
-      <div className="cardShipper">
+      <div className="cardRecycler">
         <div className="DataTableContainer">
         <DataTable
             ref={dt}
             value={productsWithIndex}
-            className="DataTableShipper"
+            className="DataTableRecycler"
             paginator
             rows={10}
             rowsPerPageOptions={[5, 10, 25]}

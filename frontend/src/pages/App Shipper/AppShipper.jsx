@@ -9,6 +9,7 @@ import { Badge } from "primereact/badge";
 import { Avatar } from "primereact/avatar";
 import { useWeb3 } from "../../contexts/web3Context";
 import { shipCollection} from "../../web3";
+import iconShipper from "../../images/shipper1.gif";
 
 import logo from "../../images/EarnGreen Icons/icon_black.png";
 import AuthContext from "../../contexts/authSlice";
@@ -155,7 +156,24 @@ const [visible, setVisible] = useState(false);
             alt="Logo"
             className="logo"
           />
+          <p style={{fontFamily:"Slackey",fontSize:"20px",fontWeight:"normal"}}>Shippers</p>
+          <div className="navbar-items">
+        <img
+            src={iconShipper}
+            style={{ width: "80px", height: "50px" }}
+            alt="Logo"
+            className="logo"
+          />
+          </div>
         </div>
+        {/* <div className="navbar-items">
+        <img
+            src={iconShipper}
+            style={{ width: "150px", height: "80px" }}
+            alt="Logo"
+            className="logo"
+          />
+          </div> */}
         <div className="navbar-items">
           <div className="navbar-user">
             <span className="user-name">{name}</span>

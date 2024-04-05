@@ -46,11 +46,13 @@ const [currentWeight, setcurrentweight] = useState(null);
       <div className="main">
         <div>
         <NavigationBar />
-          <img
+          {/* <img
             src={icon}
             style={{ width: "350px", height: "50px", marginTop: "20px" }}
             alt="register"
-          />
+          /> */}
+ <h4 style={{fontFamily:"Slackey",fontSize:"40px",fontWeight:"normal"}}>GreenEarn Citizens</h4>
+
         </div>
         <div className="steps">
           <div className="wrapper">

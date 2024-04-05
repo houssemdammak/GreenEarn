@@ -1,15 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Karla&Fira+Sans&family=Poppins&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Slackey&display=swap');
 
-.BodyShipper {
+.BodyRecycler {
   font-family: "Karla", sans-serif;
   height: 100vh;
   background-color: #c7efc9;
-  /* background-image: url("../../images/bg.svg"); */
+  background-image: url("../../images/recycle.svg");
   background-repeat: no-repeat;
   background-position: center;
 }
 
-.DataTableShipper {
+.DataTableRecycler {
   overflow-x: scroll;
  border-radius: 40px;
   max-height: 580px;
@@ -19,14 +20,14 @@
 
 
 
-.BodyShipper tr{
+.BodyRecycler tr{
   background-color: rgba(255 ,255, 255, 0.7); 
  
 } 
 
 
 
-.DataTableShipper .p-paginator {
+.DataTableRecycler .p-paginator {
   position: sticky;
   bottom: 0;
   background-color: #fff;
@@ -49,63 +50,71 @@
   margin-right: 5px;
   margin-left: 5px;
 }
-.cardShipper {
+.cardRecycler {
   background-color: transparent;
-  padding: 2rem;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
   border-radius: 10px;
   border: none;
 
 }
 /* Optional: Customize scrollbars */
-.DataTableShipper::-webkit-scrollbar {
+.DataTableRecycler::-webkit-scrollbar {
   width: 0px;
 }
-.DataTableShipper::-webkit-scrollbar-track {
+.DataTableRecycler::-webkit-scrollbar-track {
   background-color: transparent;
 
 }
 /*---------------navbar------------------------*/
-.BodyShipper .navbar {
-  background-color:  rgba(255 ,255, 255, 0.7);
-  color: #fff;
+.BodyRecycler .navbar {
+  /* background-color:  rgba(255 ,255, 255, 0.7); */
+  background-color: #fcfcff;
+  /* color: #fff; */
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
+  /* background-image: url("../../images/shippers.gif"); */
+  height: 100px;
 }
 
-.BodyShipper .navbar-logo {
-  flex: 1;
+.BodyRecycler .navbar-logo {
+  flex:1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.BodyShipper .logo {
+.BodyRecycler .logo {
   width: 100px; /* Adjust size as needed */
   height: auto;
 }
 
-.BodyShipper .navbar-items {
-  flex: 1;
+.BodyRecycler .navbar-items {
+  flex: 2;
   display: flex;
   justify-content: flex-end;
 }
 
-.BodyShipper .navbar-user {
+.BodyRecycler .navbar-user {
   display: flex;
   align-items: center;
 }
 
-.BodyShipper .user-icon {
+.BodyRecycler .user-icon {
   color: black;
   font-size: 1.5rem;
   margin-right: 0.5rem;
 }
 
-.BodyShipper .user-name {
+.BodyRecycler .user-name {
   color: black;
   margin-right: 0.5rem;
 }
 
-.BodyShipper .logout-icon {
+.BodyRecycler .logout-icon {
   cursor: pointer;
   color: black;
 }
