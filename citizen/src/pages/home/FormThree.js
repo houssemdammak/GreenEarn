@@ -54,12 +54,22 @@ const FormThree = () => {
       };
       
 
-    const finish = () => {
-        console.log("updateContext",updateContext);
-        updateContext.setStep(updateContext.currentPage +1)
-        addToBin(updateContext.binID,id,updateContext.quantity,binContext.BlockchainID,WalletID)
-
+      const finish = async () => {
+        console.log("updateContext", updateContext);
+    
+        try {
+            const waste = await addToBin(updateContext.binID, id, updateContext.quantity, binContext.BlockchainID, WalletID);
+            // Assuming addToBin returns the waste object when the transaction is successful
+            console.log("Transaction accepted. Waste created:", waste);
+            
+            // Update the page after the transaction is completed
+            updateContext.setStep(updateContext.currentPage + 1);
+        } catch (error) {
+            console.error("Error adding to bin:", error);
+            // Handle errors if addToBin fails
+        }
     }
+    
     return (
       <div>
       <Toast ref={toast} />

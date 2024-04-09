@@ -145,7 +145,7 @@ const Login = () => {
             <img src={Logo} alt="" />
           </div>
           <div className="login-center">
-            <h2>GreenEarn Support team App</h2>
+            <h2>GreenEarn Support Team App</h2>
             <p>Please enter your details</p>
             <form onSubmit={handleLoginSubmit}>
               <input type="email" placeholder="Email" name="email" />

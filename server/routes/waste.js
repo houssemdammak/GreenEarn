@@ -4,24 +4,25 @@ const {
   createWaste,
   deleteWaste,
   updateWaste,
-  getWaste,getRewarded,markAsReadWaste,
+  getWaste,getRewarded,markAsReadWaste,deleteAllWastes
 }=require('../controllers/WasteController')
 
 const router = express.Router()
 
-// GET all workouts
+// GET all wastes
 router.get('/',getWastes )
 
-// GET a single workout
+// GET a single waste
 router.get('/:id',getWaste)
 router.get('/getRewarded/:id',getRewarded)
 // POST a new 
 router.post('/',createWaste)
 
-// DELETE a workout
+// DELETE a waste
 router.delete('/:id',deleteWaste)
+router.delete('/',deleteAllWastes)
 
-// UPDATE a workout
+// UPDATE a waste
 router.patch('/:id', updateWaste)
 router.post('/markAsRead', markAsReadWaste)
 

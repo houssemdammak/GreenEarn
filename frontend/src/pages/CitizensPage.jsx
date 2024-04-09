@@ -362,7 +362,6 @@ function CitizensDemo() {
   const header = (
     <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
       <h4 className="m-0">Manage Citizens</h4>
-      <h5>houssem :Password123! asma:ABCabc123! yasmine:yasmine123!</h5>
       <span
         className="p-input-icon-left"
         style={{ display: "flex", alignItems: "center" }}

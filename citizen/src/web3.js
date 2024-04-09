@@ -10,6 +10,8 @@ const initWeb3 = async () => {
       // Request account access
       await window.ethereum.request({ method: "eth_requestAccounts" });
       console.log("ethereum enabled");
+      const accounts = await web3.eth.getAccounts();
+      console.log("account metamask :",accounts)
     } catch (error) {
       // User denied account access...
       console.error("User denied account access");
@@ -40,7 +42,7 @@ const createWaste = async (contract,Weight, CitizenId,BinId) => {
   try {
     const web3 = await initWeb3(); // Initialize Web3 instance
     const accounts = await web3.eth.getAccounts(); // Get accounts
-    const senderAddress = accounts[1]; //the citizen address
+    const senderAddress = accounts[0]; //the citizen address
 
     // Send transaction to the blockchain
     const transaction = await contract.methods.createWaste(Weight, CitizenId,BinId).send({ 

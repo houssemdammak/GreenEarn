@@ -1,6 +1,7 @@
 const Waste = require('../models/WasteModel'); // Import du modèle Bag
 const Bin= require('../models/BinModel'); 
 const mongoose = require('mongoose');
+const { watch } = require('../models/CollectionModel');
 
 // Récupérer tous les sacs
 const getWastes = async (req, res) => {
@@ -11,6 +12,14 @@ const getWastes = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const deleteAllWastes = async (req, res) => {
+  try {
+    const result = await Waste.deleteMany({});
+    res.status(200).json({ message: `${result.deletedCount} Wastes(s) deleted successfully` });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
 
 // Récupérer un seul sac
 // const getWaste = async (req, res) => {
@@ -196,5 +205,5 @@ module.exports = {
   deleteWaste,
   updateWaste,
   getWaste,
-  getRewarded,markAsReadWaste
+  getRewarded,markAsReadWaste,deleteAllWastes
 };

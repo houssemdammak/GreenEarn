@@ -132,7 +132,7 @@ import { useWeb3 } from "../contexts/web3Context";
                 // console.log('Réponse de l\'API:', responseData);
             else {
                 console.error('Error saving Shipper to the database:', response.statusText);
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to save bin to the database.', life: 3000 });
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to save Shipper to the database.', life: 3000 });
               }
             }else {
               console.error('Blockchain transaction failed.');

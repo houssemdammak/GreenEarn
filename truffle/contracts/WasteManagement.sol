@@ -49,7 +49,7 @@ contract WasteManagement is ERC20, Ownable {
     string[] public wasteIds; // Changed type to string
     mapping(string => Waste) public wastes; // Changed key type to string
     address[] citizens;
-    address recycler = address(0x4494f3bb19F95BB33EC116887b9dbd728C008f9b);
+    address recycler = address(0x5Ac7b458536be25AeEa07c8C9F49446582098EFF);
     address[] shippers;
     mapping(string => bool) isBin;
     mapping(string => bool) isCollection;
@@ -261,7 +261,7 @@ contract WasteManagement is ERC20, Ownable {
     }
 
 
-    function shipCollection(string memory _idCollection, address _shipperId, string memory _date) external onlyOwner  {
+    function shipCollection(string memory _idCollection, address _shipperId, string memory _date) external  {
         require(isCollection[_idCollection], "Collection doesn't exist");
         if (collections[_idCollection].shipperNotified != _shipperId) {
             revert("This collection doesn't concern this shipper");

@@ -9,7 +9,7 @@ const {createCollection,getCollectionByShipper,updateCollectionByCenter,deleteAl
   router.get('/',getShippedCollection)
   router.patch('/markAsRead',markAsRead)
   //delete all bins
-router.delete('/',deleteAllWastes)
+  router.delete('/',deleteAllWastes)
 
   router.patch('/updateCollectionByshipper', updateCollectionByshipper);
   module.exports = router;
