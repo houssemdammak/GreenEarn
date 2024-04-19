@@ -20,17 +20,17 @@ function RecyclingCenter() {
   const [confirm, setDialogConfirm] = useState(false);
   const [collections, setCollections] = useState(null);
   const [collection, setCollection] = useState(null);
-  const [numTasksAdded, setNumTasksAdded] = useState(0); // État pour stocker le nombre de tâches ajoutées
+  // const [numTasksAdded, setNumTasksAdded] = useState(0); // État pour stocker le nombre de tâches ajoutées
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
-  const countTasksAdded = (collections) => {
-    if (collections !== null) {
-      return collections.filter((c) => c.recyclingdatedate==null)
-        .length;
-    }
-    return 0;
-  };
+  // const countTasksAdded = (collections) => {
+  //   if (collections !== null) {
+  //     return collections.filter((c) => c.recyclingdatedate==null)
+  //       .length;
+  //   }
+  //   return 0;
+  // };
 
   
 
@@ -51,13 +51,13 @@ function RecyclingCenter() {
       fetchCollectionCalled.current = true;
     }
   }, [fetchCollectionCalled]);
-  useEffect(() => {
-    if (collections !== null) {
-      const numAdded = countTasksAdded(collections);
-      setNumTasksAdded(numAdded);
-      console.log(numAdded); // Utilisez numAdded plutôt que numTasksAdded pour obtenir la valeur mise à jour
-    }
-  }, [collections]);
+  // useEffect(() => {
+  //   if (collections !== null) {
+  //     const numAdded = countTasksAdded(collections);
+  //     setNumTasksAdded(numAdded);
+  //     console.log(numAdded); // Utilisez numAdded plutôt que numTasksAdded pour obtenir la valeur mise à jour
+  //   }
+  // }, [collections]);
   
   const header = (
     <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
@@ -166,10 +166,10 @@ function RecyclingCenter() {
             <span className="user-name">{name}</span>
             <Avatar icon="pi pi-user" shape="circle" className="mr-2" style={{  backgroundColor: 'transparent' ,color: "black", fontSize: "1.5rem" }} />
 
-          <i className="pi pi-bell p-overlay-badge mr-2" style={{ color: "black", fontSize: "1.1rem" }}>
+          {/* <i className="pi pi-bell p-overlay-badge mr-2" style={{ color: "black", fontSize: "1.1rem" }}>
            
             <Badge severity="success" value={numTasksAdded} style={{ fontSize: '0.65rem'}}></Badge>
-          </i>
+          </i> */}
 
           {/* Avatar pour se déconnecter */}
           <Avatar icon="pi pi-sign-out" shape="circle" onClick={handleLogout} style={{backgroundColor: 'transparent' , color: "black", fontSize: "1.5rem" }} />

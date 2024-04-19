@@ -76,7 +76,18 @@ import { useWeb3 } from "../contexts/web3Context";
     const hideDeleteProductDialog = () => {
         setDeleteProductDialog(false);
     }; 
-    
+    const validateWalletID = (walletID) => {
+      const addressRegex = /^0x[0-9a-fA-F]{40}$/; // Expression régulière pour valider une adresse Ethereum
+  
+      if (!walletID) {
+          return "Wallet ID required";
+      }
+      if (!addressRegex.test(walletID)) {
+          return "Wallet ID must be a valid Ethereum address.";
+      }
+  
+      return ""; // Wallet ID valide
+  };
     const isPasswordStrong = (password) => {
       // Vérifier la force du mot de passe en fonction de certains critères
       // Vous pouvez modifier ces critères en fonction de vos besoins
@@ -96,18 +107,20 @@ import { useWeb3 } from "../contexts/web3Context";
       //password not strong 
       console.log(confirmationpass)
       const validatePassword=isPasswordStrong(_product.password) ;
+      console.log(validatePassword)
       /* ------------------------------------------------------------------------ */
-      const index = findIndexById(_product.ID);
+      //const index = findIndexById(_product.ID);
       //const isValidID = /^[a-zA-Z0-9]{8}$/.test(product.ID);
-      const isExistID= index !==-1 ;
-      const isExistIDError=isExistID ? 'ID Card already exist .' : '';
+      //const isExistID= index !==-1 ;
+      
+      const isExistIDError=validateWalletID(_product.ID);
       const isValidPhoneNumber = /^\d{8}$/.test(product.TelephoneNum);
       //const idError = !isValidID ? 'ID Card should be 8 digits.' : '';
       const phoneNumberError = !isValidPhoneNumber ? 'Telephone Number should be 8 digits.' : '';
-      if ( validatePassword  &&isExistEmailError ==""  && product.email.trim() !== ""&& confirmationpass &&
+      if ( validatePassword  && isExistEmailError ==""  && product.email.trim() !== ""&& confirmationpass &&
       product.confirmpassword.trim() !== "" &&
       product.password.trim() !==""&&
-         !isExistID && isValidPhoneNumber && product.ID.trim() !== '' 
+         isExistIDError=="" && isValidPhoneNumber && product.ID.trim() !== '' 
         && product.FullName.trim() && product.Location.trim() && product.TelephoneNum.toString().trim() !== ''){            
           
           try {
@@ -127,6 +140,18 @@ import { useWeb3 } from "../contexts/web3Context";
               _products.push(_product);
               toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Shipper Created', life: 3000 });
               console.log(_product);
+              setSubmitted(false)
+              fetchShippers();
+              setIDError('');
+              setIDErrorExist('');
+              setPhoneNumberError('');
+              setIDErrorExistUpdate('')
+              setProducts(_products);
+              setProduct(emptyProduct);
+              setEmailErrorExist("");
+              setconfirmpasswordError("");
+              setpasswordError("") ;
+              setProductDialog(false);
             }
                 // const responseData = await response.json();
                 // console.log('Réponse de l\'API:', responseData);
@@ -141,17 +166,7 @@ import { useWeb3 } from "../contexts/web3Context";
             } catch (error) {
                 console.error('Erreur lors de l\'envoi des données à l\'API:', error);
           }
-            fetchShippers();
-            setIDError('');
-            setIDErrorExist('');
-            setPhoneNumberError('');
-            setIDErrorExistUpdate('')
-            setProducts(_products);
-            setProduct(emptyProduct);
-            setEmailErrorExist("");
-            setconfirmpasswordError("");
-            setpasswordError("") ;
-            setProductDialog(false);
+
           
       }else {
         if(!validatePassword){
@@ -169,7 +184,7 @@ import { useWeb3 } from "../contexts/web3Context";
         //   setIDError(idError);
         //   setIDErrorExistUpdate('')
         // }
-        if(isExistID){
+        if(isExistIDError!=""){
           setIDErrorExistUpdate(isExistIDError);
           setIDError('');
         }
@@ -455,9 +470,8 @@ import { useWeb3 } from "../contexts/web3Context";
         <div className="field">
           <label htmlFor="ID" className="font-bold">External Owned Account</label>
           <InputText id="ID" value={product.ID} onChange={(e) => onInputChange(e, 'ID')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.ID })} />
-          {submitted && !product.ID && <small className="p-error">ID Card is required.</small>}
-          {IDErrorExist && <small className="p-error">{IDErrorExist}</small>}
-          {IDErrorExistUpdate && <small className="p-error">{IDErrorExistUpdate}</small>}
+          {submitted &&IDErrorExist!="" && <small className="p-error">{IDErrorExist}</small>}
+          {submitted &&IDErrorExistUpdate && <small className="p-error">{IDErrorExistUpdate}</small>}
 
 
         </div>
@@ -480,7 +494,7 @@ import { useWeb3 } from "../contexts/web3Context";
             <small className="p-error">Email is required. <br></br></small>
           )}
                     
-          {EmailErrorExist && <small className="p-error">{EmailErrorExist}</small>}
+          {submitted && EmailErrorExist && <small className="p-error">{EmailErrorExist}</small>}
 
         </div>
         <div className="field">
@@ -498,7 +512,7 @@ import { useWeb3 } from "../contexts/web3Context";
           {submitted && !product.password && (
             <small className="p-error">Password is required.</small>
           )}
-          {passwordError && product.password && (
+          {submitted && passwordError && product.password && (
             <small className="p-error">{passwordError}</small>
           )}
         </div>
@@ -528,7 +542,7 @@ import { useWeb3 } from "../contexts/web3Context";
           <label htmlFor="TelephoneNum" className="font-bold">Telephone Number</label>
           <InputText id="TelephoneNum" value={product.TelephoneNum} onChange={(e) => onInputChange(e, 'TelephoneNum')} required className={classNames({ 'p-invalid': submitted && !product.TelephoneNum })} />
           {submitted && !product.TelephoneNum && <small className="p-error">Telephone Number is required.</small>}
-          {phoneNumberError&& product.TelephoneNum && <small className="p-error">{phoneNumberError}</small>}
+          {submitted && phoneNumberError&& product.TelephoneNum && <small className="p-error">{phoneNumberError}</small>}
         </div>
       </Dialog>
       <Dialog visible={productDialogUpdate} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Shipper Details" modal className="p-fluid" footer={productDialogUpdateFooter} onHide={hideDialog}>

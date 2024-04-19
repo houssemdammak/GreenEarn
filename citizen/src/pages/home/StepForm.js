@@ -16,6 +16,7 @@ const StepForm = () => {
   const [BinID, setBinID] = useState(null);
   const [wasteType, setwasteType] = useState(null);
   const [Quantity, setQuantity] = useState(null);
+  const [deposit, setDeposit] = useState(false);
 ////////////////////////
 const [capacity, setCapacity] = useState(null);
 const [type, setType] = useState(null);
@@ -23,6 +24,8 @@ const [currentWeight, setcurrentweight] = useState(null);
 
 /////////////
   const wasteDetails = {
+    //deposit=true si le citizen a valider son choix si nn false
+    deposit:deposit ,
     currentPage: step,
     binID: BinID,
     wasteType: wasteType,
@@ -30,7 +33,7 @@ const [currentWeight, setcurrentweight] = useState(null);
     setStep,
     setBinID,
     setwasteType,
-    setQuantity,
+    setQuantity,setDeposit
   };
   const binDetail ={
     capacity:capacity ,
