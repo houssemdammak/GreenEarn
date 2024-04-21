@@ -75,13 +75,13 @@ const deleteBin = async (contract, id) => {
   }
 };
 
-const modifyBin = async (contract, binId, location,  capacity, currentWeight) => {
+const modifyBin = async (contract, binId, location,  capacity) => {
   try {
     const web3 = await initWeb3(); // Initialize Web3 instance
     const accounts = await web3.eth.getAccounts(); // Get accounts
     const senderAddress = accounts[0]; // Assuming you want to use the first account
     // Send transaction to the blockchain
-    await contract.methods.modifyBin(binId, location, capacity, currentWeight).send({ 
+    await contract.methods.modifyBin(binId, location, capacity).send({ 
       from: senderAddress
     });  
 

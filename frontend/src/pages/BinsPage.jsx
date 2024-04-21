@@ -197,7 +197,7 @@ const saveUpdatedProduct = async () => {
       setCurrentWeightError("");
       setProducts(_products);
       try {
-        const blockchainTransactionResult = await modifyBin(contract,_product.BlockchainID, _product.location, _product.capacity, _product.currentWeight);
+        const blockchainTransactionResult = await modifyBin(contract,_product.BlockchainID, _product.location, _product.capacity);
         // console.log( _product.status.type);
         // console.log(_product.BlockchainID);
         // console.log(_product.location);
@@ -776,7 +776,7 @@ const saveUpdatedProduct = async () => {
             </small>
           )}
         </div>
-        <div className="field">
+        {/* <div className="field">
           <label htmlFor="currentWeight" className="font-bold">
             Current Weight
           </label>
@@ -784,16 +784,13 @@ const saveUpdatedProduct = async () => {
             id="currentWeight"
             value={product.currentWeight}
             onChange={(e) => onInputChange(e, "currentWeight")}
-            required
-            // className={classNames({
-            //   "p-invalid": submitted && !product.currentWeight,
-            // })}
+            required            
           />
           
           {currentWeightError && currentWeightError !== "" && (
             <small className="p-error">{currentWeightError}</small>
           )}
-        </div>
+        </div> */}
       </Dialog>
 
       <Dialog
