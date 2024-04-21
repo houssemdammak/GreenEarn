@@ -9,13 +9,7 @@ const FormTwo = () => {
 
     const [capacityError, setCapacityError] = useState("");
     const [Error, setError] = useState(false);
-    // useEffect(() => {
-    //     console.log(updateContext.wasteType)
-    //     console.log(updateContext.wasteType.quantity);
-    //     console.log(binContext)
-    //   });
-
-      const next = () => {
+    const next = () => {
         let hasError = false;
 
         if (!updateContext.quantity) {

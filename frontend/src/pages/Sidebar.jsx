@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Layout, Button } from 'antd';
+import { Layout } from 'antd';
 import Logo from '../components/Logo';
 import MenuList from '../components/MenuList';
 import AuthContext from '../contexts/authSlice';
@@ -18,9 +18,6 @@ const Sidebar = () => {
       <Layout>
         <Sider style={{ backgroundColor: '#C9EFC7', color: 'white' }}>
           <Logo />
-          {/* <Button type="primary" onClick={handleLogout} style={{ marginTop: '50px', marginLeft: '60px', backgroundColor:"white", color:"black"}}>
-            Logout
-          </Button> */}
           <MenuList />
         </Sider>
       </Layout>

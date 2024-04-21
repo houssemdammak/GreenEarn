@@ -5,7 +5,6 @@ const CitizenSchema= new Schema({
     FullName:{
         type:String,
         required:true
-
     },   
     email:{
         type: String,

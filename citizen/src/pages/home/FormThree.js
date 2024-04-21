@@ -5,9 +5,6 @@ import AuthContext from '../../contexts/authContext';
 import { useWeb3 } from "../../contexts/web3Context";
 import { Toast } from "primereact/toast";
 import { createWaste } from "../../web3";
-
-//import { toast } from 'react-toastify';
-
 const FormThree = () => {
   const toast = useRef(null);
   const { contract } = useWeb3();
@@ -36,33 +33,35 @@ const FormThree = () => {
           }
 
           const waste = await response.json();
-          console.log('success');
-          console.log('citizenID:',typeof id)
+          updateContext.setDeposit(true)
+
+          //console.log('success');
+          //console.log('citizenID:',typeof id)
           //toast.current.show({ severity: 'success', summary: 'Successful', detail: 'wastes Created', life: 3000 });
-          return waste;
+          return true;
 
         }
           else {
-          
+            
             console.error('Blockchain transaction failed.');
+            updateContext.setDeposit(false)
+            return false;
            // toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. waste creation reverted.', life: 3000 });
           }
         } catch (error) {
+          updateContext.setDeposit(false)
+
           console.error('Error creating wastes:', error);
-         // toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create waste.', life: 3000 });
+          return false;
         }
       };
       
 
       const finish = async () => {
-        console.log("updateContext", updateContext);
+        console.log("updateContext", updateContext.currentPage);
     
         try {
-            const waste = await addToBin(updateContext.binID, id, updateContext.quantity, binContext.BlockchainID, WalletID);
-            // Assuming addToBin returns the waste object when the transaction is successful
-            console.log("Transaction accepted. Waste created:", waste);
-            
-            // Update the page after the transaction is completed
+            const result = await addToBin(updateContext.binID, id, updateContext.quantity, binContext.BlockchainID, WalletID);            
             updateContext.setStep(updateContext.currentPage + 1);
         } catch (error) {
             console.error("Error adding to bin:", error);

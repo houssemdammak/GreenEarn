@@ -57,4 +57,26 @@ const createWaste = async (contract,Weight, CitizenId,BinId) => {
   }
 };
 
-export { initWeb3, initContract,createWaste };
+const createCitizen = async (contract,CitizenId) => {
+  try {
+    const web3 = await initWeb3(); // Initialize Web3 instance
+    const accounts = await web3.eth.getAccounts(); // Get accounts
+    const senderAddress = accounts[0]; //the citizen address
+
+    // Send transaction to the blockchain
+    const transaction = await contract.methods.createCitizen(CitizenId).send({ 
+      from: senderAddress
+    });  
+    console.log("Citizen created successfully!");
+    // Retrieve the bin ID from the emitted event
+    return { status: 'accepted'}; // Return 'accepted' status along with bin ID
+  } catch (error) {
+    console.error("Error creating citizen:", error);
+    return { status: 'rejected'}; // Return 'rejected' status and null bin ID if transaction fails
+  }
+};
+
+
+
+
+export { initWeb3, initContract,createWaste,createCitizen };

@@ -1,11 +1,11 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-
   const [token, setToken] = useState(JSON.parse(localStorage.getItem('citizienAuth')) || null);
   const [id, setID] = useState(JSON.parse(localStorage.getItem('citizienID')) || null);
   const [name, setName] = useState(JSON.parse(localStorage.getItem('citizienName')) || null);
@@ -17,6 +17,27 @@ export const AuthProvider = ({ children }) => {
       navigate("/Login"); // Redirect to login if not authenticated
     }
   }, [token]);
+  useEffect(() => {
+    //console.log(token)
+    
+      // Vérifier si le token est autorisé côté serveur
+      axios.post('/api/authorization/', null, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        
+        console.log("authorisé",response)
+      })
+      .catch(error => {
+        console.log("error")
+
+        // Si le token n'est pas autorisé, déconnectez l'utilisateur et redirigez-le vers la page de connexion
+        logout();
+      });
+    }
+  , [token,navigate]);
 
   const login = (token,id,name,WalletID) => {
     setToken(token);
@@ -27,7 +48,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('citizienID', JSON.stringify(id) );
     localStorage.setItem('citizienName', JSON.stringify(name) );
     localStorage.setItem('WalletID', JSON.stringify(WalletID) );
-
     navigate("/Home")
   };
 
@@ -37,11 +57,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('citizienID');
     localStorage.removeItem('citizienName');
     localStorage.removeItem('WalletID');
-
-
     navigate("/Login");
   };
-
   return (
     <AuthContext.Provider value={{ token, name ,id,WalletID ,login, logout }}>
       {children}

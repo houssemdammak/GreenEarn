@@ -123,3 +123,12 @@
     border-style: solid;
     width: 85px;
 }
+.undoneSubmit {
+    border-color: #ff0000;
+    background-color: #ff0000;
+    margin-top: 10px;
+    border-radius: 5px;
+    padding: 8px;
+    border-style: solid;
+    width: 85px;
+}

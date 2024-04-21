@@ -88,88 +88,89 @@ function CitizensDemo() {
 // fullname
 //email 
 // password // confirmpassword //wallet id 
-  const saveProduct = async () => {
-    setSubmitted(true);
-    let _products = [...products];
-    let _product = { ...product };
-    //console.log(_product)
+const saveProduct = async () => {
+  setSubmitted(true);
+  let _products = [...products];
+  let _product = { ...product };
+  //console.log(_product)
 
-    // verifier email existe ou non 
-    const index = findIndexByEmail(_product.email);
-    const isExistEmail = index !== -1;
-    const isExistEmailError = isExistEmail ? "Email already exist ." : "";
-    //walet id verification 
-    const errorWallet = "";
+  // verifier email existe ou non 
+  const index = findIndexByEmail(_product.email);
+  const isExistEmail = index !== -1;
+  const isExistEmailError = isExistEmail ? "Email already exist ." : "";
+  //walet id verification 
+  //const errorWallet = "";
 
-    //const errorWallet = validateWalletID(_product.WalletID);
-    //verifier le password confirm 
-    const confirmationpass =(product.confirmpassword == product.password) 
-    //password not strong 
-    
-    const validatePassword=isPasswordStrong(_product.password) ;
+  const errorWallet = validateWalletID(_product.WalletID);
+  //verifier le password confirm 
+  const confirmationpass =(product.confirmpassword == product.password) 
+  //password not strong 
+  
+  const validatePassword=isPasswordStrong(_product.password) ;
 
-    /////////////////////
-    
-    //////////////
-    if ( errorWallet =="" && validatePassword && confirmationpass &&isExistEmailError ==""  &&
-    product.email.trim() !== "" &&product.FullName.trim()!== "" &&product.password.trim() !=="" && product.confirmpassword.trim() !==""&& product.WalletID.trim() !== ""
-    ) {
-      try {
-        const blockchainTransactionResult = await createCitizen(contract, _product.WalletID);
-        console.log(blockchainTransactionResult);
-        if (blockchainTransactionResult.status === 'accepted') {
-          delete _product.confirmpassword;
-          console.log(_product)
-
-          const response = await fetch("/api/citizens/register", {
-            method: "POST",
-            body: JSON.stringify(_product),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          console.log(response.status);
-          if (response.status === 201) {
-            _products.push(_product);
-            toast.current.show({severity: "success",summary: "Successful",detail: "Citizen Created",life: 3000,});
-          }else {
-            console.error('Error saving Shipper to the database:', response.statusText);
-            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to save bin to the database.', life: 3000 });
-          }
+  /////////////////////
+  
+  //////////////
+  if ( errorWallet =="" && validatePassword && confirmationpass &&isExistEmailError ==""  &&
+  product.email.trim() !== "" &&product.FullName.trim()!== "" &&product.password.trim() !=="" && product.confirmpassword.trim() !==""&& product.WalletID.trim() !== ""
+  ) {
+    try {
+      const blockchainTransactionResult = await createCitizen(contract, _product.WalletID);
+      console.log(blockchainTransactionResult);
+      if (blockchainTransactionResult.status === 'accepted') {
+        delete _product.confirmpassword;
+        console.log(_product)
+        const response = await fetch("/api/citizens/register", {
+          method: "POST",
+          body: JSON.stringify(_product),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log(response.status);
+        if (response.status === 201) {
+          _products.push(_product);
+          setProductDialog(false);
+          toast.current.show({severity: "success",summary: "Successful",detail: "Citizen Created",life: 3000,});
+          fetchCitizens();
+          setSubmitted(false);
+          setEmailErrorExist("");
+          setWalletIDError("") ;setconfirmpasswordError("");setpasswordError("") ;
+          setProducts(_products);
+          setProduct(emptyProduct);
         }else {
-          console.error('Blockchain transaction failed.');
-          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Shipper creation reverted.', life: 3000 });
-        }   
-        
-        //console.log(_product)
-        // const responseData = await response.json();
-        // fetchCitizens();
-        // console.log('Réponse de l\'API:', responseData);
-      } catch (error) {
-        console.error("Erreur lors de l'envoi des données à l'API:", error);
-      }
-      fetchCitizens();
-      setEmailErrorExist("");
-      setWalletIDError("") ;setconfirmpasswordError("");setpasswordError("") ;
-      setProducts(_products);setProduct(emptyProduct);setProductDialog(false);
-    
-    } else {
+          console.error('Error saving Shipper to the database:', response.statusText);
+          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to save bin to the database.', life: 3000 });
+        }
+      }else {
+        console.error('Blockchain transaction failed.');
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. Shipper creation reverted.', life: 3000 });
+      }   
       
-      // Mise à jour de l'état d'erreur pour chaque champ
-      if(!validatePassword){
-        setpasswordError("Please enter a strong password")
-      }
-      if(!confirmationpass){
-        setconfirmpasswordError("Please confirm your password")
-      }
-       if(isExistEmailError !=""){
-         setEmailErrorExist(isExistEmailError);
-       }
-      if(errorWallet !==""){
-         setWalletIDError(errorWallet) ;
-       }
+      //console.log(_product)
+      // const responseData = await response.json();
+      // fetchCitizens();
+      // console.log('Réponse de l\'API:', responseData);
+    } catch (error) {
+      console.error("Erreur lors de l'envoi des données à l'API:", error);
     }
-  };
+  } else {
+    
+    // Mise à jour de l'état d'erreur pour chaque champ
+    if(!validatePassword){
+      setpasswordError("Please enter a strong password")
+    }
+    if(!confirmationpass){
+      setconfirmpasswordError("Please confirm your password")
+    }
+     if(isExistEmailError !=""){
+       setEmailErrorExist(isExistEmailError);
+     }
+    if(errorWallet !==""){
+       setWalletIDError(errorWallet) ;
+     }
+  }
+};
   const saveUpdatedProduct = async () => {
     setSubmitted(true);
     let _products = [...products];
@@ -439,14 +440,6 @@ function CitizensDemo() {
               sortable
               style={{ minWidth: "12rem" }}
             ></Column>
-            {/* <Column
-              field="WalletID"
-              header="Wallet Number"
-              sortable
-              style={{ minWidth: "16rem" }}
-            ></Column> */}
-
-            {/* <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column> */}
             <Column
               body={actionBodyTemplate}
               exportable={false}
@@ -496,7 +489,7 @@ function CitizensDemo() {
             <small className="p-error">Email is required. <br></br></small>
           )}
                     
-          {EmailErrorExist && <small className="p-error">{EmailErrorExist}</small>}
+          {submitted && EmailErrorExist && <small className="p-error">{EmailErrorExist}</small>}
 
         </div>
         <div className="field">
@@ -597,26 +590,6 @@ function CitizensDemo() {
           {submitted && !product.email && (<small className="p-error">Email is required.</small>)}
           {EmailErrorExist && product.email&& <small className="p-error">{EmailErrorExist}</small>}
         </div>
-       
-        {/* <div className="field">
-          <label htmlFor="WalletID" className="font-bold"> Wallet ID </label>
-          <InputText
-            id="WalletID"
-            value={product.WalletID}
-            onChange={(e) => onInputChange(e, "WalletID")}
-            required
-            autoFocus
-            className={classNames({
-              "p-invalid": submitted && !product.WalletID,
-            })}
-          />
-          {submitted && !product.WalletID && (
-            <small className="p-error">Wallet ID  is required .</small>
-          )}
-          {WalletIdError && product.WalletID && (
-            <small className="p-error">{WalletIdError}</small>
-          )}
-        </div> */}
       </Dialog>
       <Dialog
         visible={deleteProductDialog}

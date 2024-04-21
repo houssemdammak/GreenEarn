@@ -92,7 +92,7 @@ const login = async (req, res) => {
         { id: foundUser._id, name: foundUser.name },
         process.env.JWT_SECRET,
         {
-          expiresIn: "30d",
+          expiresIn: "1m",
         }
       );
 
@@ -124,7 +124,7 @@ const register = async (req, res) => {
         { id: person._id, name: person.FullName },
         process.env.JWT_SECRET,
         {
-          expiresIn: "30d",
+          expiresIn: "15d",
         }
       );
       return res.status(201).json({ id:person._id,name:person.FullName ,token,WalletID:person.WalletID});

@@ -2,10 +2,8 @@ import React, { useState,useEffect, useRef, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
-import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { Badge } from "primereact/badge";
 import { Avatar } from "primereact/avatar";
 import logo from "../../images/EarnGreen Icons/icon_black.png";
 import AuthContext from "../../contexts/authSlice";
@@ -20,61 +18,66 @@ function RecyclingCenter() {
   const [confirm, setDialogConfirm] = useState(false);
   const [collections, setCollections] = useState(null);
   const [collection, setCollection] = useState(null);
-  const [numTasksAdded, setNumTasksAdded] = useState(0); // État pour stocker le nombre de tâches ajoutées
+  //const fetchCollectionCalled = useRef(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
-  const countTasksAdded = (collections) => {
-    if (collections !== null) {
-      return collections.filter((c) => c.recyclingdatedate==null)
-        .length;
-    }
-    return 0;
-  };
-
-  
-
   const fetchCollection = async () => {
     const response = await fetch(`/api/collection/`);
     const collection = await response.json();
     setCollections(collection);
     console.log(collection);
-    
   };
+  const updateCollectionByRecycler = async () => {
+    const currentDate=new Date().toString();
+    try {
+      const blockchainTransactionResult = await RecycleCollection(contract,collection.BlockchainID,currentDate);
+      console.log(collection.BlockchainID,id)
+      if (blockchainTransactionResult.status === 'accepted') {
 
+    // const response = await fetch(`/api/collection/updateCollectionByshipper/${collection.binID._id}`);
+    const response = await fetch(`/api/collection/updateCollectionByCenter`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({collectionID:collection._id,binID:collection.binID._id,collectionshippingdate:collection.shippingdate  })
+    });
 
-  const fetchCollectionCalled = useRef(false);
+    if (response.status === 200) {
+      const newCollection = await response.json();
+      console.log(newCollection)
+      //console.log(formatDate(newCollection.collection.date));
+      fetchCollection()
+      setDialogConfirm(false);
+       toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Collection Recycled', life: 3000 });
+     } else {
+       console.error('Error shipping collection', response.statusText);
+       toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed recycling collection', life: 3000 });
+     }
+   } else {
+     console.error('Blockchain transaction failed.');
+     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. collection recycle reverted.', life: 3000 });
+   }
+ } catch (error) {
+   console.error('Error recycling collection:', error);
+   toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to recycle collection.', life: 3000 });
+ }
+};
+const [fetchCollectionCalled, setFetchCollectionCalled] = useState(false);
 
-  useEffect(() => {
-    if (!fetchCollectionCalled.current) {
-      fetchCollection();
-      fetchCollectionCalled.current = true;
-    }
-  }, [fetchCollectionCalled]);
-  useEffect(() => {
-    if (collections !== null) {
-      const numAdded = countTasksAdded(collections);
-      setNumTasksAdded(numAdded);
-      console.log(numAdded); // Utilisez numAdded plutôt que numTasksAdded pour obtenir la valeur mise à jour
-    }
-  }, [collections]);
-  
-  const header = (
-    <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-      <h4 className="m-0">Manage Bins</h4>
-      <span
-        className="p-input-icon-left"
-        style={{ display: "flex", alignItems: "center" }}
-      >
-        <InputText
-          type="search"
-          onInput={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Search..."
-        />
-      </span>
-    </div>
-  );
-
+useEffect(() => {
+  if (!fetchCollectionCalled) {
+    fetchCollection();
+    setFetchCollectionCalled(true);
+  }
+}, [fetchCollectionCalled]);
+  // useEffect(() => {
+  //   if (!fetchCollectionCalled.current) {
+  //     fetchCollection();
+  //     fetchCollectionCalled.current = true;
+  //   }
+  // }, [fetchCollectionCalled]);
   let productsWithIndex = [];
   if (collections !== null) {
     productsWithIndex = collections.map((product, index) => ({
@@ -119,23 +122,16 @@ function RecyclingCenter() {
     setDialogConfirm(true);
   };
   const formatDate = (dateString) => {
-    // Convertir la date de type string en objet Date
     const date = new Date(dateString);
-
-    // Formater la date en JJ/MM/AAAA
     const formattedDate = date.toLocaleDateString("fr-FR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
     });
-
-    // Formater l'heure en HH:MM
     const formattedTime = date.toLocaleTimeString("fr-FR", {
       hour: "2-digit",
       minute: "2-digit",
     });
-
-    // Combinaison de la date et de l'heure formatées
     return `${formattedDate} ${formattedTime}`;
   };
   const hideConfirmDialog = () => {
@@ -165,61 +161,12 @@ function RecyclingCenter() {
           <div className="navbar-user">
             <span className="user-name">{name}</span>
             <Avatar icon="pi pi-user" shape="circle" className="mr-2" style={{  backgroundColor: 'transparent' ,color: "black", fontSize: "1.5rem" }} />
-
-          <i className="pi pi-bell p-overlay-badge mr-2" style={{ color: "black", fontSize: "1.1rem" }}>
-           
-            <Badge severity="success" value={numTasksAdded} style={{ fontSize: '0.65rem'}}></Badge>
-          </i>
-
-          {/* Avatar pour se déconnecter */}
           <Avatar icon="pi pi-sign-out" shape="circle" onClick={handleLogout} style={{backgroundColor: 'transparent' , color: "black", fontSize: "1.5rem" }} />
-
-            
           </div>
         </div>
       </nav>
     );
   };
-   const updateCollectionByRecycler = async () => {
-    const currentDate=new Date().toString();
-    try {
-      const blockchainTransactionResult = await RecycleCollection(contract,collection.BlockchainID,currentDate);
-      console.log(collection.BlockchainID,id)
-      if (blockchainTransactionResult.status === 'accepted') {
-
-    // const response = await fetch(`/api/collection/updateCollectionByshipper/${collection.binID._id}`);
-    const response = await fetch(`/api/collection/updateCollectionByCenter`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({collectionID:collection._id,binID:collection.binID._id,collectionshippingdate:collection.shippingdate  })
-    });
-
-    if (response.status === 200) {
-      const newCollection = await response.json();
-      console.log(newCollection)
-      //console.log(formatDate(newCollection.collection.date));
-      fetchCollection()
-      setDialogConfirm(false);
-       toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Collection Recycled', life: 3000 });
-     } else {
-       console.error('Error shipping collection', response.statusText);
-       toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed recycling collection', life: 3000 });
-     }
-   } else {
-     console.error('Blockchain transaction failed.');
-     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Blockchain transaction failed. collection recycle reverted.', life: 3000 });
-   }
- } catch (error) {
-   console.error('Error recycling collection:', error);
-   toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to recycle collection.', life: 3000 });
- }
-};
-
-
-
-
   return (
     <div className="BodyRecycler">
       <Navbar />
@@ -268,7 +215,6 @@ function RecyclingCenter() {
               sortable
               style={{ minWidth: "16rem" }}
             ></Column>
-            {/* <Column field="binID.currentWeight" header="Current Weight (Kg)" sortable style={{ minWidth: '16rem' }}></Column> */}
             <Column
               body={actionBodyTemplate}
               exportable={false}
@@ -290,7 +236,7 @@ function RecyclingCenter() {
             className="pi pi-exclamation-triangle mr-3"
             style={{ fontSize: "2rem" }}
           />
-          <span> Are you sure you want to ship ? </span>
+          <span> Are you sure you want to recycle ? </span>
         </div>
         <React.Fragment>
           <div style={{ textAlign: "center", marginTop: "1rem" }}>

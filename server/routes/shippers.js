@@ -10,7 +10,6 @@ const {
     updateShipper,
     getCollectionByShipper
 } =require ('../controllers/ShipperController')
-const authMiddleware = require('../middleware/auth')
 
 //login shipper 
 router.post("/login",login)

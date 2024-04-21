@@ -62,12 +62,7 @@ function BinDemo() {
       .reverse()
       .map((product, index) => ({ ...product, index: 1 + index }));
   }, [products]);
-  // let productsWithIndex = [];
-//   if (products !== null ) {
-//    Object.values(products).reverse().forEach((product, index) => {
-//      productsWithIndex.push({ ...product, index: 1 + index });
-//    });
-//  }
+
   console.log(productsWithIndex)
   const getRowSeverity = (status) => {
     switch (status) {
@@ -114,7 +109,6 @@ function BinDemo() {
         <Column field="location" header="Location" sortable style={{ minWidth: '16rem' }}></Column>
         <Column field="weight" header="Weight (Kg)" sortable style={{ minWidth: '16rem' }}></Column>
         <Column field="dateAdded" header="Date"  body={(rowData) => formatDate(rowData.dateAdded)} sortable style={{ minWidth: '16rem' }}></Column> 
-        {/* <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column> */}
       </DataTable></div>  
 </div>
     ) : (

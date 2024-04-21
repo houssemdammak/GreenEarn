@@ -8,11 +8,9 @@ const Home = () => {
   
 <div className="welcome-container">
         <h1 style={{fontFamily:'monotype corsiva',fontWeight: 800}}>Welcome to GreenEarn Admin Page</h1>
-        {/* <img style={{width: '350px', height:'250px',zIndex:"-1"}} src={manager} alt=" Logo" /> */}
 
       </div>
       <div className="video-frame">
-    {/* <img className="logo-home" style={{width: '600px', height:'120px', marginTop:'70px'}}  src={icon} alt="Logo" /> */}
     
     <div className="video-container">
       <video autoPlay loop style={{width: '670px', height:'100%'}}>

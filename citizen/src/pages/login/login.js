@@ -3,14 +3,13 @@ import "./login.css";
 import register from "../../images/bitcoin.svg";
 import log from "../../images/recycle.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-//import { byPrefixAndName } from '@awesome.me/kit-KIT_CODE/icons'
 import {    faEnvelope,  faLock,  faUser,  faWallet,  faSquareCheck,} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import  AuthContext  from "../../contexts/authContext";
-
 import icon from "../../images/icon_black.png";
-
+import { useWeb3 } from "../../contexts/web3Context";
+import { createCitizen } from "../../web3";
 const Login = ()  => {
   //for login
   const [emailError, setEmailError] = useState("");
@@ -21,9 +20,9 @@ const Login = ()  => {
   const [ConfirmpasswordError, setConfirmpasswordError] = useState("");
   const [walletError, setwalletError] = useState("");
   const [passwordErrorS, setpasswordErrorS] = useState("");
-
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const { contract } = useWeb3();
   const [isSignUpMode, setSignUpMode] = useState(false);
   
   const handleSignUpClick = () => {
@@ -111,7 +110,6 @@ const Login = ()  => {
   };
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
-
     ///initialiser les erreur a vide
     setfullnameError("");
     setEmailErrorS("");
@@ -125,8 +123,8 @@ const Login = ()  => {
     let password = (e.target.password?.value ?? "").trim();
     let confirmPassword = (e.target.confirmpassword?.value ?? "").trim();
     //walet id verification
-    const errorWallet = "";
-    //const errorWallet = validateWalletID(walletid);
+    //const errorWallet = "";
+    const errorWallet = validateWalletID(walletid);
     //email validation
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isValidemail = emailPattern.test(email);
@@ -141,26 +139,18 @@ const Login = ()  => {
     const formData = { "FullName":fullname,"email":email, password, "WalletID":walletid };
     console.log(formData)
     try {
-      // const blockchainTransactionResult = await createCitizen(contract,walletid );
-      // console.log(blockchainTransactionResult);
-      // if (blockchainTransactionResult.status === 'accepted') {
+      const blockchainTransactionResult = await createCitizen(contract,walletid );
+      //console.log(blockchainTransactionResult);
+      if (blockchainTransactionResult.status === 'accepted') {
       const response = await axios.post("/api/citizens/register", formData, {
         headers: { "Content-Type": "application/json" },
       });
-      // const response = await fetch('/api/citizens/login', {
-      //   method: 'POST',
-      //   body: formData,
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   }
-      // })
-      //console.log(response);
-
-      //localStorage.setItem('citizensAuth', JSON.stringify(response.data.token));
-      ////login teb3a contexte
       login(response.data.token,response.data.id,response.data.name,response.data.WalletID);
-      //navigate("/Home");
-    // } 
+      console.log('success');
+    }
+    else {
+      console.error('Blockchain transaction failed.');
+    }
   }catch (err) {
       console.log(err);
       console.log(err.response);
@@ -169,8 +159,6 @@ const Login = ()  => {
         setEmailErrorS("Email already in use");
       }
     }
-
-    // }else {
     console.log(confirmpass);
     if (!isValidemail) {
       if (email.length == 0) {
@@ -204,9 +192,7 @@ const Login = ()  => {
   };
 
   return (
-    
     <>
-
       <div className={`containerLogin ${isSignUpMode ? "sign-up-mode" : ""}`}>
         <div className="forms-container">
           <div className="signin-signup">
