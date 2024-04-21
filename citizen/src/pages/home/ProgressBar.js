@@ -24,7 +24,6 @@ const ProgressBar = () => {
         borderRadius: 20,
     };
     
-    
     // Couleur du texte conditionnée en fonction de deposit
     const text = {
         fontSize: 12,

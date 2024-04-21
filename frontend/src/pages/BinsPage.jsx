@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { classNames } from "primereact/utils";
 import { Dropdown } from "primereact/dropdown";
-import { InputNumber } from "primereact/inputnumber";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
@@ -62,16 +61,10 @@ function BinDemo() {
   const fetchShipper = async () => {
     const response = await fetch("/api/shippers");
     const shipper = await response.json();
-    // setShippers(shipper.map(item => ({
-    //   FullName: item.FullName,
-    //   ID: item.ID ,
-    // Location:item.Location
-    // })))
     setShippers(shipper)
     //console.log(shippers);
   };
   const fetchBinsCalled = useRef(false);
-
   useEffect(() => {
     if (!fetchBinsCalled.current) {
       fetchBins();
@@ -129,8 +122,7 @@ function BinDemo() {
       setcapacityError("");
       setCurrentWeightError("");
       setProducts(_products);
-      try {
-  
+      try {  
         // Perform blockchain transaction
         const blockchainTransactionResult = await createBin(contract, _product.location, _product.capacity, _product.currentWeight);
        
@@ -162,8 +154,7 @@ function BinDemo() {
       } catch (error) {
         console.error('Error creating bin:', error);
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create bin.', life: 3000 });
-      }
-    
+      }    
       setcapacityError("");
       setCurrentWeightError("");
       setProducts(_products);
@@ -176,8 +167,6 @@ function BinDemo() {
       setCurrentWeightError(currentWeightError);
     }
   };
-  
-
   //Check if products is not null before getting its length
 const saveUpdatedProduct = async () => {
     setSubmitted(true);
@@ -240,37 +229,6 @@ const saveUpdatedProduct = async () => {
         console.error('Error updating bin:', error);
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create bin.', life: 3000 });
       }
-
-
-
-      // try {
-      //   // Utilisation de la méthode PATCH pour mettre à jour partiellement la ressource
-      //   const response = await fetch(`/api/bins/${_product._id}`, {
-      //     method: "PATCH",
-      //     body: JSON.stringify(_product),
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //   });
-
-      //   if (response.ok) {
-      //     _products[index] = _product;
-      //     toast.current.show({
-      //       severity: "success",
-      //       summary: "Successful",
-      //       detail: "Bin Updated",
-      //       life: 3000,
-      //     });
-      //   }
-      //   console.log(_product);
-      //   const responseData = await response.json();
-
-      //   console.log("Réponse de l'API:", responseData);
-      //   fetchBins();
-      // } catch (error) {
-      //   console.error("Erreur lors de la mise à jour du Bin:", error);
-      // }
-
       setcapacityError("");
       setCurrentWeightError("");
       setProducts(_products);
@@ -316,7 +274,6 @@ const saveUpdatedProduct = async () => {
       shipperID: selectedShipper._id // Assurez-vous que _id est le bon champ contenant l'ID du shipper
     }));
    // console.log(product);
-
     const currentDate=new Date();
     console.log(currentDate.toString());
     console.log("shhipper id ",selectedShipper.ID);
@@ -350,12 +307,9 @@ const saveUpdatedProduct = async () => {
     }
 
   }
-
   catch (error) {
     console.error('Erreur lors de la mise à jour du Shipper:', error);
   }
-  //console.log(response.json())
-
   }
 }
   /////////////////////////////
@@ -835,11 +789,7 @@ const saveUpdatedProduct = async () => {
             //   "p-invalid": submitted && !product.currentWeight,
             // })}
           />
-          {/* {submitted &&
-            !product.currentWeight &&
-            product.currentWeight !== "0" && (
-              <small className="p-error">Current Weight is required.</small>
-            )} */}
+          
           {currentWeightError && currentWeightError !== "" && (
             <small className="p-error">{currentWeightError}</small>
           )}
@@ -910,14 +860,10 @@ const saveUpdatedProduct = async () => {
         <div className="field">
           <label htmlFor="Shipper" className="font-bold">Select Shipper</label>
           {SelectedShipperError && <Message text="Please Select a Shipper" />}
-          {/* <ListBox value={selectedCountry} onChange={(e) => setSelectedCountry(e.value)} options={shippers} 
-                itemTemplate={optionTemplate} className="w-full md:w-80rem" listStyle={{ maxHeight: '250px' }} />   */}
+          
                 <DataTable  selectionMode="single" selection={selectedShipper}
         onSelectionChange={(e) => setSelectedShipper(e.value)} value={shippers}>
-                {/* <Column
-              field="ID"
-              header="ID"
-              style={{ minWidth: "7rem" }}/> */}
+                
               <Column
               field="FullName"
               header="Full Name"

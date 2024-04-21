@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import  "./styles.css";
 import AppContext from "./Context";
-// import FormTwo from "./FormTwo";
 import FormOne from "./FormOne";
 import FormThree from "./FormThree";
 import FormFinish from "./FormFinish";
 import FormTwo from "./FormTwo";
-
 import ProgressBar from "./ProgressBar";
-import icon from "../../images/icon_black.png";
 import NavigationBar from "../../components/navbar";
 const StepForm = () => {
   const [BlockchainID, setBlockchainID] = useState(null); // blockchain id de bin
@@ -48,14 +45,8 @@ const [currentWeight, setcurrentweight] = useState(null);
     <AppContext.Provider value={{ wasteDetails,binDetail }}>
       <div className="main">
         <div>
-        <NavigationBar />
-          {/* <img
-            src={icon}
-            style={{ width: "350px", height: "50px", marginTop: "20px" }}
-            alt="register"
-          /> */}
- <h4 style={{fontFamily:"Slackey",fontSize:"40px",fontWeight:"normal"}}>GreenEarn Citizens</h4>
-
+        <NavigationBar />          
+        <h4 style={{fontFamily:"Slackey",fontSize:"40px",fontWeight:"normal"}}>GreenEarn Citizens</h4>
         </div>
         <div className="steps">
           <div className="wrapper">

@@ -20,32 +20,6 @@ const deleteAllWastes = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 }
-
-// Récupérer un seul sac
-// const getWaste = async (req, res) => {
-//   const { id } = req.params;
-
-//   if (!mongoose.Types.ObjectId.isValid(id)) {
-//     return res.status(404).json({ error: 'Aucun waste trouvé' });
-//   }
-
-//   try {
-//     const waste = await Waste.find({ citizenID: id });
-//     console.log(waste)
-    
-//     if (!waste) {
-//       return res.status(404).json({ error: 'Aucun waste trouvé' });
-//     }
-//     const bin = await Bin.findOne({ _id: waste.binID });
-
-//     if (!bin) {
-//       return res.status(404).json({ error: 'Aucun bac trouvé pour ce déchet' });
-//     }
-//     res.status(200).json(waste,{location:bin.location ,type:bin.type});
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 //get waste pour la page citizen filtrer les wastes par citizen 
 const getWaste = async (req, res) => {
   const { id } = req.params;

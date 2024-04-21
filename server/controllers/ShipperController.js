@@ -25,7 +25,7 @@ const login = async (req, res) => {
         { id: foundUser._id, name: foundUser.FullName },
         process.env.JWT_SECRET,
         {
-          expiresIn: "2m",
+          expiresIn: "15d",
         }
       );
       console.log(token,foundUser._id,foundUser.FullName)
@@ -55,25 +55,7 @@ const getShipper = async (req, res) => {
 
   res.status(200).json(shipper);
 };
-// create a new shipper
-// const createShipper = async (req, res) => {
-//   const { ID, FullName, Location, TelephoneNum } = req.body;
-//   // add to the database
-//   try {
-//     const shipper = await Shipper.create({
-//       ID,
-//       FullName,
-//       Location,
-//       TelephoneNum,
-//     });
-//     res.status(200).json(shipper);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
-
 // delete a shipper
-
 const deleteShipper = async (req, res) => {
   const { id } = req.params;
 
@@ -145,9 +127,7 @@ const getCollectionByShipper=async (req,res)=>{
 
     // Utilisez la méthode find de Mongoose pour récupérer les collections avec le shipperID spécifié
     const collections = await Collection.find({ shipperID: id }).populate('binID').populate('shipperID');
-    // Envoyez les collections trouvées en réponse
-    //res.status(200).json( collections );
-    // Envoyez les collections trouvées en réponse
+    
     res.status(200).json(collections);
   } catch (error) {
     // En cas d'erreur, renvoyez un statut d'erreur avec un message d'erreur

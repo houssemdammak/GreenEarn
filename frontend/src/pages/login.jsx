@@ -29,39 +29,7 @@ const Login = () => {
           email,
           password,
         };
-  
-        // try {
-        //   try{
-        //     const response = await axios.post("/api/auth/login", formData, {
-        //       headers: { "Content-Type": "application/json" },
-        //     });
-        //     console.log(response.data) ;
-        //      //login(response.data.token,response.data.name,"Manager");
-        //   }catch{
-        //     const responseLogShipper = await axios.post("/api/shippers/login", formData, {
-        //       headers: { "Content-Type": "application/json" },
-        //     });
-            
-        //     console.log(responseLogShipper)
-        //      //login(responseLogShipper.data.token,responseLogShipper.data.name,"Shipper");
-        //   }
-          
-          
-        //   //localStorage.setItem('auth', JSON.stringify(response.data.token));
-        //  // login(response.data.token);
-        //  // navigate("/");
-        // } catch (err) {
-        //   console.log()
-        //   console.log(err.response);
-        //   console.log(err.response.data.msg)
-          
-        //   if ( err.response.data.msg ==="Bad password") {
-        //     setPasswordError("Incorrect password");
-        //   } if(err.response.data.msg==="Bad credentails"){
-        //     setEmailError("User does not exist");
-        //   }
-        // }
-        try {
+          try {
           //////ythabet shipper
           let response = await axios.post("/api/shippers/login", formData, {
               headers: { "Content-Type": "application/json" }

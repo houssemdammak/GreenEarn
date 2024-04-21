@@ -48,8 +48,6 @@ const Register = () => {
     }else{
       toast.error("Please fill all inputs");
     }
-
-
   }
 
   useEffect(() => {

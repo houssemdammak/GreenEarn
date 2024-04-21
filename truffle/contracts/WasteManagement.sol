@@ -329,7 +329,7 @@ contract WasteManagement is ERC20, Ownable {
                      
                      
                         //*****************Citizen********************//
-    function createCitizen(address _citizen) external onlyOwner {
+    function createCitizen(address _citizen) external {
         require(!isCitizen[_citizen], "Citizen already exists");
        // require(_citizen != owner, "Cannot create citizen with owner's address");
 

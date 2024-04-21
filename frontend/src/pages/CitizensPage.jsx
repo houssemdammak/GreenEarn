@@ -154,10 +154,6 @@ const saveProduct = async () => {
     } catch (error) {
       console.error("Erreur lors de l'envoi des données à l'API:", error);
     }
-    
-    
-    
-  
   } else {
     
     // Mise à jour de l'état d'erreur pour chaque champ
@@ -444,14 +440,6 @@ const saveProduct = async () => {
               sortable
               style={{ minWidth: "12rem" }}
             ></Column>
-            {/* <Column
-              field="WalletID"
-              header="Wallet Number"
-              sortable
-              style={{ minWidth: "16rem" }}
-            ></Column> */}
-
-            {/* <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column> */}
             <Column
               body={actionBodyTemplate}
               exportable={false}
@@ -602,26 +590,6 @@ const saveProduct = async () => {
           {submitted && !product.email && (<small className="p-error">Email is required.</small>)}
           {EmailErrorExist && product.email&& <small className="p-error">{EmailErrorExist}</small>}
         </div>
-       
-        {/* <div className="field">
-          <label htmlFor="WalletID" className="font-bold"> Wallet ID </label>
-          <InputText
-            id="WalletID"
-            value={product.WalletID}
-            onChange={(e) => onInputChange(e, "WalletID")}
-            required
-            autoFocus
-            className={classNames({
-              "p-invalid": submitted && !product.WalletID,
-            })}
-          />
-          {submitted && !product.WalletID && (
-            <small className="p-error">Wallet ID  is required .</small>
-          )}
-          {WalletIdError && product.WalletID && (
-            <small className="p-error">{WalletIdError}</small>
-          )}
-        </div> */}
       </Dialog>
       <Dialog
         visible={deleteProductDialog}

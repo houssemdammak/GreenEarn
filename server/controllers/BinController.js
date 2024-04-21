@@ -26,51 +26,6 @@ const getBin = async (req, res) => {
   res.status(200).json(bin)
 }
 
-// create a new bin
-// const createBin = async (req, res) => {
-//   const { type, location, capacity, currentWeight } = req.body;
-
-//   let emptyFields = [];
-
-//   if (!type) {
-//     emptyFields.push('type');
-//   }
-
-//   if (!location) {
-//     emptyFields.push('location');
-//   }
-//   if (!capacity) {
-//     emptyFields.push('capacity');
-//   }
-//   if (currentWeight === null) {
-//     emptyFields.push('currentWeight');
-//   }
-//   if (emptyFields.length > 0) {
-//     return res.status(400).json({ error: 'Please fill in all fields', emptyFields });
-//   }
-
-//   let bin;
-//   let isUnique = false;
-
-//   // Tant que l'ID généré n'est pas unique, générez un nouvel entier aléatoire
-//   while (!isUnique) {
-//     const randomId = Math.floor(Math.random() * 1000000); // Génère un entier aléatoire
-//     try {
-//       // Vérifie si l'ID est déjà utilisé
-//       const existingBin = await Bin.findOne({ id: randomId });
-//       if (!existingBin) {
-//         bin = await Bin.create({ id: randomId, type, location, capacity, currentWeight });
-//         isUnique = true;
-//       }
-//     } catch (error) {
-//       // Gérer les erreurs de base de données
-//       return res.status(500).json({ error: 'Internal server error' });
-//     }
-//   }
-
-//   // Si tout s'est bien passé, renvoyer le bin créé
-//   res.status(200).json(bin);
-// };
 const createBin = async (req, res) => {
   const { type, location, capacity, currentWeight,BlockchainID } = req.body;
 
@@ -179,15 +134,6 @@ const deleteAllBins = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 }
-//  const getLastGeneratedId = async (req, res) => {
-//     try {
-//       const bins = await Bin.find({}).sort({ createdAt: -1 });
-//       const lastBinId = bins.length > 0 ? bins[0].id : null; // Get the ID of the last bin created
-//       res.status(200).json({lastBinId });
-//     } catch (error) {
-//       res.status(500).json({ error: 'Internal server error' });
-//     }
-//   }
 module.exports = {
   getBins,
   getBin,

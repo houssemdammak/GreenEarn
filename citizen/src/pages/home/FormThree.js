@@ -5,9 +5,6 @@ import AuthContext from '../../contexts/authContext';
 import { useWeb3 } from "../../contexts/web3Context";
 import { Toast } from "primereact/toast";
 import { createWaste } from "../../web3";
-
-//import { toast } from 'react-toastify';
-
 const FormThree = () => {
   const toast = useRef(null);
   const { contract } = useWeb3();
@@ -56,7 +53,6 @@ const FormThree = () => {
 
           console.error('Error creating wastes:', error);
           return false;
-         // toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create waste.', life: 3000 });
         }
       };
       
@@ -65,11 +61,7 @@ const FormThree = () => {
         console.log("updateContext", updateContext.currentPage);
     
         try {
-            const result = await addToBin(updateContext.binID, id, updateContext.quantity, binContext.BlockchainID, WalletID);
-            // Assuming addToBin returns the waste object when the transaction is successful
-            //console.log("Transaction accepted. Waste created:", result);
-            // Update the page after the transaction is completed
-            
+            const result = await addToBin(updateContext.binID, id, updateContext.quantity, binContext.BlockchainID, WalletID);            
             updateContext.setStep(updateContext.currentPage + 1);
         } catch (error) {
             console.error("Error adding to bin:", error);
