@@ -1610,7 +1610,15 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
+<<<<<<< HEAD
   "updatedAt": "2024-04-21T17:39:50.152Z",
+=======
+<<<<<<< HEAD
+  "updatedAt": "2024-04-21T11:54:50.796Z",
+=======
+  "updatedAt": "2024-04-20T23:56:20.886Z",
+>>>>>>> c3dca0d9e1f39a6612d169f3de73234e011c93cd
+>>>>>>> f027b3347bb2d049ac241aa6d58f72b51368e794
   "devdoc": {
     "details": "Standard ERC721 Errors Interface of the https://eips.ethereum.org/EIPS/eip-6093[ERC-6093] custom errors for ERC721 tokens.",
     "errors": {

@@ -1819,7 +1819,15 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
+<<<<<<< HEAD
   "updatedAt": "2024-04-21T17:39:50.145Z",
+=======
+<<<<<<< HEAD
+  "updatedAt": "2024-04-21T11:54:50.788Z",
+=======
+  "updatedAt": "2024-04-20T23:56:20.880Z",
+>>>>>>> c3dca0d9e1f39a6612d169f3de73234e011c93cd
+>>>>>>> f027b3347bb2d049ac241aa6d58f72b51368e794
   "devdoc": {
     "details": "Contract module which provides a basic access control mechanism, where there is an account (an owner) that can be granted exclusive access to specific functions. The initial owner is set to the address provided by the deployer. This can later be changed with {transferOwnership}. This module is used through inheritance. It will make available the modifier `onlyOwner`, which can be applied to your functions to restrict their use to the owner.",
     "errors": {
