@@ -39,9 +39,9 @@ contract WasteManagement is ERC20, Ownable {
     event CollectionCreated(string id);
     event ModifShipper(string message);
     event ModifCitizen(string message);
-    uint256 public wasteCount;
-    uint256 public binCount;
-    uint256 public collectionCount;
+    uint public wasteCount;
+    uint public binCount;
+    uint public collectionCount;
     mapping(string => Bin) public bins; // Changed key type to string
     mapping(string => Collection) public collections;
     string[] binIds; // Changed type to string
@@ -91,11 +91,12 @@ contract WasteManagement is ERC20, Ownable {
         isBin[_id] = true;
         emit BinCreated(_id);
         return _id;
+    
     }
 
     function modifyBin(string memory _id, string memory _location,  uint256 _capacity) external {
         require(isBin[_id], "Bin does not exist");
-        bins[_id] = Bin(_id, _location,  _capacity);
+        bins[_id] = Bin(_id, _location,_capacity,0);
     }
 
     function deleteBin(string memory _id) external onlyOwner {
@@ -121,34 +122,9 @@ contract WasteManagement is ERC20, Ownable {
         binCount--;
     }
     
-    // function getBins() public view returns (string[] memory, string[] memory, uint256[] memory, uint256[] memory) {
-    //     string[] memory ids = new string[](binCount);
-    //     string[] memory locations = new string[](binCount);
-       
-    //     uint256[] memory capacities = new uint256[](binCount);
-    //     uint256[] memory currentWeights = new uint256[](binCount);
-
-    //     for (uint256 i = 0; i < binCount; i++) {
-    //         Bin memory bin = bins[binIds[i]];
-    //         ids[i] = bin.id;
-    //         locations[i] = bin.location;
-    //         capacities[i] = bin.capacity;
-    //         currentWeights[i] = bin.currentWeight;
-    //     }
-
-    //     return (ids, locations, capacities, currentWeights);
-    // }
-    // Function to generate a unique ID
+   
     function generateUniqueId() internal  returns (string memory) {
-        bytes32 hash = keccak256(abi.encodePacked(
-            block.timestamp,
-            block.prevrandao,
-            block.coinbase,
-            msg.sender,
-            binCount,
-            wasteCount,
-            collectionCount // Assuming this is a counter for collections
-        ));
+        bytes32 hash = keccak256(abi.encodePacked(block.timestamp,block.prevrandao,block.coinbase,msg.sender,binCount,wasteCount,collectionCount ));
 
         // Convert hash to string
         uint256 value = uint256(hash);
@@ -183,16 +159,6 @@ contract WasteManagement is ERC20, Ownable {
         isShipper[_shipper] = true;
     }
 
-    // function getShippers() public view returns (address[] memory) {
-    //     return shippers;
-    // }
-
-    // function notifyShipper(address _shipper, string memory _idBin, string memory _date) external onlyOwner {
-
-    //     require(isShipper[_shipper], "Shipper doesn't exist");
-    //     require(isBin[_idBin], "Bin doesn't exist");
-    //     notifications[_shipper][_idBin] = Notif(_shipper, _idBin, false);
-    // }
 
     function createWaste(uint256 _weight, address _citizenId, string memory _binId) external {
         string memory _id = generateUniqueId();
@@ -204,6 +170,7 @@ contract WasteManagement is ERC20, Ownable {
         require(msg.sender==_citizenId," Forbidden ");
         // Create waste
         wastes[_id] = Waste(_id, "Waiting", _weight, _citizenId, address(0), address(0), _binId, "");
+        bins[_binId].currentWeight+=_weight;
         wasteIds.push(_id);
         isWaste[_id] = true;
         wasteCount++;
@@ -248,8 +215,8 @@ contract WasteManagement is ERC20, Ownable {
             // If not, create a new notification
             notifications[_shipper][_date] = Notif(_shipper, _idBin, false);
         }
-        emit CollectionCreated(_idCollection);
 
+        emit CollectionCreated(_idCollection); 
         return _idCollection;
     }
 
@@ -326,7 +293,7 @@ contract WasteManagement is ERC20, Ownable {
                      
                      
                         //*****************Citizen********************//
-    function createCitizen(address _citizen) external 
+    function createCitizen(address _citizen) external {
         require(!isCitizen[_citizen], "Citizen already exists");
        // require(_citizen != owner, "Cannot create citizen with owner's address");
 
@@ -442,7 +409,35 @@ contract WasteManagement is ERC20, Ownable {
 
     //     return shipperNotifications;
     // }
+ // function getBins() public view returns (string[] memory, string[] memory, uint256[] memory, uint256[] memory) {
+    //     string[] memory ids = new string[](binCount);
+    //     string[] memory locations = new string[](binCount);
+       
+    //     uint256[] memory capacities = new uint256[](binCount);
+    //     uint256[] memory currentWeights = new uint256[](binCount);
 
+    //     for (uint256 i = 0; i < binCount; i++) {
+    //         Bin memory bin = bins[binIds[i]];
+    //         ids[i] = bin.id;
+    //         locations[i] = bin.location;
+    //         capacities[i] = bin.capacity;
+    //         currentWeights[i] = bin.currentWeight;
+    //     }
+
+    //     return (ids, locations, capacities, currentWeights);
+    // }
+    // Function to generate a unique ID
     
+    
+    // function getShippers() public view returns (address[] memory) {
+    //     return shippers;
+    // }
+
+    // function notifyShipper(address _shipper, string memory _idBin, string memory _date) external onlyOwner {
+
+    //     require(isShipper[_shipper], "Shipper doesn't exist");
+    //     require(isBin[_idBin], "Bin doesn't exist");
+    //     notifications[_shipper][_idBin] = Notif(_shipper, _idBin, false);
+    // }
 
 }

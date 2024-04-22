@@ -10,17 +10,28 @@ export const AuthProvider = ({ children }) => {
   const [id, setID] = useState(JSON.parse(localStorage.getItem('citizienID')) || null);
   const [name, setName] = useState(JSON.parse(localStorage.getItem('citizienName')) || null);
   const [WalletID, setWalletID] = useState(JSON.parse(localStorage.getItem('WalletID')) || null);
-  console.log(name ,id)
+  const [action, setAction] = useState("");
+
+  //console.log(name ,id)
 
   useEffect(() => {
     if (!token) {
-      navigate("/Login"); // Redirect to login if not authenticated
+      if(action == "login"){
+        navigate("/Login"); 
+      } else if(action == "signup"){
+        navigate("/SignUp"); 
+      } else {
+        navigate("/Login");
+      }
+      console.log(action)
+
+      //navigate("/Login"); // Redirect to login if not authenticated
     }
-  }, [token]);
+  }, [token,action]);
   useEffect(() => {
     //console.log(token)
-    
       // Vérifier si le token est autorisé côté serveur
+      if(token){
       axios.post('/api/authorization/', null, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -36,7 +47,7 @@ export const AuthProvider = ({ children }) => {
         // Si le token n'est pas autorisé, déconnectez l'utilisateur et redirigez-le vers la page de connexion
         logout();
       });
-    }
+    }}
   , [token,navigate]);
 
   const login = (token,id,name,WalletID) => {
@@ -60,7 +71,7 @@ export const AuthProvider = ({ children }) => {
     navigate("/Login");
   };
   return (
-    <AuthContext.Provider value={{ token, name ,id,WalletID ,login, logout }}>
+    <AuthContext.Provider value={{ token, name ,id,WalletID,action,setAction ,login, logout }}>
       {children}
     </AuthContext.Provider>
   );

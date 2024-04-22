@@ -21,17 +21,20 @@ const Login = ()  => {
   const [walletError, setwalletError] = useState("");
   const [passwordErrorS, setpasswordErrorS] = useState("");
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  
+const { login,setAction } = useContext(AuthContext);
   const { contract } = useWeb3();
   const [isSignUpMode, setSignUpMode] = useState(false);
   
   const handleSignUpClick = () => {
+    setAction("signup")
     navigate('/SignUp'); 
     setSignUpMode(true);
     console.log("ena f")
     
   };
   const handleSignInClick = () => {
+    setAction("login")
     navigate("/Login");
     setSignUpMode(false);
   };
