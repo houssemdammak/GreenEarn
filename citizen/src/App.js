@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import React from 'react';
 import "./App.css";
 import Login from "./pages/login/login";
-import StepForm from "./pages/home/StepForm";
+import StepForm from "./pages/Home1/StepForm";
 import BinDemo from "./pages/bins/bin";
 import PrivateRoute from './contexts/PrivateRoute';
 function App() {

@@ -13,7 +13,7 @@ import { Web3Provider } from './contexts/web3Context';
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
-    <React.StrictMode>
+    {/* <React.StrictMode> */}
     <AuthProvider>
     <Web3Provider>
           <PrimeReactProvider>
@@ -21,7 +21,7 @@ root.render(
           </PrimeReactProvider>
         </Web3Provider>
       </AuthProvider>
-    </React.StrictMode>
+    {/* </React.StrictMode> */}
   </BrowserRouter>
 );
 
