@@ -50,6 +50,8 @@ contract WasteManagement is ERC20, Ownable {
     mapping(string => Waste) public wastes; // Changed key type to string
     address[] citizens;
     address recycler = address(0x056ba2E0789740FB3C8c8C4E6B1d2B247D296ab3);
+    //recycler yesmmine : 0x056ba2E0789740FB3C8c8C4E6B1d2B247D296ab3
+    //recycler houssem : 0x56383d8e914BA54040125bAeD014ddCAE01DE81A
     address[] shippers;
     mapping(string => bool) isBin;
     mapping(string => bool) isCollection;
