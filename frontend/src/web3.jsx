@@ -19,9 +19,9 @@ const initWeb3 = async () => {
   else if (window.web3) {
     web3 = new Web3(window.web3.currentProvider);
   }
-  // If no injected web3 instance is detected, fall back to Ganache
+  // If no injected web3 instance is detected, fall back to quorum
   else {
-    web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+    web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:22000"));
   }
   return web3;
 };
@@ -29,7 +29,7 @@ const initWeb3 = async () => {
 const initContract = async (web3) => {
   const contract = new web3.eth.Contract(
     WasteManagement.abi,
-    WasteManagement.networks[5777].address
+    WasteManagement.networks[10].address
   );
   return contract;
 };
@@ -40,19 +40,22 @@ const createBin = async (contract, location, capacity, currentWeight) => {
   try {
     const web3 = await initWeb3(); // Initialize Web3 instance
     const accounts = await web3.eth.getAccounts(); // Get accounts
+    console.log("accounts: " , accounts)
+   
     const senderAddress = accounts[0]; // Assuming you want to use the first account
-
-    // Send transaction to the blockchain
     const transaction = await contract.methods.createBin(location, capacity, currentWeight).send({ 
-      from: senderAddress
+      from: senderAddress, gasPrice: await web3.eth.getGasPrice()
     });  
-    console.log("Bin created successfully!");
-    // Retrieve the bin ID from the emitted event
+
+    console.log("trrrr : ",transaction)
+    
     const binId = transaction.events.BinCreated.returnValues.id;
     console.log(binId)
     return { status: 'accepted', binId }; // Return 'accepted' status along with bin ID
   } catch (error) {
     console.error("Error creating bin:", error);
+     
+
     return { status: 'rejected', binId: null }; // Return 'rejected' status and null bin ID if transaction fails
   }
 };

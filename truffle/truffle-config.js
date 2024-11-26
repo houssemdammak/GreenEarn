@@ -59,13 +59,21 @@ module.exports = {
  
   //contracts_build_directory: "../citizen/src/contracts",
   contracts_build_directory: "../frontend/src/contracts",
-
-  networks: {   
-    development: {
-     host: "127.0.0.1",     // Localhost (default: none)
-     port: 7545,            // Standard Ethereum port (default: none)
-     network_id: "*",       // Any network (default: none)
+  networks: {
+    quorum: {
+      host: "127.0.0.1", // Quorum node RPC URL
+      port: 22000,       // Node1 RPC port
+      network_id: "*",   // Match any network id
+      gas: 4500000,      // Adjust gas limit for Quorum
+      gasPrice: 0        // No gas cost in Quorum
     },
+
+  // networks: {   
+  //   development: {
+  //    host: "127.0.0.1",     // Localhost (default: none)
+  //    port: 7545,            // Standard Ethereum port (default: none)
+  //    network_id: "*",       // Any network (default: none)
+  //   },
     //
     // An additional network, but with some advanced options…
     // advanced: {
