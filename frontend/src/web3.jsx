@@ -21,7 +21,7 @@ const initWeb3 = async () => {
   }
   // If no injected web3 instance is detected, fall back to Ganache
   else {
-    web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+    web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:22000"));
   }
   return web3;
 };
@@ -29,7 +29,7 @@ const initWeb3 = async () => {
 const initContract = async (web3) => {
   const contract = new web3.eth.Contract(
     WasteManagement.abi,
-    WasteManagement.networks[5777].address
+    WasteManagement.networks[10].address
   );
   return contract;
 };
@@ -44,7 +44,7 @@ const createBin = async (contract, location, capacity, currentWeight) => {
 
     // Send transaction to the blockchain
     const transaction = await contract.methods.createBin(location, capacity, currentWeight).send({ 
-      from: senderAddress
+      from: senderAddress,gasPrice: await web3.eth.getGasPrice()
     });  
     console.log("Bin created successfully!");
     // Retrieve the bin ID from the emitted event
@@ -53,6 +53,7 @@ const createBin = async (contract, location, capacity, currentWeight) => {
     return { status: 'accepted', binId }; // Return 'accepted' status along with bin ID
   } catch (error) {
     console.error("Error creating bin:", error);
+    console.error("Error details:", error.message || error);
     return { status: 'rejected', binId: null }; // Return 'rejected' status and null bin ID if transaction fails
   }
 };
@@ -82,7 +83,7 @@ const modifyBin = async (contract, binId, location,  capacity) => {
     const senderAddress = accounts[0]; // Assuming you want to use the first account
     // Send transaction to the blockchain
     await contract.methods.modifyBin(binId, location, capacity).send({ 
-      from: senderAddress
+      from: senderAddress,gasPrice: await web3.eth.getGasPrice()
     });  
 
     console.log("Bin modified successfully!");

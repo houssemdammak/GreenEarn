@@ -61,10 +61,10 @@ module.exports = {
   contracts_build_directory: "../frontend/src/contracts",
 
   networks: {   
-    development: {
-     host: "127.0.0.1",     // Localhost (default: none)
-     port: 7545,            // Standard Ethereum port (default: none)
-     network_id: "*",       // Any network (default: none)
+    quorum: {
+      host: "127.0.0.1",
+      port: 22000, // RPC port for Node 1
+      network_id: "*", // Match any network id
     },
     //
     // An additional network, but with some advanced options…
